@@ -8,7 +8,7 @@ public class SceneControllerTestScene : SceneController_Base
 		return SceneManager.EScene.TestScene;
 	}
 
-	static private readonly bool DEBUG_LOCAL = false;
+//	static private readonly bool DEBUG_LOCAL = false;
 
 
 	// Use this for initialization
