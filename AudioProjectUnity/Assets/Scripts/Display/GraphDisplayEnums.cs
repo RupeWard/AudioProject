@@ -16,4 +16,18 @@ namespace RJWS.Graph
 		Vertical
 	}
 
+	static class GraphDisplayEnumsHelpers
+	{
+		public static EOrthoDirection OtherDirection(this EOrthoDirection dirn)
+		{
+			if (dirn == EOrthoDirection.Horizontal)
+			{
+				return EOrthoDirection.Vertical;
+			}
+			else
+			{
+				return EOrthoDirection.Horizontal;
+			}
+		}
+	}
 }

@@ -6,11 +6,26 @@ namespace RJWS.Graph
 {
 	public class GraphPanel: MonoBehaviour
 	{
-		static private Dictionary<EOrthoDirection, ELowHigh> s_defaultPositions = new Dictionary<EOrthoDirection, ELowHigh>( )
+		public class ScrollBarSettings
 		{
-			{ EOrthoDirection.Horizontal, ELowHigh.Low },
-			{ EOrthoDirection.Vertical, ELowHigh.High }
-		};
+			public Dictionary<EOrthoDirection, ELowHigh> positions = new Dictionary<EOrthoDirection, ELowHigh>( )
+			{
+				{ EOrthoDirection.Horizontal, ELowHigh.Low},
+				{ EOrthoDirection.Vertical, ELowHigh.High }
+			};
+
+			public Dictionary<EOrthoDirection, float> sizes = new Dictionary<EOrthoDirection, float>( )
+			{
+				{ EOrthoDirection.Horizontal, 40f},
+				{ EOrthoDirection.Vertical, 60f }
+			};
+		}
+
+		public ScrollBarSettings scrollBarSettings
+		{
+			get;
+			private set;
+		}
 
 		private Dictionary<EOrthoDirection, GraphScrollBarPanel> _scrollBars = new Dictionary<EOrthoDirection, GraphScrollBarPanel>( );
 
@@ -23,6 +38,7 @@ namespace RJWS.Graph
 		private void Awake()
 		{
 			cachedRT = GetComponent<RectTransform>( );
+			scrollBarSettings = new ScrollBarSettings( );
 			Init( );
 		}
 
@@ -34,7 +50,7 @@ namespace RJWS.Graph
 			{
 				GameObject go = GameObject.Instantiate( scrollPrefab );
 				_scrollBars[edirn] = go.GetComponent<GraphScrollBarPanel>( );
-				_scrollBars[edirn].Init( this, edirn, s_defaultPositions[ edirn] );
+				_scrollBars[edirn].Init( this, edirn);
 			}
 
 		}
