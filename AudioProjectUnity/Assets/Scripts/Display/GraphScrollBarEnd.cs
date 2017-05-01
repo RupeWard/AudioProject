@@ -2,20 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace RJWS.Graph
 {
 	public class GraphScrollBarEnd : MonoBehaviour
 	{
-		public enum EEnd
-		{
-			Min,
-			Max
-		}
-
 		public RectTransform bgRT;
 
-		private EEnd _end;
+		private ELowHigh _end;
 
 		public RectTransform cachedRT
 		{
@@ -30,7 +23,7 @@ namespace RJWS.Graph
 			cachedRT = GetComponent<RectTransform>( );
 		}
 
-		public void Init( GraphScrollBar gsb, EEnd ee)
+		public void Init( GraphScrollBar gsb, ELowHigh ee)
 		{
 			_graphScrollBar = gsb;
 			_end = ee;
@@ -47,7 +40,7 @@ namespace RJWS.Graph
 			float height = _graphScrollBar.cachedRT.rect.height;
 			switch (_end)
 			{
-				case EEnd.Min:
+				case ELowHigh.Low:
 					{
 						cachedRT.anchorMin = new Vector2( 0f, 0.5f );
 						cachedRT.anchorMax = new Vector2( 0f, 0.5f );
@@ -56,7 +49,7 @@ namespace RJWS.Graph
 						bgRT.localRotation = Quaternion.Euler( 0f, 0f, 180f );
 						break;
 					}
-				case EEnd.Max:
+				case ELowHigh.High:
 					{
 						cachedRT.anchorMin = new Vector2( 1f, 0.5f );
 						cachedRT.anchorMax = new Vector2( 1f, 0.5f );

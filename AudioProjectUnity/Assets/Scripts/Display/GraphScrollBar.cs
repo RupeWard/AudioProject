@@ -6,7 +6,7 @@ namespace RJWS.Graph
 {
 	public class GraphScrollBar : MonoBehaviour
 	{
-		private Dictionary<GraphScrollBarEnd.EEnd, GraphScrollBarEnd> _ends = new Dictionary<GraphScrollBarEnd.EEnd, GraphScrollBarEnd>( );
+		private Dictionary<ELowHigh, GraphScrollBarEnd> _ends = new Dictionary<ELowHigh, GraphScrollBarEnd>( );
 		public RectTransform cachedRT
 		{
 			private set;
@@ -23,7 +23,7 @@ namespace RJWS.Graph
 		{
 			GameObject endPrefab = Resources.Load<GameObject>( "Graph/Prefabs/ScrollBarEnd" );
 
-			foreach (GraphScrollBarEnd.EEnd eend in System.Enum.GetValues( typeof( GraphScrollBarEnd.EEnd ) ))
+			foreach (ELowHigh eend in System.Enum.GetValues( typeof( ELowHigh ) ))
 			{
 				GameObject go = GameObject.Instantiate( endPrefab );
 				_ends[eend] = go.GetComponent<GraphScrollBarEnd>( );
