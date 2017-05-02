@@ -35,6 +35,15 @@ namespace RJWS.Graph
 			cachedRT.SetParent( _graphScrollBar.cachedRT );
 			cachedRT.localScale = new Vector3( 1f, 1f, 1f );
 			SetPos( );
+
+			if (_graphScrollBar.scrollBarPanel.eDirection == EOrthoDirection.Horizontal)
+			{
+				objectGrabber.onXMovementAction += HandleMovement;
+			}
+			else
+			{
+				objectGrabber.onYMovementAction += HandleMovement;
+			}
 		}
 
 		private void SetPos()
@@ -69,6 +78,11 @@ namespace RJWS.Graph
 		{
 			Debug.Log( Time.time + " Click on " + transform.GetPathInHierarchy( ) );
 			ObjectGrabManager.Instance.HandleGrabRequest( objectGrabber );
+		}
+
+		public void HandleMovement( float delta)
+		{
+			_graphScrollBar.HandleEndMoved( _end, delta );
 		}
 	}
 

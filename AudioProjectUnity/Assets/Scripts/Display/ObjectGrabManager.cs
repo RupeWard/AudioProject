@@ -57,6 +57,24 @@ namespace RJWS.Graph
 			get { return _currentGrab; }
 		}
 
+		public void CancelGrab(ObjectGrabber og)
+		{
+			if (_currentGrab != null)
+			{
+				if (og == _currentGrab)
+				{
+					CancelCurrentGrab( );
+				}
+				else
+				{
+					Debug.LogError( "Cancel called on grab " + og.cachedTransform.GetPathInHierarchy( ) + " when current is " + _currentGrab.cachedTransform.GetPathInHierarchy( ) );
+				}
+			}
+			else
+			{
+				Debug.LogError( "Cancel called on grab " + og.cachedTransform.GetPathInHierarchy( ) + " when no _currentGrab" );
+			}
+		}
 		private void CancelCurrentGrab()
 		{
 			if (_currentGrab != null)
@@ -113,7 +131,7 @@ namespace RJWS.Graph
 			return result;
 		}
 
-		private readonly bool DEBUG_CAST = true;
+		private readonly bool DEBUG_CAST = false;
 		private System.Text.StringBuilder _debugRaycastSB = null;
 
 		private void LateUpdate()
@@ -122,82 +140,99 @@ namespace RJWS.Graph
 			{
 				if (_currentGrab != null)
 				{
-					if (!_didHandleThisFrame)
+					if (_currentGrab.isDragging)
 					{
-						if (DEBUG_CAST)
-						{
-							if (_debugRaycastSB == null)
-							{
-								_debugRaycastSB = new System.Text.StringBuilder( );
-							}
-							else
-							{
-								_debugRaycastSB.Length = 0;
-							}
-							_debugRaycastSB.Append(Time.time ).Append( " RayCast hit " );
-						}
-						PointerEventData ped = new PointerEventData( null );
-						//Set required parameters, in this case, mouse position
-						ped.position = Input.mousePosition;
-						//Create list to receive all results
-						List<RaycastResult> results = new List<RaycastResult>( );
-						//Raycast it
-						_rayCaster.Raycast( ped, results );
-
-						if (DEBUG_CAST)
-						{
-							_debugRaycastSB.Append( results.Count ).Append( " objects" );
-						}
-						bool hit = false;
-						if (results.Count > 0)
-						{
-							if (DEBUG_CAST)
-							{
-								_debugRaycastSB.Append( ":" );
-							}
-						}
-						foreach( RaycastResult rayCastResult in results)
-						{
-							GameObject hitGO = rayCastResult.gameObject;
-							if (DEBUG_CAST)
-							{
-								_debugRaycastSB.Append( "\n- " );
-							}
-							if (rayCastResult.gameObject == _currentGrab.gameObject)
-							{
-								hit = true;
-								if (DEBUG_CAST)
-								{
-									_debugRaycastSB.Append( "GRABBED " );
-								}
-							}
-							else
-							{
-								if (DEBUG_CAST)
-								{
-									_debugRaycastSB.Append( "NOT GRABBED" );
-								}
-							}
-							if (DEBUG_CAST)
-							{
-								_debugRaycastSB.Append( hitGO.transform.GetPathInHierarchy() );
-							}
-						}
-						if (!hit)
-						{
-							if (DEBUG_CAST)
-							{
-								_debugRaycastSB.Append( "\nCANCELLING GRAB" );
-							}
-							CancelCurrentGrab( );
-							
-						}
-						if (DEBUG_CAST)
-						{
-							Debug.Log( _debugRaycastSB.ToString( ) );
-						}
+						_currentGrab.HandleHit(Input.mousePosition );
 					}
+					else
+					{
+						if (!_didHandleThisFrame)
+						{
+							if (DEBUG_CAST)
+							{
+								if (_debugRaycastSB == null)
+								{
+									_debugRaycastSB = new System.Text.StringBuilder( );
+								}
+								else
+								{
+									_debugRaycastSB.Length = 0;
+								}
+								_debugRaycastSB.Append( Time.time ).Append( " RayCast hit " );
+							}
+							PointerEventData ped = new PointerEventData( null );
+							//Set required parameters, in this case, mouse position
+							ped.position = Input.mousePosition;
+							//Create list to receive all results
+							List<RaycastResult> results = new List<RaycastResult>( );
+							//Raycast it
+							_rayCaster.Raycast( ped, results );
 
+							if (DEBUG_CAST)
+							{
+								_debugRaycastSB.Append( results.Count ).Append( " objects" );
+							}
+							bool hit = false;
+							if (results.Count > 0)
+							{
+								if (DEBUG_CAST)
+								{
+									_debugRaycastSB.Append( ":" );
+								}
+							}
+							foreach (RaycastResult rayCastResult in results)
+							{
+								GameObject hitGO = rayCastResult.gameObject;
+								if (DEBUG_CAST)
+								{
+									_debugRaycastSB.Append( "\n- " );
+								}
+								if (rayCastResult.gameObject == _currentGrab.gameObject)
+								{
+									ObjectGrabber grabber = rayCastResult.gameObject.GetComponent<ObjectGrabber>( );
+									if (grabber != null)
+									{
+										hit = true;
+										grabber.HandleHit( ped.position );
+										if (DEBUG_CAST)
+										{
+											_debugRaycastSB.Append( "GRABBED " );
+										}
+									}
+									else
+									{
+										Debug.LogError( "No grabber on " + hitGO.transform.GetPathInHierarchy( ) );
+									}
+								}
+								else
+								{
+									if (DEBUG_CAST)
+									{
+										_debugRaycastSB.Append( "NOT GRABBED" );
+									}
+								}
+								if (DEBUG_CAST)
+								{
+									_debugRaycastSB.Append( hitGO.transform.GetPathInHierarchy( ) );
+								}
+							}
+							if (!hit)
+							{
+								if (DEBUG_CAST)
+								{
+									_debugRaycastSB.Append( "\nCANCELLING GRAB" );
+								}
+								CancelCurrentGrab( );
+
+							}
+							if (DEBUG_CAST)
+							{
+								Debug.Log( _debugRaycastSB.ToString( ) );
+							}
+						}
+
+
+					}
 				}
 			}
 

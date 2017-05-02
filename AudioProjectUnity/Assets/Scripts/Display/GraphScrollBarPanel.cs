@@ -85,7 +85,7 @@ namespace RJWS.Graph
 				case EOrthoDirection.Vertical:
 					{
 						cachedRT.sizeDelta = new Vector2( _graphPanel.cachedRT.rect.height - otherSize, size);
-						scrollBar.Init( this );
+						scrollBar.Init(  this );
 
 						cachedRT.rotation = Quaternion.Euler( 0f, 0f, 90f );
 
