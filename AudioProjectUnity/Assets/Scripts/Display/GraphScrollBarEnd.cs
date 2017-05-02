@@ -77,7 +77,10 @@ namespace RJWS.Graph
 		public void HandleClick()
 		{
 			Debug.Log( Time.time + " Click on " + transform.GetPathInHierarchy( ) );
-			ObjectGrabManager.Instance.HandleGrabRequest( objectGrabber );
+			if (!objectGrabber.isActivated)
+			{
+				ObjectGrabManager.Instance.HandleGrabRequest( objectGrabber );
+			}
 		}
 
 		public void HandleMovement( float delta)

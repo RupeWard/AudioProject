@@ -14,7 +14,11 @@ namespace RJWS.Graph
 		private UnityEngine.UI.Image _image;
 		private Collider2D _collider;
 
-		private bool _activated = false;
+		public bool isActivated
+		{
+			get;
+			private set;
+		}
 
 		public Transform cachedTransform
 		{
@@ -38,7 +42,7 @@ namespace RJWS.Graph
 
 			_image.enabled = false;
 			_collider.enabled = false;
-			_activated = false;
+			isActivated = false;
 		}
 
 		public void Activate()
@@ -53,17 +57,17 @@ namespace RJWS.Graph
 
 		public void Activate(bool active)
 		{
-			if (active != _activated)
+			if (active != isActivated)
 			{
 				_image.enabled = active;
 				_collider.enabled = active;
-				_activated = active;
+				isActivated = active;
 
 				lastFramePointerPos = null;
 
 				if (DEBUG_OBJECTGRABBER)
 				{
-					if (_activated)
+					if (isActivated)
 					{
 						Debug.Log( Time.time + " OG: activated " + cachedTransform.GetPathInHierarchy( ) );
                     }
@@ -101,7 +105,7 @@ namespace RJWS.Graph
 				Debug.Log( Time.time + " Up " + cachedTransform.GetPathInHierarchy( ) );
 			}
 			ObjectGrabManager.Instance.SetHandled( this );
-			if (_activated)
+			if (isActivated)
 			{
 				//				ObjectGrabManager.Instance.CancelGrab( this );
 				lastFramePointerPos = null;
@@ -154,7 +158,7 @@ namespace RJWS.Graph
 
 		public void HandleHit(Vector2 screenPos)
 		{
-			if (!_activated)
+			if (!isActivated)
 			{
 				Debug.LogError( "HandleHit when not activated" );
 				return;

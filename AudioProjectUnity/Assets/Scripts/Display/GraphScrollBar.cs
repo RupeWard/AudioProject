@@ -25,17 +25,22 @@ namespace RJWS.Graph
 			cachedRT = GetComponent<RectTransform>( );
 		}
 
+		private Vector2 _sizeRange;
+
 		public void Init( GraphScrollBarPanel sbp)
 		{
 			scrollBarPanel = sbp;
 			GameObject endPrefab = Resources.Load<GameObject>( "Graph/Prefabs/ScrollBarEnd" );
 
 			cachedRT.sizeDelta = scrollBarPanel.cachedRT.sizeDelta;
+			_sizeRange.y = cachedRT.sizeDelta.x;
+			
 			foreach (ELowHigh eend in System.Enum.GetValues( typeof( ELowHigh ) ))
 			{
 				GameObject go = GameObject.Instantiate( endPrefab );
 				_ends[eend] = go.GetComponent<GraphScrollBarEnd>( );
 				_ends[eend].Init( this, eend );
+				_sizeRange.x += _ends[eend].cachedRT.sizeDelta.x;
 			}
 		}
 
@@ -62,8 +67,14 @@ namespace RJWS.Graph
 				anchoredPos.x += 0.5f * delta;
 			}
 
-			cachedRT.sizeDelta = size;
-			cachedRT.anchoredPosition = anchoredPos;
+			if (size.x >= _sizeRange.x && size.x <= _sizeRange.y)
+			{
+				if (0.5f * _sizeRange.y + anchoredPos.x + 0.5f * size.x <= _sizeRange.y && 0.5f * _sizeRange.y + anchoredPos.x - 0.5f * size.x >= 0f)
+				{
+					cachedRT.sizeDelta = size;
+					cachedRT.anchoredPosition = anchoredPos;
+				}
+			}
 		}
 	}
 
