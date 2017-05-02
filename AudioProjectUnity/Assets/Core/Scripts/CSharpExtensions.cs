@@ -5,8 +5,14 @@ namespace RJWS.Core
 {
 	public static class CSharpExtensions
 	{
+		public enum ETriBehaviour
+		{
+			Always,
+			Never,
+			Sometimes
+		}
 
-#region Numeric
+		#region Numeric
 
 		public static bool EqualsApprox( this double d, double other, double tolerance )
 		{

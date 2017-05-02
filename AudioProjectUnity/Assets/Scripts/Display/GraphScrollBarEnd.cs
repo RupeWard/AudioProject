@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RJWS.Core.TransformExtensions;
 
 namespace RJWS.Graph
 {
 	public class GraphScrollBarEnd : MonoBehaviour
 	{
 		public RectTransform bgRT;
+		public ObjectGrabber objectGrabber;
 
 		private ELowHigh _end;
 
@@ -61,6 +63,12 @@ namespace RJWS.Graph
 			}
 			cachedRT.anchoredPosition = Vector2.zero;
 			cachedRT.sizeDelta = new Vector2( 0.5f * height, height );
+		}
+
+		public void HandleClick()
+		{
+			Debug.Log( Time.time + " Click on " + transform.GetPathInHierarchy( ) );
+			ObjectGrabManager.Instance.HandleGrabRequest( objectGrabber );
 		}
 	}
 
