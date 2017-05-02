@@ -34,18 +34,21 @@ namespace RJWS.Graph
 			cachedRT = GetComponent<RectTransform>( );
 		}
 
-		public void Init(GraphPanel p, EOrthoDirection eod)
+		public void Init( GraphPanel p, EOrthoDirection ed )
 		{
 			_graphPanel = p;
-			eDirection = eod;
-			ePosition = _graphPanel.scrollBarSettings.positions[eDirection];
-
-			ELowHigh otherPosition = _graphPanel.scrollBarSettings.positions[eDirection.OtherDirection( )];
-
-			gameObject.name = "ScrollBarPanel_" + eod.ToString();
+			eDirection = ed;
+			gameObject.name = "ScrollBarPanel_" + eDirection.ToString( );
 
 			cachedRT.SetParent( _graphPanel.transform );
 			cachedRT.localScale = Vector3.one;
+		}
+
+		public void SetUp()
+		{ 
+			ePosition = _graphPanel.scrollBarSettings.positions[eDirection];
+
+			ELowHigh otherPosition = _graphPanel.scrollBarSettings.positions[eDirection.OtherDirection( )];
 
 			float size = _graphPanel.scrollBarSettings.sizes[eDirection];
 			float otherSize = _graphPanel.scrollBarSettings.sizes[eDirection.OtherDirection()];
