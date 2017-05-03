@@ -42,6 +42,8 @@ namespace RJWS.Graph
 
 			cachedRT.SetParent( _graphPanel.scrollBarContainer.transform );
 			cachedRT.localScale = Vector3.one;
+
+			scrollBar.onScrollBarChanged += _graphPanel.HandleScrollBarChanged;
 		}
 
 		public void SetUp()

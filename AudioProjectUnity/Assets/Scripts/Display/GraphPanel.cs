@@ -32,6 +32,7 @@ namespace RJWS.Graph
 
 		public RectTransform graphViewPanelRT;
 		public Transform scrollBarContainer;
+		public GraphViewPanel graphViewPanel;
 
 		public RectTransform cachedRT
 		{
@@ -63,6 +64,11 @@ namespace RJWS.Graph
 				_scrollBars[dirn] = result;
 			}
 			return result;
+		}
+
+		public void HandleScrollBarChanged( EOrthoDirection direction, float sizeFraction, float posFraction)
+		{
+			graphViewPanel.HandleViewChange( direction, sizeFraction, posFraction );
 		}
 
 		public void SetUpScrollBars()

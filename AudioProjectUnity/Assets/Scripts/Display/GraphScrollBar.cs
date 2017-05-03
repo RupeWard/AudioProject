@@ -8,6 +8,8 @@ namespace RJWS.Graph
 	{
 		private Dictionary<ELowHigh, GraphScrollBarEnd> _ends = new Dictionary<ELowHigh, GraphScrollBarEnd>( );
 
+		public System.Action<EOrthoDirection, float, float> onScrollBarChanged; // size, pos as fractions
+
 		public RectTransform cachedRT
 		{
 			private set;
@@ -74,6 +76,33 @@ namespace RJWS.Graph
 					cachedRT.sizeDelta = size;
 					cachedRT.anchoredPosition = anchoredPos;
 				}
+			}
+
+			DoScrollBarChangedAction( );
+		}
+
+		private void DoScrollBarChangedAction()
+		{
+			if (onScrollBarChanged != null)
+			{
+				float sizeFraction = cachedRT.sizeDelta.x / _sizeRange.y;
+				float posFraction = (cachedRT.anchoredPosition.x + 0.5f * _sizeRange.y) / _sizeRange.y;
+
+				if (sizeFraction > 1f || sizeFraction < 0f)
+				{
+					Debug.LogError( "Bad sizeFraction: " + sizeFraction );
+					sizeFraction = Mathf.Clamp01( sizeFraction );
+				}
+				if (posFraction > 1f || posFraction < 0f)
+				{
+					Debug.LogError( "Bad posFraction: " + posFraction );
+					posFraction = Mathf.Clamp01( posFraction );
+				}
+				onScrollBarChanged( scrollBarPanel.eDirection, sizeFraction, posFraction );
+            }
+			else
+			{
+				Debug.LogError( "No onScrollBarChanged!" );
 			}
 		}
 	}
