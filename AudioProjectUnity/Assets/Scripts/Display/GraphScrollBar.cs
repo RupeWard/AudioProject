@@ -7,6 +7,7 @@ namespace RJWS.Graph
 	public class GraphScrollBar : MonoBehaviour
 	{
 		private Dictionary<ELowHigh, GraphScrollBarEnd> _ends = new Dictionary<ELowHigh, GraphScrollBarEnd>( );
+		private GraphScrollBarMiddle _middle;
 
 		public System.Action<EOrthoDirection, float, float> onScrollBarChanged; // size, pos as fractions
 
@@ -44,15 +45,41 @@ namespace RJWS.Graph
 				_ends[eend].Init( this, eend );
 				_sizeRange.x += _ends[eend].cachedRT.sizeDelta.x;
 			}
-		}
+
+			GameObject middlePrefab = Resources.Load<GameObject>( "Graph/Prefabs/ScrollBarMiddle" );
+			GameObject mgo = GameObject.Instantiate( middlePrefab );
+			_middle = mgo.GetComponent<GraphScrollBarMiddle>( );
+			_middle.Init( this );
+			_sizeRange.x += _middle.cachedRT.sizeDelta.x;
+        }
 
 		public static readonly bool DEBUG_SCROLLBAR = true;
+
+		public void HandleMiddleMoved( float delta )
+		{
+			if (DEBUG_SCROLLBAR)
+			{
+				Debug.Log( "SB Middle moved: " + delta );
+			}
+
+			Vector2 size = cachedRT.sizeDelta;
+			Vector2 anchoredPos = cachedRT.anchoredPosition;
+
+			anchoredPos.x += delta;
+
+			if (0.5f * _sizeRange.y + anchoredPos.x + 0.5f * size.x <= _sizeRange.y && 0.5f * _sizeRange.y + anchoredPos.x - 0.5f * size.x >= 0f)
+			{
+				cachedRT.anchoredPosition = anchoredPos;
+			}
+
+			DoScrollBarChangedAction( );
+		}
 
 		public void HandleEndMoved( ELowHigh lowHigh, float delta)
 		{
 			if (DEBUG_SCROLLBAR)
 			{
-				Debug.Log( "SB moved: " + lowHigh + " " + delta );
+				Debug.Log( "SB End moved: " + lowHigh + " " + delta );
 			}
 
 			Vector2 size = cachedRT.sizeDelta;
