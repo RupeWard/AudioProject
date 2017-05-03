@@ -12,10 +12,11 @@ namespace RJWS.Graph
 
 		ObjectGrabber _currentGrab = null;
 
-		UnityEngine.UI.GraphicRaycaster _rayCaster;
+		public UnityEngine.UI.GraphicRaycaster grabRayCaster;
 
 		private bool _grabEnabled = true;
 		public float grabDisableDuration = 0.2f;
+		public RectTransform cancelGrabButtonRT;
 
 		private IEnumerator DisableGrabCR()
 		{
@@ -26,7 +27,28 @@ namespace RJWS.Graph
 
 		protected override void PostAwake( )
 		{
-			_rayCaster = GetComponent<UnityEngine.UI.GraphicRaycaster>( );
+			cancelGrabButtonRT.gameObject.SetActive( false);
+		}
+
+		public void OnScrollBarsSetUp( Dictionary<EOrthoDirection, GraphScrollBarPanel> scrollBars)
+		{
+			cancelGrabButtonRT.sizeDelta =
+				new Vector2(
+					scrollBars[EOrthoDirection.Vertical].cachedRT.sizeDelta.y,
+					scrollBars[EOrthoDirection.Horizontal].cachedRT.sizeDelta.y);
+			Vector2 anchoredPos =
+				new Vector2(
+					0.5f * scrollBars[EOrthoDirection.Vertical].cachedRT.sizeDelta.y,
+					0.5f * scrollBars[EOrthoDirection.Horizontal].cachedRT.sizeDelta.y );
+			if (scrollBars[EOrthoDirection.Horizontal].ePosition == ELowHigh.Low)
+			{
+				anchoredPos.x += scrollBars[ EOrthoDirection.Horizontal].cachedRT.sizeDelta.x;
+			}
+			if (scrollBars[EOrthoDirection.Vertical].ePosition == ELowHigh.Low)
+			{
+				anchoredPos.y += scrollBars[ EOrthoDirection.Vertical].cachedRT.sizeDelta.x;
+			}
+			cancelGrabButtonRT.anchoredPosition = anchoredPos;
 		}
 
 		private bool _didHandleThisFrame = false;
@@ -75,14 +97,28 @@ namespace RJWS.Graph
 				Debug.LogError( "Cancel called on grab " + og.cachedTransform.GetPathInHierarchy( ) + " when no _currentGrab" );
 			}
 		}
-		private void CancelCurrentGrab()
+
+		public void CancelCurrentGrab()
 		{
 			if (_currentGrab != null)
 			{
 				_currentGrab.Deactivate( );
 				_currentGrab = null;
 
+				cancelGrabButtonRT.gameObject.SetActive( false );
 				StartCoroutine( DisableGrabCR( ) );
+			}
+		}
+
+		private void Grab(ObjectGrabber og)
+		{
+			_currentGrab = og;
+			og.Activate( );
+			cancelGrabButtonRT.gameObject.SetActive( true );
+
+			if (DEBUG_OBJECTGRABMANAGER)
+			{
+				Debug.Log( Time.time + " OGM grabbed " + _currentGrab.cachedTransform.GetPathInHierarchy( ) );
 			}
 		}
 
@@ -99,14 +135,8 @@ namespace RJWS.Graph
 			}
 			if (!HasGrabbed)
 			{
-				_currentGrab = og;
-				og.Activate( );
+				Grab( og );
 				result = true;
-
-				if (DEBUG_OBJECTGRABMANAGER)
-				{
-					Debug.Log( Time.time+" OGM grabbed " + _currentGrab.cachedTransform.GetPathInHierarchy( ) );
-				}
 			}
 			else
 			{
@@ -166,7 +196,7 @@ namespace RJWS.Graph
 							//Create list to receive all results
 							List<RaycastResult> results = new List<RaycastResult>( );
 							//Raycast it
-							_rayCaster.Raycast( ped, results );
+							grabRayCaster.Raycast( ped, results );
 
 							if (DEBUG_CAST)
 							{

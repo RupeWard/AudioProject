@@ -31,6 +31,7 @@ namespace RJWS.Graph
 		private Dictionary<EOrthoDirection, GraphScrollBarPanel> _scrollBars = new Dictionary<EOrthoDirection, GraphScrollBarPanel>( );
 
 		public RectTransform graphViewPanelRT;
+		public Transform scrollBarContainer;
 
 		public RectTransform cachedRT
 		{
@@ -93,7 +94,9 @@ namespace RJWS.Graph
 				anchoredPos.x -= 0.5f * scrollBarSettings.sizes[EOrthoDirection.Vertical];
 			}
 			graphViewPanelRT.anchoredPosition = anchoredPos;
-		}
+
+			ObjectGrabManager.Instance.OnScrollBarsSetUp( _scrollBars );
+        }
 	}
 
 }

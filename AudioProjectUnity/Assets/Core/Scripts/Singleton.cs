@@ -51,6 +51,8 @@ namespace RJWS.Core.Singleton
 	public class SingletonSceneLifetime<GameObjectType> : MonoBehaviour
 		where GameObjectType : MonoBehaviour
 	{
+		public bool rename = false;
+
 		public static bool IsInitialised( )
 		{
 			return instance != null;
@@ -171,11 +173,15 @@ namespace RJWS.Core.Singleton
 #if DEBUG_SINGLETONS
 						Debug.Log( "Unable to find game object named " + instanceName + " of type " + typeof( GameObjectType ).ToString( ) + " in current scene" );
 #endif
-						GameObjectType got = FindObjectOfType( typeof( GameObjectType ) ) as GameObjectType;
+						GameObjectType got = FindObjectOfType< GameObjectType >();
 						if (got != null)
 						{
 							instance = got;
-//							got.gameObject.name = instanceName;
+							SingletonSceneLifetime<GameObjectType> asSingleton = got as SingletonSceneLifetime<GameObjectType>;
+                            if (asSingleton.rename)
+							{
+								got.gameObject.name = instanceName;
+							}
 #if DEBUG_SINGLETONS
 							Debug.Log( "Found, assigned, and renamed lifetime instance of type " + typeof( GameObjectType ).ToString( ) );
 #endif //DEBUG_SINGLETONS

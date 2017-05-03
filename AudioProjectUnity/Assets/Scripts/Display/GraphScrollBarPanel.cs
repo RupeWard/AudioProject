@@ -40,7 +40,7 @@ namespace RJWS.Graph
 			eDirection = ed;
 			gameObject.name = "ScrollBarPanel_" + eDirection.ToString( );
 
-			cachedRT.SetParent( _graphPanel.transform );
+			cachedRT.SetParent( _graphPanel.scrollBarContainer.transform );
 			cachedRT.localScale = Vector3.one;
 		}
 
