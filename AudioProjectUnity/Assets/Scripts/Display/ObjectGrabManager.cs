@@ -124,6 +124,7 @@ namespace RJWS.Graph
 
 		public void CancelCurrentGrab()
 		{
+			Debug.Log( "CancelGrab" );
 			if (_currentGrab != null)
 			{
 				_currentGrab.Deactivate( );
@@ -131,6 +132,10 @@ namespace RJWS.Graph
 
 				_cancelGrabButton.gameObject.SetActive( false );
 				StartCoroutine( DisableGrabCR( ) );
+			}
+			else
+			{
+				Debug.LogWarning( "Null CurrentGrab" );
 			}
 		}
 

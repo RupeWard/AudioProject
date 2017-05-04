@@ -101,6 +101,7 @@ namespace RJWS.Graph
 				GetScrollBar(edirn).SetUp();
 			}
 
+
 			graphViewPanelRT.sizeDelta =
 				new Vector2(
 					cachedRT.rect.width - scrollBarSettings.sizes[EOrthoDirection.Vertical],
@@ -123,6 +124,7 @@ namespace RJWS.Graph
 				anchoredPos.x -= 0.5f * scrollBarSettings.sizes[EOrthoDirection.Vertical];
 			}
 			graphViewPanelRT.anchoredPosition = anchoredPos;
+			graphViewPanel.InitContent( );
 
 			ObjectGrabManager.Instance.OnScrollBarsSetUp( cancelGrabButton, _scrollBars );
         }

@@ -17,8 +17,12 @@ namespace RJWS.Graph
 		private void Awake()
 		{
 			cachedRT = GetComponent<RectTransform>( );
+		}
+
+		public void InitContent()
+		{
 			contentPanelRT.localScale = Vector3.one;
-            contentPanelRT.sizeDelta = cachedRT.sizeDelta;
+			contentPanelRT.sizeDelta = cachedRT.sizeDelta;
 			contentPanelRT.anchoredPosition = Vector2.zero;
 		}
 
