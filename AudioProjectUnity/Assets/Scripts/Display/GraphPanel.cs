@@ -33,6 +33,9 @@ namespace RJWS.Graph
 		public RectTransform graphViewPanelRT;
 		public Transform scrollBarContainer;
 		public GraphViewPanel graphViewPanel;
+		public UnityEngine.UI.Button cancelGrabButton;
+
+		public bool InitOnAwake = false;
 
 		public RectTransform cachedRT
 		{
@@ -40,14 +43,27 @@ namespace RJWS.Graph
 			get;
 		}
 
+		public void HandleCancelGrabButtonClicked()
+		{
+			ObjectGrabManager.Instance.CancelCurrentGrab( );
+		}
+
 		private void Awake()
 		{
 			cachedRT = GetComponent<RectTransform>( );
 			scrollBarSettings = new ScrollBarSettings( );
-			SetUpScrollBars( );
+			if (InitOnAwake)
+			{
+				SetUpScrollBars( );
+			}
 		}
 
 		private GameObject _scrollPrefab = null;
+
+		public void Init()
+		{
+			SetUpScrollBars( );
+		}
 
 		private GraphScrollBarPanel GetScrollBar(EOrthoDirection dirn)
 		{
@@ -101,7 +117,7 @@ namespace RJWS.Graph
 			}
 			graphViewPanelRT.anchoredPosition = anchoredPos;
 
-			ObjectGrabManager.Instance.OnScrollBarsSetUp( _scrollBars );
+			ObjectGrabManager.Instance.OnScrollBarsSetUp( cancelGrabButton, _scrollBars );
         }
 	}
 
