@@ -15,7 +15,11 @@ namespace RJWS.Graph
 			get;
 		}
 
-		private GraphPanel _graphPanel;
+		public GraphPanel graphPanel
+		{
+			get;
+			private set;
+		}
 
 		public EOrthoDirection eDirection
 		{
@@ -36,30 +40,30 @@ namespace RJWS.Graph
 
 		public void Init( GraphPanel p, EOrthoDirection ed )
 		{
-			_graphPanel = p;
+			graphPanel = p;
 			eDirection = ed;
 			gameObject.name = "ScrollBarPanel_" + eDirection.ToString( );
 
-			cachedRT.SetParent( _graphPanel.scrollBarContainer.transform );
+			cachedRT.SetParent( graphPanel.scrollBarContainer.transform );
 			cachedRT.localScale = Vector3.one;
 
-			scrollBar.onScrollBarChanged += _graphPanel.HandleScrollBarChanged;
+			scrollBar.onScrollBarChanged += graphPanel.HandleScrollBarChanged;
 		}
 
 		public void SetUp()
 		{ 
-			ePosition = _graphPanel.scrollBarSettings.positions[eDirection];
+			ePosition = graphPanel.scrollBarSettings.positions[eDirection];
 
-			ELowHigh otherPosition = _graphPanel.scrollBarSettings.positions[eDirection.OtherDirection( )];
+			ELowHigh otherPosition = graphPanel.scrollBarSettings.positions[eDirection.OtherDirection( )];
 
-			float size = _graphPanel.scrollBarSettings.sizes[eDirection];
-			float otherSize = _graphPanel.scrollBarSettings.sizes[eDirection.OtherDirection()];
+			float size = graphPanel.scrollBarSettings.sizes[eDirection];
+			float otherSize = graphPanel.scrollBarSettings.sizes[eDirection.OtherDirection()];
 
 			switch (eDirection)
 			{
 				case EOrthoDirection.Horizontal:
 					{
-						cachedRT.sizeDelta = new Vector2( _graphPanel.cachedRT.rect.width - otherSize, size );
+						cachedRT.sizeDelta = new Vector2( graphPanel.cachedRT.rect.width - otherSize, size );
 						scrollBar.Init( this );
 
 						cachedRT.rotation = Quaternion.Euler( 0f, 0f, 0f );
@@ -86,7 +90,7 @@ namespace RJWS.Graph
 					}
 				case EOrthoDirection.Vertical:
 					{
-						cachedRT.sizeDelta = new Vector2( _graphPanel.cachedRT.rect.height - otherSize, size);
+						cachedRT.sizeDelta = new Vector2( graphPanel.cachedRT.rect.height - otherSize, size);
 						scrollBar.Init(  this );
 
 						cachedRT.rotation = Quaternion.Euler( 0f, 0f, 90f );
@@ -101,7 +105,7 @@ namespace RJWS.Graph
 						cachedRT.anchorMax = anchorV;
 						cachedRT.pivot = anchorV;
 
-						Vector2 anchoredPos = new Vector2( 0.5f * size, -0.5f * _graphPanel.cachedRT.rect.height );
+						Vector2 anchoredPos = new Vector2( 0.5f * size, -0.5f * graphPanel.cachedRT.rect.height );
 						if (otherPosition == ePosition)
 						{
 							anchoredPos.y += otherSize;

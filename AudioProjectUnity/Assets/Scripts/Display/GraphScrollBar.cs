@@ -62,6 +62,23 @@ namespace RJWS.Graph
 			_sizeRange.x += _middle.cachedRT.sizeDelta.x;
         }
 
+		public bool SetSizeFraction(float fraction)
+		{
+			if (fraction < 0f || fraction > 1f)
+			{
+				throw new System.Exception( "Size Fraction out of range: " + fraction );
+			}
+			float newSize = fraction * _sizeRange.y;
+			if (newSize < _sizeRange.x || newSize > _sizeRange.y)
+			{
+				Debug.LogWarning( "Scrollbar new size " + newSize + " for fraction " + fraction + " out of range " + _sizeRange );
+				return false;
+			}
+			cachedRT.sizeDelta = new Vector2( newSize, cachedRT.sizeDelta.y );
+			DoScrollBarChangedAction( );
+			return true;
+		}
+
 		public void HandleMiddleMoved( float delta )
 		{
 			if (DEBUG_MOVE)
@@ -117,16 +134,28 @@ namespace RJWS.Graph
 				}
 			}
 
+			bool canChange = false;
+
 			if (size.x >= _sizeRange.x && size.x <= _sizeRange.y)
 			{
 				if (0.5f * _sizeRange.y + anchoredPos.x + 0.5f * size.x <= _sizeRange.y && 0.5f * _sizeRange.y + anchoredPos.x - 0.5f * size.x >= 0f)
 				{
-					cachedRT.sizeDelta = size;
-					cachedRT.anchoredPosition = anchoredPos;
+					canChange = true;
 				}
 			}
 
-			DoScrollBarChangedAction( );
+			if (canChange && scrollBarPanel.graphPanel.scrollBarSettings.scaleInBothDirections)
+			{
+				canChange = scrollBarPanel.graphPanel.GetScrollBar( scrollBarPanel.eDirection.OtherDirection( ) ).scrollBar.SetSizeFraction( size.x/_sizeRange.y );
+			}
+
+			if (canChange)
+			{
+				cachedRT.sizeDelta = size;
+				cachedRT.anchoredPosition = anchoredPos;
+				DoScrollBarChangedAction( );
+			}
+
 		}
 
 		private void DoScrollBarChangedAction()

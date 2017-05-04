@@ -6,6 +6,8 @@ namespace RJWS.Graph
 {
 	public class GraphPanel: MonoBehaviour
 	{
+		static readonly bool DEBUG_GRAPHPANEL = true;
+
 		public class ScrollBarSettings
 		{
 			public Dictionary<EOrthoDirection, ELowHigh> positions = new Dictionary<EOrthoDirection, ELowHigh>( )
@@ -20,6 +22,7 @@ namespace RJWS.Graph
 				{ EOrthoDirection.Vertical, 40f }
 			};
 
+			public bool scaleInBothDirections = true;
 		}
 
 		public ScrollBarSettings scrollBarSettings
@@ -65,7 +68,7 @@ namespace RJWS.Graph
 			SetUpScrollBars( );
 		}
 
-		private GraphScrollBarPanel GetScrollBar(EOrthoDirection dirn)
+		public GraphScrollBarPanel GetScrollBar(EOrthoDirection dirn)
 		{
 			GraphScrollBarPanel result;
 			if (false == _scrollBars.TryGetValue(dirn, out result))
@@ -77,7 +80,11 @@ namespace RJWS.Graph
 				GameObject go = GameObject.Instantiate( _scrollPrefab );
 				result = go.GetComponent<GraphScrollBarPanel>( );
 				result.Init( this, dirn );
-				_scrollBars[dirn] = result;
+				_scrollBars.Add(dirn, result);
+				if (DEBUG_GRAPHPANEL)
+				{
+					Debug.LogWarning( "Created scroll bar: " + dirn );
+				}
 			}
 			return result;
 		}
