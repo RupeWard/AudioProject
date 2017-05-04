@@ -33,7 +33,14 @@ namespace RJWS.Graph
 			cachedRT.localScale = new Vector3( 1f, 1f, 1f );
 			SetPos( );
 
-			objectGrabber.onXMovementAction += HandleMovement;	
+			if (_graphScrollBar.scrollBarPanel.eDirection == EOrthoDirection.Horizontal)
+			{
+				objectGrabber.onXMovementAction += HandleMovement;
+			}
+			else
+			{
+				objectGrabber.onYMovementAction += HandleMovement;
+			}
 		}
 
 		private void SetPos()
