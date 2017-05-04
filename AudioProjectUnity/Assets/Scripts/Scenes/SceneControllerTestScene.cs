@@ -20,4 +20,8 @@ public class SceneControllerTestScene : SceneController_Base
 	{
 	}
 
+	public void QuitScene()
+	{
+		SceneManager.Instance.SwitchScene( SceneManager.EScene.DevSetup);
+	}
 }

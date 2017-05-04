@@ -10,9 +10,32 @@ namespace RJWS.Graph
 	public class ObjectGrabber: MonoBehaviour
 	{
 		static public readonly bool DEBUG_OBJECTGRABBER = true;
+		private static readonly bool DEBUG_DRAG = false;
+		private static readonly bool DEBUG_CLICK = true;
+
+		public float doubleClickPeriod = 0.5f;
+		public float clickPeriod = 0.5f;
+		private float _downTime = float.MinValue;
+		private float _lastClickTime = float.MinValue;
 
 		private UnityEngine.UI.Image _image;
 		private Collider2D _collider;
+
+
+		private Vector2? lastFramePointerPos = null;
+
+		public System.Action<Vector2> onMovementAction;
+		public System.Action<float> onXMovementAction;
+		public System.Action<float> onYMovementAction;
+		public System.Action onDoubleClickAction;
+		public System.Action onClickAction;
+		public System.Action<bool> onActivateAction;
+
+		public bool isDragging
+		{
+			get;
+			private set;
+		}
 
 		public bool isActivated
 		{
@@ -65,6 +88,7 @@ namespace RJWS.Graph
 
 				lastFramePointerPos = null;
 
+				HandlePointerDown( );
 				if (DEBUG_OBJECTGRABBER)
 				{
 					if (isActivated)
@@ -76,31 +100,28 @@ namespace RJWS.Graph
 						Debug.Log( Time.time + " OG: deactivated " + cachedTransform.GetPathInHierarchy( ) );
 					}
 				}
+
+				if (onActivateAction != null)
+				{
+					onActivateAction( active );
+				}
 			}
 		}
 
-		private static readonly bool DEBUG_DRAG = true;
-
-		private Vector2? lastFramePointerPos =null;
-
-		public bool isDragging
-		{
-			get;
-			private set;
-		}
 
 		public void HandlePointerDown()
 		{
-			if (DEBUG_DRAG)
+			if (DEBUG_DRAG || DEBUG_CLICK)
 			{
 				Debug.Log( Time.time + " Down " + cachedTransform.GetPathInHierarchy( ) );
 			}
+			_downTime = Time.time;
 			ObjectGrabManager.Instance.SetHandled( this );
 		}
 
 		public void HandlePointerUp( )
 		{
-			if (DEBUG_DRAG)
+			if (DEBUG_DRAG || DEBUG_CLICK)
 			{
 				Debug.Log( Time.time + " Up " + cachedTransform.GetPathInHierarchy( ) );
 			}
@@ -110,9 +131,19 @@ namespace RJWS.Graph
 				//				ObjectGrabManager.Instance.CancelGrab( this );
 				lastFramePointerPos = null;
 				isDragging = false;
-			}
-		}
 
+				if (Time.time - _downTime < clickPeriod)
+				{
+					HandlePointerClick( );
+				}
+				else
+				{
+					_lastClickTime = float.MinValue;
+				}
+			}
+			_downTime = float.MinValue;
+		}
+		
 		public void HandlePointerMove( )
 		{
 			if (DEBUG_DRAG)
@@ -122,30 +153,63 @@ namespace RJWS.Graph
 			ObjectGrabManager.Instance.SetHandled( this );
 		}
 
-		public void HandlePointerClick( )
+
+		private void DoClickAction()
 		{
-			if (DEBUG_DRAG)
+			if (DEBUG_CLICK || DEBUG_OBJECTGRABBER)
 			{
-				Debug.Log( Time.time + " Click " + cachedTransform.GetPathInHierarchy( ) );
+				Debug.Log( "OG " + Time.time + " Click " + cachedTransform.GetPathInHierarchy( ) );
 			}
-			ObjectGrabManager.Instance.SetHandled( this );
+			if (onClickAction != null)
+			{
+				onClickAction( );
+			}
 		}
 
+		private void DoDoubleClickAction()
+		{
+			if (DEBUG_CLICK || DEBUG_OBJECTGRABBER)
+			{
+				Debug.Log( "OG Double Click " + cachedTransform.GetPathInHierarchy( ) );
+			}
+			CancelInvoke( "DoClickAction");
+			if (onDoubleClickAction != null)
+			{
+				onDoubleClickAction( );
+			}
+		}
+
+		private void HandlePointerClick( )
+		{
+//			ObjectGrabManager.Instance.SetHandled( this );
+
+			if (Time.time -_lastClickTime <= doubleClickPeriod)
+			{
+				DoDoubleClickAction( );
+			}
+			else
+			{
+				CancelInvoke( "DoClickAction" );
+				Invoke( "DoClickAction", doubleClickPeriod + 0.2f );
+			}
+			_lastClickTime = Time.time;
+		}
+
+		/* TODO Remove these handlers
 		public void HandleDrag( )
 		{
 			if (DEBUG_DRAG)
 			{
-				Debug.Log( Time.time + " Drag " + cachedTransform.GetPathInHierarchy( ) );
+				Debug.LogWarning( Time.time + " Drag " + cachedTransform.GetPathInHierarchy( ) );
 			}
-			ObjectGrabManager.Instance.SetHandled( this );
-			
+			ObjectGrabManager.Instance.SetHandled( this );			
 		}
 
 		public void HandleDrop( )
 		{
 			if (DEBUG_DRAG)
 			{
-				Debug.Log( Time.time + " Drop" + cachedTransform.GetPathInHierarchy( ) );
+				Debug.LogWarning( Time.time + " Drop" + cachedTransform.GetPathInHierarchy( ) );
 			}
 			ObjectGrabManager.Instance.SetHandled( this );
 		}
@@ -155,6 +219,7 @@ namespace RJWS.Graph
 			Debug.LogWarning( "MOUSEOVER" );
 			ObjectGrabManager.Instance.SetHandled( this );
 		}
+		*/
 
 		public void HandleHit(Vector2 screenPos)
 		{
@@ -169,7 +234,7 @@ namespace RJWS.Graph
 				Vector2 movement = screenPos - (Vector2)lastFramePointerPos; //raycastResult.screenPosition - (Vector2)lastFramePointerPos;
 				if (DEBUG_DRAG)
 				{
-					Debug.Log( Time.time + " MOVED " + screenPos + " centre " + cachedTransform.position +" last " + (Vector2)lastFramePointerPos+ " moved "+movement );
+					Debug.Log( Time.time + " OG MOVED " + screenPos + " centre " + cachedTransform.position +" last " + (Vector2)lastFramePointerPos+ " moved "+movement );
 				}
 				if (onMovementAction != null)
 				{
@@ -187,7 +252,7 @@ namespace RJWS.Graph
 			}
 			else
 			{
-				if (DEBUG_DRAG)
+				if (DEBUG_OBJECTGRABBER || DEBUG_CLICK || DEBUG_DRAG)
 				{
 					Debug.Log( Time.time + " GRABBED " + screenPos);
 				}
@@ -195,9 +260,6 @@ namespace RJWS.Graph
 			lastFramePointerPos = new Vector2( screenPos.x, screenPos.y );
 		}
 
-		public System.Action< Vector2 > onMovementAction;
-		public System.Action< float > onXMovementAction;
-		public System.Action< float > onYMovementAction;
 	}
 
 

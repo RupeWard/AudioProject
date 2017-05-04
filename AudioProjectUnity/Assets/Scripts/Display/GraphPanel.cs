@@ -17,7 +17,7 @@ namespace RJWS.Graph
 			public Dictionary<EOrthoDirection, float> sizes = new Dictionary<EOrthoDirection, float>( )
 			{
 				{ EOrthoDirection.Horizontal, 40f},
-				{ EOrthoDirection.Vertical, 60f }
+				{ EOrthoDirection.Vertical, 40f }
 			};
 
 		}

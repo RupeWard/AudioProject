@@ -59,7 +59,7 @@ namespace RJWS.Graph
 				_didHandleThisFrame = true;
 				if (DEBUG_OBJECTGRABMANAGER)
 				{
-					Debug.Log( "OGM: handled " + _currentGrab.cachedTransform.GetPathInHierarchy( ) );
+					Debug.Log( Time.time+ " OGM: handled " + _currentGrab.cachedTransform.GetPathInHierarchy( ) );
 				}
 			}
 		}

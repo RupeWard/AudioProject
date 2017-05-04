@@ -6,6 +6,9 @@ namespace RJWS.Graph
 {
 	public class GraphScrollBar : MonoBehaviour
 	{
+		public static readonly bool DEBUG_SCROLLBAR = true;
+		public static readonly bool DEBUG_MOVE = false;
+
 		private Dictionary<ELowHigh, GraphScrollBarEnd> _ends = new Dictionary<ELowHigh, GraphScrollBarEnd>( );
 		private GraphScrollBarMiddle _middle;
 
@@ -35,7 +38,10 @@ namespace RJWS.Graph
 			scrollBarPanel = sbp;
 			GameObject endPrefab = Resources.Load<GameObject>( "Graph/Prefabs/ScrollBarEnd" );
 
-			cachedRT.sizeDelta = scrollBarPanel.cachedRT.sizeDelta;
+			Vector2 size = scrollBarPanel.cachedRT.sizeDelta;
+			size.y -= 10f;
+			cachedRT.sizeDelta = size;
+
 			_sizeRange.y = cachedRT.sizeDelta.x;
 			
 			foreach (ELowHigh eend in System.Enum.GetValues( typeof( ELowHigh ) ))
@@ -53,11 +59,9 @@ namespace RJWS.Graph
 			_sizeRange.x += _middle.cachedRT.sizeDelta.x;
         }
 
-		public static readonly bool DEBUG_SCROLLBAR = true;
-
 		public void HandleMiddleMoved( float delta )
 		{
-			if (DEBUG_SCROLLBAR)
+			if (DEBUG_MOVE)
 			{
 				Debug.Log( "SB Middle moved: " + delta );
 			}
@@ -77,9 +81,9 @@ namespace RJWS.Graph
 
 		public void HandleEndMoved( ELowHigh lowHigh, float delta)
 		{
-			if (DEBUG_SCROLLBAR)
+			if (DEBUG_MOVE)
 			{
-				Debug.Log( "SB End moved: " + lowHigh + " " + delta );
+				Debug.Log( Time.time + " SB End moved: " + lowHigh + " " + delta );
 			}
 
 			Vector2 size = cachedRT.sizeDelta;
