@@ -294,6 +294,18 @@ namespace RJWS.Graph
 					}
 				}
 			}
+			
+			else
+			{
+				if (!_didHandleThisFrame && _currentGrab != null)
+				{
+					if (_currentGrab.isDragging)
+					{
+						_currentGrab.HandlePointerUp( );
+					}
+				}
+			}
+			
 
 			_didHandleThisFrame = false;
 		}
