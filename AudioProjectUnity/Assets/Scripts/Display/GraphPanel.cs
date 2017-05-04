@@ -8,12 +8,12 @@ namespace RJWS.Graph
 	{
 		static readonly bool DEBUG_GRAPHPANEL = true;
 
-		public class ScrollBarSettings
+		public class GraphPanelSettings
 		{
 			public Dictionary<EOrthoDirection, ELowHigh> positions = new Dictionary<EOrthoDirection, ELowHigh>( )
 			{
 				{ EOrthoDirection.Horizontal, ELowHigh.Low},
-				{ EOrthoDirection.Vertical, ELowHigh.High }
+				{ EOrthoDirection.Vertical, ELowHigh.High}
 			};
 
 			public Dictionary<EOrthoDirection, float> sizes = new Dictionary<EOrthoDirection, float>( )
@@ -23,9 +23,11 @@ namespace RJWS.Graph
 			};
 
 			public bool scaleInBothDirections = true;
+
+			public bool showCancelGrabButton = true;
 		}
 
-		public ScrollBarSettings scrollBarSettings
+		public GraphPanelSettings graphPanelSettings
 		{
 			get;
 			private set;
@@ -54,11 +56,15 @@ namespace RJWS.Graph
 		private void Awake()
 		{
 			cachedRT = GetComponent<RectTransform>( );
-			scrollBarSettings = new ScrollBarSettings( );
+			graphPanelSettings = new GraphPanelSettings( );
 			if (InitOnAwake)
 			{
-				SetUpScrollBars( );
+				Init( );
 			}
+		}
+
+		private void Start()
+		{
 		}
 
 		private GameObject _scrollPrefab = null;
@@ -101,33 +107,97 @@ namespace RJWS.Graph
 				GetScrollBar(edirn).SetUp();
 			}
 
-
 			graphViewPanelRT.sizeDelta =
 				new Vector2(
-					cachedRT.rect.width - scrollBarSettings.sizes[EOrthoDirection.Vertical],
-					cachedRT.rect.height - scrollBarSettings.sizes[EOrthoDirection.Horizontal] );
+					cachedRT.rect.width - graphPanelSettings.sizes[EOrthoDirection.Vertical],
+					cachedRT.rect.height - graphPanelSettings.sizes[EOrthoDirection.Horizontal] );
 			Vector2 anchoredPos = Vector2.zero;
-			if (scrollBarSettings.positions[EOrthoDirection.Horizontal] == ELowHigh.Low)
+			if (graphPanelSettings.positions[EOrthoDirection.Horizontal] == ELowHigh.Low)
 			{
-				anchoredPos.y += 0.5f * scrollBarSettings.sizes[EOrthoDirection.Horizontal];
+				anchoredPos.y += 0.5f * graphPanelSettings.sizes[EOrthoDirection.Horizontal];
             }
 			else
 			{
-				anchoredPos.y -= 0.5f * scrollBarSettings.sizes[EOrthoDirection.Horizontal];
+				anchoredPos.y -= 0.5f * graphPanelSettings.sizes[EOrthoDirection.Horizontal];
 			}
-			if (scrollBarSettings.positions[EOrthoDirection.Vertical] == ELowHigh.Low)
+			if (graphPanelSettings.positions[EOrthoDirection.Vertical] == ELowHigh.Low)
 			{
-				anchoredPos.x += 0.5f * scrollBarSettings.sizes[EOrthoDirection.Vertical];
+				anchoredPos.x += 0.5f * graphPanelSettings.sizes[EOrthoDirection.Vertical];
 			}
 			else
 			{
-				anchoredPos.x -= 0.5f * scrollBarSettings.sizes[EOrthoDirection.Vertical];
+				anchoredPos.x -= 0.5f * graphPanelSettings.sizes[EOrthoDirection.Vertical];
 			}
 			graphViewPanelRT.anchoredPosition = anchoredPos;
 			graphViewPanel.InitContent( );
 
-			ObjectGrabManager.Instance.OnScrollBarsSetUp( cancelGrabButton, _scrollBars );
+			SetUpCancelGrabButton( );
         }
+
+		public void SetUpCancelGrabButton( )
+		{
+			if (graphPanelSettings.showCancelGrabButton)
+			{
+				if (cancelGrabButton == null)
+				{
+					Debug.LogError( "No cancelGrabButton to set up" );
+				}
+				else
+				{
+					ObjectGrabManager.Instance.SetCancelGrabButton( cancelGrabButton);
+
+					RectTransform cancelGrabButtonRT = cancelGrabButton.GetComponent<RectTransform>( );
+
+					System.Text.StringBuilder sb = null;
+					if (DEBUG_GRAPHPANEL)
+					{
+						sb = new System.Text.StringBuilder( );
+						sb.Append( "GP: SetUpCancelGrab" );
+						foreach (KeyValuePair<EOrthoDirection, GraphScrollBarPanel> kvp in _scrollBars)
+						{
+							sb.Append( "\n-" ).Append( kvp.Key ).Append( " " ).Append( kvp.Value.cachedRT.rect );
+						}
+					}
+					cancelGrabButtonRT.sizeDelta =
+						new Vector2(
+							_scrollBars[EOrthoDirection.Vertical].cachedRT.rect.height,
+							_scrollBars[EOrthoDirection.Horizontal].cachedRT.rect.height );
+
+					Vector2 anchorMin = Vector2.zero;
+					Vector2 anchorMax = Vector2.zero;
+					Vector2 pivot = Vector2.zero;
+
+					if (_scrollBars[EOrthoDirection.Horizontal].ePosition == ELowHigh.Low)
+					{
+						anchorMin.x = 1f;
+						anchorMax.x = 1f;
+						pivot.x = 1f;
+					}
+					if (_scrollBars[EOrthoDirection.Vertical].ePosition == ELowHigh.Low)
+					{
+						anchorMin.y = 1f;
+						anchorMax.y = 1f;
+						pivot.y = 1f;
+					}
+					cancelGrabButtonRT.anchorMin = anchorMin;
+					cancelGrabButtonRT.anchorMax = anchorMax;
+					cancelGrabButtonRT.pivot = pivot;
+					cancelGrabButtonRT.anchoredPosition = Vector2.zero;
+					if (sb != null)
+					{
+						sb.Append( "\n sizeDelta = " + cancelGrabButtonRT.sizeDelta );
+						sb.Append( "\n anchored Pos = " + cancelGrabButtonRT.anchoredPosition );
+						sb.Append( "\n rect = " + cancelGrabButtonRT.rect );
+						Debug.Log( sb.ToString( ) );
+					}
+				}
+			}
+			if (cancelGrabButton != null)
+			{
+				cancelGrabButton.gameObject.SetActive( false );
+			}
+		}
+
 	}
 
 }

@@ -14,12 +14,7 @@ public class SceneControllerTestScene : SceneController_Base
 
 //	static private readonly bool DEBUG_LOCAL = false;
 
-	// Use this for initialization
 	void Start( )
-	{
-	}
-
-	protected override void PostAwake( )
 	{
 		GameObject graphPanelPrefab = Resources.Load<GameObject>( "Graph/Prefabs/GraphPanel" );
 
@@ -28,6 +23,10 @@ public class SceneControllerTestScene : SceneController_Base
 		graphPanel.cachedRT.SetParent( canvasRT );
 		graphPanel.cachedRT.sizeDelta = new Vector2( canvasRT.rect.width - permanentButtonsRT.rect.width, canvasRT.rect.height );
 		graphPanel.Init( );
+	}
+
+	protected override void PostAwake( )
+	{
 	}
 
 	public void QuitScene()

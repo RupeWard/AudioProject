@@ -144,7 +144,7 @@ namespace RJWS.Graph
 				}
 			}
 
-			if (canChange && scrollBarPanel.graphPanel.scrollBarSettings.scaleInBothDirections)
+			if (canChange && scrollBarPanel.graphPanel.graphPanelSettings.scaleInBothDirections)
 			{
 				canChange = scrollBarPanel.graphPanel.GetScrollBar( scrollBarPanel.eDirection.OtherDirection( ) ).scrollBar.SetSizeFraction( size.x/_sizeRange.y );
 			}

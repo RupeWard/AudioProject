@@ -29,50 +29,11 @@ namespace RJWS.Graph
 		{
 		}
 
-		private static readonly bool DEBUG_SETUP = true;
+//		private static readonly bool DEBUG_SETUP = true;
 
-		public void OnScrollBarsSetUp(UnityEngine.UI.Button button, Dictionary<EOrthoDirection, GraphScrollBarPanel> scrollBars)
+		public void SetCancelGrabButton( UnityEngine.UI.Button button)
 		{
 			_cancelGrabButton = button;
-			RectTransform cancelGrabButtonRT = _cancelGrabButton.GetComponent<RectTransform>( );
-
-			System.Text.StringBuilder sb = null;
-			if (DEBUG_SETUP)
-			{
-				sb = new System.Text.StringBuilder( );
-				sb.Append( "OGM: OnScrollBarsSetUp" );
-				foreach (KeyValuePair<EOrthoDirection, GraphScrollBarPanel> kvp in scrollBars)
-				{
-					sb.Append( "\n-" ).Append( kvp.Key ).Append( " " ).Append( kvp.Value.cachedRT.rect );
-				}
-			}
-			cancelGrabButtonRT.sizeDelta =
-				new Vector2(
-					scrollBars[EOrthoDirection.Vertical].cachedRT.rect.height,
-					scrollBars[EOrthoDirection.Horizontal].cachedRT.rect.height);
-
-			Vector2 anchoredPos =
-				new Vector2(
-					0.5f * scrollBars[EOrthoDirection.Vertical].cachedRT.rect.height,
-					0.5f * scrollBars[EOrthoDirection.Horizontal].cachedRT.rect.height );
-			if (scrollBars[EOrthoDirection.Horizontal].ePosition == ELowHigh.Low)
-			{
-				anchoredPos.x += scrollBars[ EOrthoDirection.Horizontal].cachedRT.rect.width;
-			}
-			if (scrollBars[EOrthoDirection.Vertical].ePosition == ELowHigh.Low)
-			{
-				anchoredPos.y += scrollBars[ EOrthoDirection.Vertical].cachedRT.rect.width;
-			}
-			cancelGrabButtonRT.anchoredPosition = anchoredPos;
-			if (sb != null)
-			{
-				sb.Append( "\n sizeDelta = " + cancelGrabButtonRT.sizeDelta);
-				sb.Append( "\n anchored Pos = " + cancelGrabButtonRT.anchoredPosition );
-				sb.Append( "\n rect = " + cancelGrabButtonRT.rect);
-				Debug.Log( sb.ToString( ) );
-			}
-
-			_cancelGrabButton.gameObject.SetActive( false );
 		}
 
 		private bool _didHandleThisFrame = false;
@@ -129,8 +90,10 @@ namespace RJWS.Graph
 			{
 				_currentGrab.Deactivate( );
 				_currentGrab = null;
-
-				_cancelGrabButton.gameObject.SetActive( false );
+				if (_cancelGrabButton != null)
+				{
+					_cancelGrabButton.gameObject.SetActive( false );
+				}
 				StartCoroutine( DisableGrabCR( ) );
 			}
 			else
@@ -143,7 +106,10 @@ namespace RJWS.Graph
 		{
 			_currentGrab = og;
 			og.Activate( );
-			_cancelGrabButton.gameObject.SetActive( true );
+			if (_cancelGrabButton != null)
+			{
+				_cancelGrabButton.gameObject.SetActive( true );
+			}
 
 			if (DEBUG_OBJECTGRABMANAGER)
 			{

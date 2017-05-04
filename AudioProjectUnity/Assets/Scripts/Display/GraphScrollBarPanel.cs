@@ -52,12 +52,12 @@ namespace RJWS.Graph
 
 		public void SetUp()
 		{ 
-			ePosition = graphPanel.scrollBarSettings.positions[eDirection];
+			ePosition = graphPanel.graphPanelSettings.positions[eDirection];
 
-			ELowHigh otherPosition = graphPanel.scrollBarSettings.positions[eDirection.OtherDirection( )];
+			ELowHigh otherPosition = graphPanel.graphPanelSettings.positions[eDirection.OtherDirection( )];
 
-			float size = graphPanel.scrollBarSettings.sizes[eDirection];
-			float otherSize = graphPanel.scrollBarSettings.sizes[eDirection.OtherDirection()];
+			float size = graphPanel.graphPanelSettings.sizes[eDirection];
+			float otherSize = graphPanel.graphPanelSettings.sizes[eDirection.OtherDirection()];
 
 			switch (eDirection)
 			{
