@@ -52,6 +52,9 @@ namespace RJWS.Graph
 				_sizeRange.x += _ends[eend].cachedRT.sizeDelta.x;
 			}
 
+			_ends[ELowHigh.Low].otherEnd = _ends[ELowHigh.High];
+			_ends[ELowHigh.High].otherEnd = _ends[ELowHigh.Low];
+
 			GameObject middlePrefab = Resources.Load<GameObject>( "Graph/Prefabs/ScrollBarMiddle" );
 			GameObject mgo = GameObject.Instantiate( middlePrefab );
 			_middle = mgo.GetComponent<GraphScrollBarMiddle>( );
@@ -79,7 +82,7 @@ namespace RJWS.Graph
 			DoScrollBarChangedAction( );
 		}
 
-		public void HandleEndMoved( ELowHigh lowHigh, float delta)
+		public void HandleEndMoved( ELowHigh lowHigh, float delta, bool doubleEnded)
 		{
 			if (DEBUG_MOVE)
 			{
@@ -89,15 +92,29 @@ namespace RJWS.Graph
 			Vector2 size = cachedRT.sizeDelta;
 			Vector2 anchoredPos = cachedRT.anchoredPosition;
 
-			if (lowHigh == ELowHigh.Low)
+			if (doubleEnded)
 			{
-				size.x -= delta;
-				anchoredPos.x += 0.5f * delta;
+				if (lowHigh == ELowHigh.Low)
+				{
+					size.x -= 2f * delta;
+				}
+				else
+				{
+					size.x += 2f * delta;
+				}
 			}
 			else
 			{
-				size.x += delta;
-				anchoredPos.x += 0.5f * delta;
+				if (lowHigh == ELowHigh.Low)
+				{
+					size.x -= delta;
+					anchoredPos.x += 0.5f * delta;
+				}
+				else
+				{
+					size.x += delta;
+					anchoredPos.x += 0.5f * delta;
+				}
 			}
 
 			if (size.x >= _sizeRange.x && size.x <= _sizeRange.y)

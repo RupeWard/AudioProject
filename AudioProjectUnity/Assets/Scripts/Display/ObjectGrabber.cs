@@ -31,6 +31,9 @@ namespace RJWS.Graph
 		public System.Action onClickAction;
 		public System.Action<bool> onActivateAction;
 
+		public Color inactiveColour = Color.white;
+		public Color activeColour = Color.green;
+
 		public bool isDragging
 		{
 			get;
@@ -106,6 +109,7 @@ namespace RJWS.Graph
 					onActivateAction( active );
 				}
 			}
+			_image.color = (active) ? (activeColour) : (inactiveColour);
 		}
 
 

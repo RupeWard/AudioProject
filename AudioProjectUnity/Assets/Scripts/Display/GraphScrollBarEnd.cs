@@ -10,7 +10,12 @@ namespace RJWS.Graph
 		public RectTransform bgRT;
 		public ObjectGrabber objectGrabber;
 
+		public GraphScrollBarEnd otherEnd;
+		public GameObject secondaryIndicator;
+
 		private ELowHigh _end;
+
+		private bool _doubleEndedMode = false;
 
 		public RectTransform cachedRT
 		{
@@ -23,6 +28,7 @@ namespace RJWS.Graph
 		private void Awake( )
 		{
 			cachedRT = GetComponent<RectTransform>( );
+			secondaryIndicator.SetActive( false );
 		}
 
 		public void Init( GraphScrollBar gsb, ELowHigh ee)
@@ -44,6 +50,8 @@ namespace RJWS.Graph
 			{
 				objectGrabber.onYMovementAction += HandleMovement;
 			}
+			objectGrabber.onDoubleClickAction += HandleGrabberDoubleClick;
+			objectGrabber.onActivateAction += HandleGrabberActivated;
 		}
 
 		private void SetPos()
@@ -79,13 +87,37 @@ namespace RJWS.Graph
 			Debug.Log( "SBE "+Time.time + " Click on " + transform.GetPathInHierarchy( ) );
 			if (!objectGrabber.isActivated)
 			{
-				ObjectGrabManager.Instance.HandleGrabRequest( objectGrabber );
+				if (ObjectGrabManager.Instance.HandleGrabRequest( objectGrabber ))
+				{
+					_doubleEndedMode = false;
+				}
 			}
 		}
 
 		public void HandleMovement( float delta)
 		{
-			_graphScrollBar.HandleEndMoved( _end, delta );
+			_graphScrollBar.HandleEndMoved( _end, delta, _doubleEndedMode );
+		}
+
+		public void HandleGrabberClick()
+		{
+
+		}
+
+		public void HandleGrabberDoubleClick( )
+		{
+			SetDoubleEndedMode( !_doubleEndedMode );
+		}
+
+		private void SetDoubleEndedMode(bool b)
+		{
+			_doubleEndedMode = b;
+			otherEnd.secondaryIndicator.SetActive( _doubleEndedMode );
+		}
+
+		public void HandleGrabberActivated( bool b)
+		{
+			SetDoubleEndedMode( false );
 		}
 	}
 
