@@ -13,7 +13,7 @@ namespace RJWS.Graph
 		public GraphScrollBarEnd otherEnd;
 		public GameObject secondaryIndicator;
 
-		private ELowHigh _end;
+		private ELowHigh _end = ELowHigh.None;
 
 		private bool _doubleEndedMode = false;
 
@@ -77,6 +77,11 @@ namespace RJWS.Graph
 						bgRT.localRotation = Quaternion.Euler( 0f, 0f, 0f );
 						break;
 					}
+				default:
+				{
+					Debug.LogError( "Bad ELowHigh: " + _end );
+					break;
+				}
 			}
 			cachedRT.anchoredPosition = Vector2.zero;
 			cachedRT.sizeDelta = new Vector2( 0.5f * height, height );

@@ -41,6 +41,7 @@ namespace RJWS.Graph
 			{
 				objectGrabber.onYMovementAction += HandleMovement;
 			}
+			objectGrabber.onActivateAction += HandleGrabberActivated;
 		}
 
 		private void SetPos()
@@ -67,6 +68,15 @@ namespace RJWS.Graph
 		{
 			_graphScrollBar.HandleMiddleMoved( delta );
 		}
+
+		public void HandleGrabberActivated( bool b )
+		{
+			if (_graphScrollBar.IsAtRangeEnd(ELowHigh.High))
+			{
+				objectGrabber.SetInactiveColour( );
+			}
+		}
+
 	}
 
 }

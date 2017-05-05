@@ -7,7 +7,8 @@ namespace RJWS.Graph
 	public enum ELowHigh
 	{
 		Low,
-		High
+		High,
+		None
 	}
 
 	public enum EOrthoDirection

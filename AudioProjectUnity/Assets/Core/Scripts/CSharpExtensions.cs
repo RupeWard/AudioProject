@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace RJWS.Core
+namespace RJWS.Core.Extensions
 {
-	public static class CSharpExtensions
+	public static class MathsExtensions
 	{
 		public enum ETriBehaviour
 		{

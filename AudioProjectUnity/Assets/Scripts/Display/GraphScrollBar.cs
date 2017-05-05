@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RJWS.Core.Extensions;
 
 namespace RJWS.Graph
 {
@@ -46,10 +47,13 @@ namespace RJWS.Graph
 			
 			foreach (ELowHigh eend in System.Enum.GetValues( typeof( ELowHigh ) ))
 			{
-				GameObject go = GameObject.Instantiate( endPrefab );
-				_ends[eend] = go.GetComponent<GraphScrollBarEnd>( );
-				_ends[eend].Init( this, eend );
-				_sizeRange.x += _ends[eend].cachedRT.sizeDelta.x;
+				if (eend != ELowHigh.None)
+				{
+					GameObject go = GameObject.Instantiate( endPrefab );
+					_ends[eend] = go.GetComponent<GraphScrollBarEnd>( );
+					_ends[eend].Init( this, eend );
+					_sizeRange.x += _ends[eend].cachedRT.sizeDelta.x;
+				}
 			}
 
 			_ends[ELowHigh.Low].otherEnd = _ends[ELowHigh.High];
@@ -111,27 +115,48 @@ namespace RJWS.Graph
 
 			if (doubleEnded)
 			{
-				if (lowHigh == ELowHigh.Low)
+				switch (lowHigh)
 				{
-					size.x -= 2f * delta;
-				}
-				else
-				{
-					size.x += 2f * delta;
+					case ELowHigh.Low:
+						{
+							size.x -= 2f * delta;
+							break;
+						}
+					case ELowHigh.High:
+						{
+							size.x += 2f * delta;
+							break;
+						}
+					default:
+						{
+							Debug.LogError( "Bad ELowHigh: " + lowHigh );
+							break;
+						}
 				}
 			}
 			else
 			{
-				if (lowHigh == ELowHigh.Low)
+				switch (lowHigh)
 				{
-					size.x -= delta;
-					anchoredPos.x += 0.5f * delta;
+					case ELowHigh.Low:
+						{
+							size.x -= delta;
+							anchoredPos.x += 0.5f * delta;
+							break;
+						}
+					case ELowHigh.High:
+						{
+							size.x += delta;
+							anchoredPos.x += 0.5f * delta;
+							break;
+						}
+					default:
+						{
+							Debug.LogError( "Bad ELowHigh: " + lowHigh );
+							break;
+						}
 				}
-				else
-				{
-					size.x += delta;
-					anchoredPos.x += 0.5f * delta;
-				}
+
 			}
 
 			bool canChange = false;
@@ -156,6 +181,20 @@ namespace RJWS.Graph
 				DoScrollBarChangedAction( );
 			}
 
+		}
+
+		public bool IsAtRangeEnd( ELowHigh eLowHigh )
+		{
+			bool result = false;
+			if ((eLowHigh == ELowHigh.Low || eLowHigh == ELowHigh.None) && (cachedRT.sizeDelta.x < _sizeRange.x + 0.1f))
+			{
+				result = true;
+			}
+			if ((eLowHigh == ELowHigh.High || eLowHigh == ELowHigh.None) && (cachedRT.sizeDelta.x >  _sizeRange.y- 0.1f ))
+			{
+				result = true;
+			}
+			return result;
 		}
 
 		private void DoScrollBarChangedAction()

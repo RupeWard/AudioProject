@@ -81,8 +81,14 @@ namespace RJWS.Graph
 			Activate( false );
 		}
 
+		public void SetInactiveColour()
+		{
+			_image.color = inactiveColour;
+		}
+
 		public void Activate(bool active)
 		{
+			_image.color = activeColour;
 			if (active != isActivated)
 			{
 				_image.enabled = active;
@@ -109,7 +115,6 @@ namespace RJWS.Graph
 					onActivateAction( active );
 				}
 			}
-			_image.color = (active) ? (activeColour) : (inactiveColour);
 		}
 
 

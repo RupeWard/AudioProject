@@ -102,31 +102,50 @@ namespace RJWS.Graph
 
 		public void SetUpScrollBars()
 		{
-			foreach (EOrthoDirection edirn in System.Enum.GetValues( typeof( EOrthoDirection) ))
-			{
-				GetScrollBar(edirn).SetUp();
-			}
+			GetScrollBar( EOrthoDirection.Horizontal).SetUp( );
+			GetScrollBar( EOrthoDirection.Vertical).SetUp( );
 
 			graphViewPanelRT.sizeDelta =
 				new Vector2(
 					cachedRT.rect.width - graphPanelSettings.sizes[EOrthoDirection.Vertical],
 					cachedRT.rect.height - graphPanelSettings.sizes[EOrthoDirection.Horizontal] );
 			Vector2 anchoredPos = Vector2.zero;
-			if (graphPanelSettings.positions[EOrthoDirection.Horizontal] == ELowHigh.Low)
+
+			switch(graphPanelSettings.positions[EOrthoDirection.Horizontal])
 			{
-				anchoredPos.y += 0.5f * graphPanelSettings.sizes[EOrthoDirection.Horizontal];
-            }
-			else
-			{
-				anchoredPos.y -= 0.5f * graphPanelSettings.sizes[EOrthoDirection.Horizontal];
+				case ELowHigh.Low:
+				{
+					anchoredPos.y += 0.5f * graphPanelSettings.sizes[EOrthoDirection.Horizontal];
+					break;
+				}
+				case ELowHigh.High:
+				{
+					anchoredPos.y -= 0.5f * graphPanelSettings.sizes[EOrthoDirection.Horizontal];
+					break;
+				}
+				default:
+				{
+					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.positions[EOrthoDirection.Horizontal] );
+					break;
+				}
 			}
-			if (graphPanelSettings.positions[EOrthoDirection.Vertical] == ELowHigh.Low)
+			switch (graphPanelSettings.positions[EOrthoDirection.Vertical])
 			{
-				anchoredPos.x += 0.5f * graphPanelSettings.sizes[EOrthoDirection.Vertical];
-			}
-			else
-			{
-				anchoredPos.x -= 0.5f * graphPanelSettings.sizes[EOrthoDirection.Vertical];
+				case ELowHigh.Low:
+				{
+					anchoredPos.x += 0.5f * graphPanelSettings.sizes[EOrthoDirection.Vertical];
+					break;
+				}
+				case ELowHigh.High:
+				{
+					anchoredPos.x -= 0.5f * graphPanelSettings.sizes[EOrthoDirection.Vertical];
+					break;
+				}
+				default:
+				{
+					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.positions[EOrthoDirection.Vertical] );
+					break;
+				}
 			}
 			graphViewPanelRT.anchoredPosition = anchoredPos;
 			graphViewPanel.InitContent( );
@@ -167,7 +186,7 @@ namespace RJWS.Graph
 					Vector2 anchorMax = Vector2.zero;
 					Vector2 pivot = Vector2.zero;
 
-					if (_scrollBars[EOrthoDirection.Horizontal].ePosition == ELowHigh.Low)
+					if (_scrollBars[EOrthoDirection.Horizontal].ePosition== ELowHigh.Low)
 					{
 						anchorMin.x = 1f;
 						anchorMax.x = 1f;
