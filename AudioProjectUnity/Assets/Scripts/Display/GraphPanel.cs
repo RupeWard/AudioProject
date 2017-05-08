@@ -10,17 +10,33 @@ namespace RJWS.Graph
 
 		public class GraphPanelSettings
 		{
-			public Dictionary<EOrthoDirection, ELowHigh> positions = new Dictionary<EOrthoDirection, ELowHigh>( )
+			private Dictionary<EOrthoDirection, ELowHigh> _scrollBarPositions = new Dictionary<EOrthoDirection, ELowHigh>( )
 			{
 				{ EOrthoDirection.Horizontal, ELowHigh.Low},
 				{ EOrthoDirection.Vertical, ELowHigh.High}
 			};
 
-			public Dictionary<EOrthoDirection, float> sizes = new Dictionary<EOrthoDirection, float>( )
+			public ELowHigh GetScrollBarPosition(EOrthoDirection dirn)
 			{
-				{ EOrthoDirection.Horizontal, 40f},
-				{ EOrthoDirection.Vertical, 40f }
-			};
+				return _scrollBarPositions[dirn];
+			}
+
+			private float _scrollBarWidth = 40f;
+
+			public float scrollBarWidth
+			{
+				get
+				{
+					return Mathf.Max( _scrollBarWidth, GetMinScrollBarWidthPixels( ) );
+				}
+			}
+
+			const float MIN_SCROLLBAR_WIDTH_mm = 10f;
+			static float GetMinScrollBarWidthPixels()
+			{
+				float minInches = MIN_SCROLLBAR_WIDTH_mm / 25.4f;
+				return minInches * Screen.dpi; 
+			}
 
 			public bool scaleInBothDirections = true;
 
@@ -105,45 +121,47 @@ namespace RJWS.Graph
 			GetScrollBar( EOrthoDirection.Horizontal).SetUp( );
 			GetScrollBar( EOrthoDirection.Vertical).SetUp( );
 
+			float sbWidth = graphPanelSettings.scrollBarWidth;
+
 			graphViewPanelRT.sizeDelta =
 				new Vector2(
-					cachedRT.rect.width - graphPanelSettings.sizes[EOrthoDirection.Vertical],
-					cachedRT.rect.height - graphPanelSettings.sizes[EOrthoDirection.Horizontal] );
+					cachedRT.rect.width - sbWidth,
+					cachedRT.rect.height - sbWidth );
 			Vector2 anchoredPos = Vector2.zero;
 
-			switch(graphPanelSettings.positions[EOrthoDirection.Horizontal])
+			switch(graphPanelSettings.GetScrollBarPosition(EOrthoDirection.Horizontal))
 			{
 				case ELowHigh.Low:
 				{
-					anchoredPos.y += 0.5f * graphPanelSettings.sizes[EOrthoDirection.Horizontal];
+					anchoredPos.y += 0.5f * sbWidth;
 					break;
 				}
 				case ELowHigh.High:
 				{
-					anchoredPos.y -= 0.5f * graphPanelSettings.sizes[EOrthoDirection.Horizontal];
+					anchoredPos.y -= 0.5f * sbWidth;
 					break;
 				}
 				default:
 				{
-					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.positions[EOrthoDirection.Horizontal] );
+					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.GetScrollBarPosition(EOrthoDirection.Horizontal) );
 					break;
 				}
 			}
-			switch (graphPanelSettings.positions[EOrthoDirection.Vertical])
+			switch (graphPanelSettings.GetScrollBarPosition(EOrthoDirection.Vertical))
 			{
 				case ELowHigh.Low:
 				{
-					anchoredPos.x += 0.5f * graphPanelSettings.sizes[EOrthoDirection.Vertical];
+					anchoredPos.x += 0.5f * sbWidth;
 					break;
 				}
 				case ELowHigh.High:
 				{
-					anchoredPos.x -= 0.5f * graphPanelSettings.sizes[EOrthoDirection.Vertical];
+					anchoredPos.x -= 0.5f * sbWidth;
 					break;
 				}
 				default:
 				{
-					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.positions[EOrthoDirection.Vertical] );
+					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.GetScrollBarPosition(EOrthoDirection.Vertical) );
 					break;
 				}
 			}

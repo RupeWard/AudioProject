@@ -52,18 +52,17 @@ namespace RJWS.Graph
 
 		public void SetUp()
 		{ 
-			ePosition = graphPanel.graphPanelSettings.positions[eDirection];
+			ePosition = graphPanel.graphPanelSettings.GetScrollBarPosition(eDirection);
 
-			ELowHigh otherPosition = graphPanel.graphPanelSettings.positions[eDirection.OtherDirection( )];
+			ELowHigh otherPosition = graphPanel.graphPanelSettings.GetScrollBarPosition( eDirection.OtherDirection( ));
 
-			float size = graphPanel.graphPanelSettings.sizes[eDirection];
-			float otherSize = graphPanel.graphPanelSettings.sizes[eDirection.OtherDirection()];
+			float sbWidth = graphPanel.graphPanelSettings.scrollBarWidth;
 
 			switch (eDirection)
 			{
 				case EOrthoDirection.Horizontal:
 					{
-						cachedRT.sizeDelta = new Vector2( graphPanel.cachedRT.rect.width - otherSize, size );
+						cachedRT.sizeDelta = new Vector2( graphPanel.cachedRT.rect.width - sbWidth, sbWidth );
 						scrollBar.Init( this );
 
 						cachedRT.rotation = Quaternion.Euler( 0f, 0f, 0f );
@@ -79,18 +78,18 @@ namespace RJWS.Graph
 
 						if (otherPosition == ELowHigh.High)
 						{
-							cachedRT.anchoredPosition = new Vector2( -0.5f * otherSize, 0f );
+							cachedRT.anchoredPosition = new Vector2( -0.5f * sbWidth, 0f );
 						}
 						else
 						{
-							cachedRT.anchoredPosition = new Vector2( 0.5f * otherSize, 0f );
+							cachedRT.anchoredPosition = new Vector2( 0.5f * sbWidth, 0f );
 						}
 
 						break;
 					}
 				case EOrthoDirection.Vertical:
 					{
-						cachedRT.sizeDelta = new Vector2( graphPanel.cachedRT.rect.height - otherSize, size);
+						cachedRT.sizeDelta = new Vector2( graphPanel.cachedRT.rect.height - sbWidth, sbWidth);
 						scrollBar.Init(  this );
 
 						cachedRT.rotation = Quaternion.Euler( 0f, 0f, 90f );
@@ -105,10 +104,10 @@ namespace RJWS.Graph
 						cachedRT.anchorMax = anchorV;
 						cachedRT.pivot = anchorV;
 
-						Vector2 anchoredPos = new Vector2( 0.5f * size, -0.5f * graphPanel.cachedRT.rect.height );
+						Vector2 anchoredPos = new Vector2( 0.5f * sbWidth, -0.5f * graphPanel.cachedRT.rect.height );
 						if (otherPosition == ePosition)
 						{
-							anchoredPos.y += otherSize;
+							anchoredPos.y += sbWidth;
 						}
 						if (ePosition == ELowHigh.High)
 						{
