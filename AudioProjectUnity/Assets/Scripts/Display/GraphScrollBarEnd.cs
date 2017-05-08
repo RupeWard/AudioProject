@@ -84,7 +84,7 @@ namespace RJWS.Graph
 				}
 			}
 			cachedRT.anchoredPosition = Vector2.zero;
-			cachedRT.sizeDelta = new Vector2( 0.5f * height, height );
+			cachedRT.sizeDelta = new Vector2( height, height );
 		}
 
 		public void HandleClick()
