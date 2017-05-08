@@ -6,7 +6,7 @@ namespace RJWS.Graph
 {
 	public class GraphPanel: MonoBehaviour
 	{
-		static readonly bool DEBUG_GRAPHPANEL = true;
+		static readonly bool DEBUG_GRAPHPANEL = false;
 
 		public class GraphPanelSettings
 		{
@@ -27,15 +27,8 @@ namespace RJWS.Graph
 			{
 				get
 				{
-					return Mathf.Max( _scrollBarWidth, GetMinScrollBarWidthPixels( ) );
+					return Mathf.Max( _scrollBarWidth, AppManager.Instance.minClickablePixels );
 				}
-			}
-
-			const float MIN_SCROLLBAR_WIDTH_mm = 10f;
-			static float GetMinScrollBarWidthPixels()
-			{
-				float minInches = MIN_SCROLLBAR_WIDTH_mm / 25.4f;
-				return minInches * Screen.dpi; 
 			}
 
 			public bool scaleInBothDirections = true;

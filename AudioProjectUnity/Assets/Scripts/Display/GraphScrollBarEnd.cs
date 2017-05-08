@@ -151,6 +151,8 @@ namespace RJWS.Graph
 			}
 			cachedRT.anchoredPosition = Vector2.zero;
 			cachedRT.sizeDelta = new Vector2( height, height );
+			objectGrabber.HandleObjectSizeSet( cachedRT.sizeDelta);
+			secondaryIndicator.GetComponent<RectTransform>( ).sizeDelta = objectGrabber.cachedRT.sizeDelta;
 		}
 
 		public void HandleClick()

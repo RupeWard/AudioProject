@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class SceneManager : RJWS.Core.Singleton.SingletonApplicationLifetimeLazy< SceneManager > 
 {
-	public static readonly bool DEBUG_SCENES = false;
+	public static readonly bool DEBUG_SCENES = true;
 
 	private bool isSwitching_ = false;
 	public void finishedSwitching()
@@ -61,12 +61,11 @@ public class SceneManager : RJWS.Core.Singleton.SingletonApplicationLifetimeLazy
 			previousScene_ = currentScene_;
 		}
 		currentScene_ = controller.Scene();
-#if UNITY_EDITOR
+
 		if (DEBUG_SCENES)
 		{
 			Debug.Log ("SceneManager: HandleSceneAwake( " + currentScene_ + " ), previously " + previousScene_);
 		}
-#endif
     }
 
 	public void SwitchScene(EScene newScene)

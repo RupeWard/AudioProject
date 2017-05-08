@@ -8,7 +8,7 @@ namespace RJWS.Graph
 {
 	public class ObjectGrabManager : RJWS.Core.Singleton.SingletonSceneLifetime<ObjectGrabManager>
 	{
-		public static readonly bool DEBUG_OBJECTGRABMANAGER = true;
+		public static readonly bool DEBUG_OBJECTGRABMANAGER = false;
 
 		ObjectGrabber _currentGrab = null;
 

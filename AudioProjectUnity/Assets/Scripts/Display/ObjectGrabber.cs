@@ -9,9 +9,11 @@ namespace RJWS.Graph
 {
 	public class ObjectGrabber: MonoBehaviour
 	{
-		static public readonly bool DEBUG_OBJECTGRABBER = true;
+		static public readonly bool DEBUG_OBJECTGRABBER = false;
 		private static readonly bool DEBUG_DRAG = false;
-		private static readonly bool DEBUG_CLICK = true;
+		private static readonly bool DEBUG_CLICK = false;
+
+		public float relativeSize = 3f;
 
 		public float doubleClickPeriod = 0.5f;
 		public float clickPeriod = 0.5f;
@@ -33,6 +35,11 @@ namespace RJWS.Graph
 
 		public Color inactiveColour = Color.white;
 		public Color activeColour = Color.green;
+
+		public void HandleObjectSizeSet(Vector2 objectSize)
+		{
+			cachedRT.sizeDelta = relativeSize * objectSize;
+		}
 
 		public bool isDragging
 		{
@@ -137,7 +144,6 @@ namespace RJWS.Graph
 			ObjectGrabManager.Instance.SetHandled( this );
 			if (isActivated)
 			{
-				//				ObjectGrabManager.Instance.CancelGrab( this );
 				lastFramePointerPos = null;
 				isDragging = false;
 
@@ -190,8 +196,6 @@ namespace RJWS.Graph
 
 		private void HandlePointerClick( )
 		{
-//			ObjectGrabManager.Instance.SetHandled( this );
-
 			if (Time.time -_lastClickTime <= doubleClickPeriod)
 			{
 				DoDoubleClickAction( );
@@ -203,32 +207,6 @@ namespace RJWS.Graph
 			}
 			_lastClickTime = Time.time;
 		}
-
-		/* TODO Remove these handlers
-		public void HandleDrag( )
-		{
-			if (DEBUG_DRAG)
-			{
-				Debug.LogWarning( Time.time + " Drag " + cachedTransform.GetPathInHierarchy( ) );
-			}
-			ObjectGrabManager.Instance.SetHandled( this );			
-		}
-
-		public void HandleDrop( )
-		{
-			if (DEBUG_DRAG)
-			{
-				Debug.LogWarning( Time.time + " Drop" + cachedTransform.GetPathInHierarchy( ) );
-			}
-			ObjectGrabManager.Instance.SetHandled( this );
-		}
-
-		public void OnMouseOver()
-		{
-			Debug.LogWarning( "MOUSEOVER" );
-			ObjectGrabManager.Instance.SetHandled( this );
-		}
-		*/
 
 		public void HandleHit(Vector2 screenPos)
 		{
