@@ -24,6 +24,8 @@ namespace RJWS.Graph
 		}
 
 		private GraphScrollBar _graphScrollBar;
+		private bool _isInitialised = false;
+		private bool _isInsideBar = true;
 
 		private void Awake( )
 		{
@@ -40,7 +42,7 @@ namespace RJWS.Graph
 
 			cachedRT.SetParent( _graphScrollBar.cachedRT );
 			cachedRT.localScale = new Vector3( 1f, 1f, 1f );
-			SetPos( );
+			SetInitialPos( );
 
 			if (_graphScrollBar.scrollBarPanel.eDirection == EOrthoDirection.Horizontal)
 			{
@@ -52,15 +54,79 @@ namespace RJWS.Graph
 			}
 			objectGrabber.onDoubleClickAction += HandleGrabberDoubleClick;
 			objectGrabber.onActivateAction += HandleGrabberActivated;
+
+			_isInitialised = true;
+			_isInsideBar = true;
 		}
 
-		private void SetPos()
+		private void Update()
+		{
+			if (!_isInitialised)
+			{
+				return;
+			}
+
+			bool bInside = (_graphScrollBar.SpaceAtEnd(_end) < cachedRT.rect.width);
+			if (bInside != _isInsideBar)
+			{
+				_isInsideBar = bInside;
+
+				if (_isInsideBar)
+				{
+					cachedRT.anchoredPosition = Vector2.zero;
+					switch (_end)
+					{
+						case ELowHigh.Low:
+							{
+								bgRT.localRotation = Quaternion.Euler( 0f, 0f, 180f );
+								break;
+							}
+						case ELowHigh.High:
+							{
+								bgRT.localRotation = Quaternion.Euler( 0f, 0f, 0f );
+								break;
+							}
+						default:
+							{
+								Debug.LogError( "Bad LowHigh: " + _end );
+								break;
+							}
+					}
+				}
+				else
+				{
+					switch (_end)
+					{
+						case ELowHigh.Low:
+							{
+								bgRT.localRotation = Quaternion.Euler( 0f, 0f, 0f );
+								cachedRT.anchoredPosition = new Vector2( -1f * cachedRT.rect.width, 0f );
+								break;
+							}
+						case ELowHigh.High:
+							{
+								bgRT.localRotation = Quaternion.Euler( 0f, 0f, 180f );
+								cachedRT.anchoredPosition = new Vector2( cachedRT.rect.width, 0f );
+								break;
+							}
+						default:
+							{
+								Debug.LogError( "Bad LowHigh: " + _end );
+								break;
+							}
+					}
+				}
+			}
+		}
+
+		private void SetInitialPos()
 		{
 			float height = _graphScrollBar.cachedRT.rect.height;
 			switch (_end)
 			{
 				case ELowHigh.Low:
 					{
+
 						cachedRT.anchorMin = new Vector2( 0f, 0.5f );
 						cachedRT.anchorMax = new Vector2( 0f, 0.5f );
 						cachedRT.pivot = new Vector2( 0f, 0.5f );

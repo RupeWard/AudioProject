@@ -197,6 +197,26 @@ namespace RJWS.Graph
 			return result;
 		}
 
+		public float SpaceAtEnd(ELowHigh eLowHigh)
+		{
+			switch (eLowHigh)
+			{
+				case ELowHigh.Low:
+					{
+						return 0.5f * _sizeRange.y + cachedRT.anchoredPosition.x - 0.5f * cachedRT.rect.width;
+					}
+				case ELowHigh.High:
+					{
+						return 0.5f * _sizeRange.y - (cachedRT.anchoredPosition.x + 0.5f * cachedRT.rect.width);  
+					}
+				default:
+					{
+						Debug.LogError( "Bad LowHigh: " + eLowHigh );
+						return 0f;
+					}
+			}
+		}
+
 		private void DoScrollBarChangedAction()
 		{
 			if (onScrollBarChanged != null)

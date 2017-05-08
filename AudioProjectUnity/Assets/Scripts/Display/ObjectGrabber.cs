@@ -122,7 +122,7 @@ namespace RJWS.Graph
 		{
 			if (DEBUG_DRAG || DEBUG_CLICK)
 			{
-				Debug.Log( Time.time + " Down " + cachedTransform.GetPathInHierarchy( ) );
+				Debug.Log( Time.time + " OG: Down " + cachedTransform.GetPathInHierarchy( ) );
 			}
 			_downTime = Time.time;
 			ObjectGrabManager.Instance.SetHandled( this );
@@ -132,7 +132,7 @@ namespace RJWS.Graph
 		{
 			if (DEBUG_DRAG || DEBUG_CLICK)
 			{
-				Debug.Log( Time.time + " Up " + cachedTransform.GetPathInHierarchy( ) );
+				Debug.Log( Time.time + " OG: Up " + cachedTransform.GetPathInHierarchy( ) );
 			}
 			ObjectGrabManager.Instance.SetHandled( this );
 			if (isActivated)
@@ -263,7 +263,7 @@ namespace RJWS.Graph
 			{
 				if (DEBUG_OBJECTGRABBER || DEBUG_CLICK || DEBUG_DRAG)
 				{
-					Debug.Log( Time.time + " GRABBED " + screenPos);
+					Debug.Log( Time.time + " OG: GRABBED " + screenPos);
 				}
 			}
 			lastFramePointerPos = new Vector2( screenPos.x, screenPos.y );

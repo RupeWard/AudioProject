@@ -89,7 +89,7 @@ namespace RJWS.Graph
 				_scrollBars.Add(dirn, result);
 				if (DEBUG_GRAPHPANEL)
 				{
-					Debug.LogWarning( "Created scroll bar: " + dirn );
+//					Debug.LogWarning( "Created scroll bar: " + dirn );
 				}
 			}
 			return result;
