@@ -68,19 +68,25 @@ namespace RJWS.Graph
 
 		public bool SetSizeFraction(float fraction)
 		{
+			bool didChange = false;
+
 			if (fraction < 0f || fraction > 1f)
 			{
 				throw new System.Exception( "Size Fraction out of range: " + fraction );
 			}
 			float newSize = fraction * _sizeRange.y;
-			if (newSize < _sizeRange.x || newSize > _sizeRange.y)
+
+			if (newSize >= _sizeRange.x && newSize <= _sizeRange.y)
 			{
-				Debug.LogWarning( "Scrollbar new size " + newSize + " for fraction " + fraction + " out of range " + _sizeRange );
-				return false;
+				if (0.5f * _sizeRange.y + cachedRT.anchoredPosition.x + 0.5f * newSize <= _sizeRange.y && 0.5f * _sizeRange.y + cachedRT.anchoredPosition.x - 0.5f * newSize >= 0f)
+				{
+					cachedRT.sizeDelta = new Vector2( newSize, cachedRT.sizeDelta.y );
+					DoScrollBarChangedAction( );
+					didChange = true;
+				}
 			}
-			cachedRT.sizeDelta = new Vector2( newSize, cachedRT.sizeDelta.y );
-			DoScrollBarChangedAction( );
-			return true;
+
+			return didChange;
 		}
 
 		public void HandleMiddleMoved( float delta )
