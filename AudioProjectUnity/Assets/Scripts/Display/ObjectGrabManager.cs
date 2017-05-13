@@ -14,6 +14,8 @@ namespace RJWS.Graph
 
 		public UnityEngine.UI.GraphicRaycaster grabRayCaster;
 
+		public bool showCancelGrabButton = true;
+
 		private bool _grabEnabled = true;
 		public float grabDisableDuration = 0.2f;
 		private UnityEngine.UI.Button _cancelGrabButton;

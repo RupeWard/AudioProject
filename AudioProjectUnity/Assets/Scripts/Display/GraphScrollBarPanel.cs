@@ -52,17 +52,18 @@ namespace RJWS.Graph
 
 		public void SetUp()
 		{ 
-			ePosition = graphPanel.graphPanelSettings.GetScrollBarPosition(eDirection);
+			ePosition = graphPanel.graphPanelSettings.scrollSettings.GetScrollBarPosition(eDirection);
 
-			ELowHigh otherPosition = graphPanel.graphPanelSettings.GetScrollBarPosition( eDirection.OtherDirection( ));
+			ELowHigh otherPosition = graphPanel.graphPanelSettings.scrollSettings.GetScrollBarPosition( eDirection.OrthogonalDirection( ));
 
-			float sbWidth = graphPanel.graphPanelSettings.scrollBarWidth;
+			float sbWidth = graphPanel.graphPanelSettings.scrollSettings.GetScrollBarWidth(eDirection);
+			float otherWidth = graphPanel.graphPanelSettings.scrollSettings.GetScrollBarWidth( eDirection.OrthogonalDirection() );
 
 			switch (eDirection)
 			{
 				case EOrthoDirection.Horizontal:
 					{
-						cachedRT.sizeDelta = new Vector2( graphPanel.cachedRT.rect.width - sbWidth, sbWidth );
+						cachedRT.sizeDelta = new Vector2( graphPanel.cachedRT.rect.width - otherWidth, sbWidth );
 						scrollBar.Init( this );
 
 						cachedRT.rotation = Quaternion.Euler( 0f, 0f, 0f );
@@ -78,18 +79,18 @@ namespace RJWS.Graph
 
 						if (otherPosition == ELowHigh.High)
 						{
-							cachedRT.anchoredPosition = new Vector2( -0.5f * sbWidth, 0f );
+							cachedRT.anchoredPosition = new Vector2( -0.5f * otherWidth, 0f );
 						}
 						else
 						{
-							cachedRT.anchoredPosition = new Vector2( 0.5f * sbWidth, 0f );
+							cachedRT.anchoredPosition = new Vector2( 0.5f * otherWidth, 0f );
 						}
 
 						break;
 					}
 				case EOrthoDirection.Vertical:
 					{
-						cachedRT.sizeDelta = new Vector2( graphPanel.cachedRT.rect.height - sbWidth, sbWidth);
+						cachedRT.sizeDelta = new Vector2( graphPanel.cachedRT.rect.height - otherWidth, sbWidth);
 						scrollBar.Init(  this );
 
 						cachedRT.rotation = Quaternion.Euler( 0f, 0f, 90f );
@@ -107,7 +108,7 @@ namespace RJWS.Graph
 						Vector2 anchoredPos = new Vector2( 0.5f * sbWidth, -0.5f * graphPanel.cachedRT.rect.height );
 						if (otherPosition == ePosition)
 						{
-							anchoredPos.y += sbWidth;
+							anchoredPos.y += otherWidth;
 						}
 						if (ePosition == ELowHigh.High)
 						{

@@ -12,15 +12,26 @@ public class SceneControllerTestScene : SceneController_Base
 		return SceneManager.EScene.TestScene;
 	}
 
-//	static private readonly bool DEBUG_LOCAL = false;
+	//	static private readonly bool DEBUG_LOCAL = false;
+
+	private GraphPanel _graphPanel;
+	public GraphPanelSettings graphSettings = new GraphPanelSettings( );
 
 	protected override void PostStart( )
 	{
+		RefreshGraphPanel( );
+	}
+
+	private void RefreshGraphPanel()
+	{
+		if (_graphPanel != null)
+		{
+			GameObject.Destroy( _graphPanel.gameObject );
+		}
 		GameObject graphPanelPrefab = Resources.Load<GameObject>( "Graph/Prefabs/GraphPanel" );
 
-		GameObject graphPanelGO = GameObject.Instantiate( graphPanelPrefab );
-		GraphPanel graphPanel = graphPanelGO.GetComponent<GraphPanel>( );
-		graphPanel.cachedRT.SetParent( canvasRT );
+		_graphPanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent<GraphPanel>( );
+		_graphPanel.cachedRT.SetParent( canvasRT );
 		permanentButtonsRT.sizeDelta = new Vector2( Mathf.Max( permanentButtonsRT.sizeDelta.x, RJWS.AppManager.Instance.minClickablePixels ), permanentButtonsRT.sizeDelta.y );
 
 		foreach (Transform t in permanentButtonsRT.transform)
@@ -29,11 +40,14 @@ public class SceneControllerTestScene : SceneController_Base
 			if (rt != null)
 			{
 				float buttonWidth = permanentButtonsRT.sizeDelta.x - 4f;
-                rt.sizeDelta = new Vector2(  buttonWidth, buttonWidth);
+				rt.sizeDelta = new Vector2( buttonWidth, buttonWidth );
 			}
 		}
-		graphPanel.cachedRT.sizeDelta = new Vector2( canvasRT.rect.width - permanentButtonsRT.rect.width, canvasRT.rect.height );
-		graphPanel.Init( );
+
+		_graphPanel.cachedRT.sizeDelta = new Vector2( canvasRT.rect.width - permanentButtonsRT.rect.width, canvasRT.rect.height );
+		_graphPanel.graphPanelSettings = graphSettings;
+		_graphPanel.Init( );
+
 	}
 
 	protected override void PostAwake( )
@@ -44,5 +58,10 @@ public class SceneControllerTestScene : SceneController_Base
 	{
 		Debug.Log( "Leaving scene" );
 		SceneManager.Instance.SwitchScene( SceneManager.EScene.DevSetup);
+	}
+
+	public void HandleRefreshButton()
+	{
+		RefreshGraphPanel( );
 	}
 }

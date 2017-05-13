@@ -8,39 +8,7 @@ namespace RJWS.Graph
 	{
 		static readonly bool DEBUG_GRAPHPANEL = false;
 
-		public class GraphPanelSettings
-		{
-			private Dictionary<EOrthoDirection, ELowHigh> _scrollBarPositions = new Dictionary<EOrthoDirection, ELowHigh>( )
-			{
-				{ EOrthoDirection.Horizontal, ELowHigh.Low},
-				{ EOrthoDirection.Vertical, ELowHigh.High}
-			};
-
-			public ELowHigh GetScrollBarPosition(EOrthoDirection dirn)
-			{
-				return _scrollBarPositions[dirn];
-			}
-
-			private float _scrollBarWidth = 40f;
-
-			public float scrollBarWidth
-			{
-				get
-				{
-					return Mathf.Max( _scrollBarWidth, AppManager.Instance.minClickablePixels );
-				}
-			}
-
-			public bool scaleInBothDirections = true;
-
-			public bool showCancelGrabButton = true;
-		}
-
-		public GraphPanelSettings graphPanelSettings
-		{
-			get;
-			private set;
-		}
+		public GraphPanelSettings graphPanelSettings = new GraphPanelSettings( );
 
 		private Dictionary<EOrthoDirection, GraphScrollBarPanel> _scrollBars = new Dictionary<EOrthoDirection, GraphScrollBarPanel>( );
 
@@ -65,7 +33,6 @@ namespace RJWS.Graph
 		private void Awake()
 		{
 			cachedRT = GetComponent<RectTransform>( );
-			graphPanelSettings = new GraphPanelSettings( );
 			if (InitOnAwake)
 			{
 				Init( );
@@ -114,47 +81,48 @@ namespace RJWS.Graph
 			GetScrollBar( EOrthoDirection.Horizontal).SetUp( );
 			GetScrollBar( EOrthoDirection.Vertical).SetUp( );
 
-			float sbWidth = graphPanelSettings.scrollBarWidth;
+			float horSbWidth = graphPanelSettings.scrollSettings.GetScrollBarWidth( EOrthoDirection.Horizontal );
+			float vertSbWidth = graphPanelSettings.scrollSettings.GetScrollBarWidth( EOrthoDirection.Vertical);
 
 			graphViewPanelRT.sizeDelta =
 				new Vector2(
-					cachedRT.rect.width - sbWidth,
-					cachedRT.rect.height - sbWidth );
+					cachedRT.rect.width - vertSbWidth,
+					cachedRT.rect.height - horSbWidth );
 			Vector2 anchoredPos = Vector2.zero;
 
-			switch(graphPanelSettings.GetScrollBarPosition(EOrthoDirection.Horizontal))
+			switch(graphPanelSettings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Horizontal))
 			{
 				case ELowHigh.Low:
 				{
-					anchoredPos.y += 0.5f * sbWidth;
+					anchoredPos.y += 0.5f * horSbWidth;
 					break;
 				}
 				case ELowHigh.High:
 				{
-					anchoredPos.y -= 0.5f * sbWidth;
+					anchoredPos.y -= 0.5f * horSbWidth;
 					break;
 				}
 				default:
 				{
-					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.GetScrollBarPosition(EOrthoDirection.Horizontal) );
+					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Horizontal) );
 					break;
 				}
 			}
-			switch (graphPanelSettings.GetScrollBarPosition(EOrthoDirection.Vertical))
+			switch (graphPanelSettings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Vertical))
 			{
 				case ELowHigh.Low:
 				{
-					anchoredPos.x += 0.5f * sbWidth;
+					anchoredPos.x += 0.5f * vertSbWidth;
 					break;
 				}
 				case ELowHigh.High:
 				{
-					anchoredPos.x -= 0.5f * sbWidth;
+					anchoredPos.x -= 0.5f * vertSbWidth;
 					break;
 				}
 				default:
 				{
-					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.GetScrollBarPosition(EOrthoDirection.Vertical) );
+					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Vertical) );
 					break;
 				}
 			}
@@ -166,7 +134,7 @@ namespace RJWS.Graph
 
 		public void SetUpCancelGrabButton( )
 		{
-			if (graphPanelSettings.showCancelGrabButton)
+			if (ObjectGrabManager.Instance.showCancelGrabButton)
 			{
 				if (cancelGrabButton == null)
 				{
