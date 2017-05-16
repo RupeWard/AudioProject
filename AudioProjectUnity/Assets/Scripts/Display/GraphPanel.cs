@@ -61,7 +61,7 @@ namespace RJWS.Graph
 				}
 				GameObject go = GameObject.Instantiate( _scrollPrefab );
 				result = go.GetComponent<GraphScrollBarPanel>( );
-				result.Init( this, dirn );
+				result.Init( this, dirn, graphPanelSettings.scrollSettings.GetScrollBarSettings( dirn ) );
 				_scrollBars.Add(dirn, result);
 				if (DEBUG_GRAPHPANEL)
 				{

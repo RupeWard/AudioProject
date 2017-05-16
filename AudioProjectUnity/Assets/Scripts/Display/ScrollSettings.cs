@@ -30,12 +30,12 @@ namespace RJWS.UI
 
 		public ELowHigh GetScrollBarPosition( EOrthoDirection dirn )
 		{
-			return GetScrollBarSettings(dirn).position.value;
+			return GetScrollBarSettings(dirn).position;
 		}
 
 		public float GetScrollBarWidth( EOrthoDirection dirn )
 		{
-			return GetScrollBarSettings( dirn ).width.value;
+			return GetScrollBarSettings( dirn ).width;
 		}
 
 

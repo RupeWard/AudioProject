@@ -33,13 +33,21 @@ namespace RJWS.Graph
 			get;
 		}
 
+		public RJWS.UI.ScrollBarSettings settings
+		{
+			get;
+			private set;
+		}
+
 		private void Awake()
 		{
 			cachedRT = GetComponent<RectTransform>( );
 		}
 
-		public void Init( GraphPanel p, EOrthoDirection ed )
+		public void Init( GraphPanel p, EOrthoDirection ed, RJWS.UI.ScrollBarSettings sets )
 		{
+			settings = sets;
+
 			graphPanel = p;
 			eDirection = ed;
 			gameObject.name = "ScrollBarPanel_" + eDirection.ToString( );

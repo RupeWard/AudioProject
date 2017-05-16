@@ -78,8 +78,24 @@ namespace RJWS.Graph
 
 			if (newSize >= _sizeRange.x && newSize <= _sizeRange.y)
 			{
-				if (0.5f * _sizeRange.y + cachedRT.anchoredPosition.x + 0.5f * newSize <= _sizeRange.y && 0.5f * _sizeRange.y + cachedRT.anchoredPosition.x - 0.5f * newSize >= 0f)
+				float highOffset = (0.5f * _sizeRange.y + cachedRT.anchoredPosition.x + 0.5f * newSize) - _sizeRange.y;
+				float lowOffset = 0.5f * newSize - (0.5f * _sizeRange.y + cachedRT.anchoredPosition.x);
+                if (highOffset <= 0 &&  lowOffset <= 0f)
 				{
+					cachedRT.sizeDelta = new Vector2( newSize, cachedRT.sizeDelta.y );
+					DoScrollBarChangedAction( );
+					didChange = true;
+				}
+				else if (scrollBarPanel.settings.allowExternalPositionChange)
+				{
+					if (highOffset > 0)
+					{
+						cachedRT.anchoredPosition = new Vector2( cachedRT.anchoredPosition.x - highOffset, cachedRT.anchoredPosition.y );
+					}
+					else
+					{
+						cachedRT.anchoredPosition = new Vector2( cachedRT.anchoredPosition.x + lowOffset, cachedRT.anchoredPosition.y );
+					}
 					cachedRT.sizeDelta = new Vector2( newSize, cachedRT.sizeDelta.y );
 					DoScrollBarChangedAction( );
 					didChange = true;
