@@ -15,7 +15,7 @@ public class SceneControllerTestScene : SceneController_Base
 	//	static private readonly bool DEBUG_LOCAL = false;
 
 	private GraphPanel _graphPanel;
-	public GraphPanelSettings graphSettings = new GraphPanelSettings( );
+	public GraphPanelSettings graphSettings;
 
 	protected override void PostStart( )
 	{
@@ -45,7 +45,14 @@ public class SceneControllerTestScene : SceneController_Base
 		}
 
 		_graphPanel.cachedRT.sizeDelta = new Vector2( canvasRT.rect.width - permanentButtonsRT.rect.width, canvasRT.rect.height );
-		_graphPanel.graphPanelSettings = graphSettings;
+		if (graphSettings != null)
+		{
+			_graphPanel.graphPanelSettings = graphSettings.Clone< GraphPanelSettings >();
+		}
+		else
+		{
+			graphSettings = _graphPanel.graphPanelSettings.Clone<GraphPanelSettings>( );
+		}
 		_graphPanel.Init( );
 
 	}

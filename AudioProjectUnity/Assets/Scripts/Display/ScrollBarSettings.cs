@@ -2,22 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using RJWS.Core.Settings;
+
 namespace RJWS.UI
 {
 	[System.Serializable]
-	public class ScrollBarSettings
+	public class ScrollBarSettings : RJWS.Core.Settings.Settings__Base
 	{
-		public string name
-		{
-			get;
-			private set;
-		}
-		public ELowHigh position = ELowHigh.High;
-		public float width = 40f;
+		public Setting_ELowHigh position = new Setting_ELowHigh( "position", ELowHigh.High);
+		public Setting_Float width = new Setting_Float("width", 40f);
 
-		public ScrollBarSettings(string s)
+		public ScrollBarSettings(string n): base( n )
 		{
-			name = s;
+		}
+
+		protected override Settings__Base CloneBase()
+		{
+			ScrollBarSettings clone = new ScrollBarSettings( name );
+			clone.position = position.Clone<Setting_ELowHigh>();
+			clone.width = width.Clone<Setting_Float>();
+			return clone;
 		}
 	}
 }
