@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using RJWS.Core.UI;
 
-namespace RJWS.Graph
+namespace RJWS.UI.Scrollable
 {
-	public class GraphScrollBarPanel : MonoBehaviour
+	public class ScrollableScrollBarPanel : MonoBehaviour
 	{
-		public GraphScrollBar scrollBar;
+		public ScrollableScrollBar scrollBar;
 
 		public RectTransform cachedRT
 		{
@@ -15,7 +15,7 @@ namespace RJWS.Graph
 			get;
 		}
 
-		public GraphPanel graphPanel
+		public ScrollablePanel graphPanel
 		{
 			get;
 			private set;
@@ -33,7 +33,7 @@ namespace RJWS.Graph
 			get;
 		}
 
-		public RJWS.UI.ScrollBarSettings settings
+		public ScrollableScrollBarSettings settings
 		{
 			get;
 			private set;
@@ -44,7 +44,7 @@ namespace RJWS.Graph
 			cachedRT = GetComponent<RectTransform>( );
 		}
 
-		public void Init( GraphPanel p, EOrthoDirection ed, RJWS.UI.ScrollBarSettings sets )
+		public void Init( ScrollablePanel p, EOrthoDirection ed, ScrollableScrollBarSettings sets )
 		{
 			settings = sets;
 

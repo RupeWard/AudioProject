@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RJWS.Graph
+namespace RJWS.UI.Scrollable
 {
-	public class GraphViewPanel : MonoBehaviour
+	public class ScrollablePanelView : MonoBehaviour
 	{
 		public RectTransform contentPanelRT;
 
@@ -21,9 +21,9 @@ namespace RJWS.Graph
 			cachedRT = GetComponent<RectTransform>( );
 		}
 
-		private GraphPanel _graphPanel;
+		private ScrollablePanel _graphPanel;
 
-		public void InitContent(GraphPanel gp)
+		public void InitContent(ScrollablePanel gp)
 		{
 			_graphPanel = gp;
 			Vector2 cSize = _graphPanel.graphPanelSettings.contentSize;

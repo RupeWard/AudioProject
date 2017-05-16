@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using RJWS.Graph;
+using RJWS.UI.Scrollable;
 
 public class SceneControllerTestScene : SceneController_Base
 {
@@ -14,8 +14,8 @@ public class SceneControllerTestScene : SceneController_Base
 
 	//	static private readonly bool DEBUG_LOCAL = false;
 
-	private GraphPanel _graphPanel;
-	public GraphPanelSettings graphSettings;
+	private ScrollablePanel _graphPanel;
+	public ScrollablePanelSettings graphSettings;
 
 	protected override void PostStart( )
 	{
@@ -30,7 +30,7 @@ public class SceneControllerTestScene : SceneController_Base
 		}
 		GameObject graphPanelPrefab = Resources.Load<GameObject>( "Graph/Prefabs/GraphPanel" );
 
-		_graphPanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent<GraphPanel>( );
+		_graphPanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent<ScrollablePanel>( );
 		_graphPanel.cachedRT.SetParent( canvasRT );
 		permanentButtonsRT.sizeDelta = new Vector2( Mathf.Max( permanentButtonsRT.sizeDelta.x, RJWS.AppManager.Instance.minClickablePixels ), permanentButtonsRT.sizeDelta.y );
 
@@ -47,11 +47,11 @@ public class SceneControllerTestScene : SceneController_Base
 		_graphPanel.cachedRT.sizeDelta = new Vector2( canvasRT.rect.width - permanentButtonsRT.rect.width, canvasRT.rect.height );
 		if (graphSettings != null)
 		{
-			_graphPanel.graphPanelSettings = graphSettings.Clone< GraphPanelSettings >();
+			_graphPanel.graphPanelSettings = graphSettings.Clone< ScrollablePanelSettings >();
 		}
 		else
 		{
-			graphSettings = _graphPanel.graphPanelSettings.Clone<GraphPanelSettings>( );
+			graphSettings = _graphPanel.graphPanelSettings.Clone<ScrollablePanelSettings>( );
 		}
 		_graphPanel.Init( );
 

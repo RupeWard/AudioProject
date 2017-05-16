@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RJWS.Graph
+namespace RJWS.UI.Scrollable
 {
-	public class GraphPanel: MonoBehaviour
+	public class ScrollablePanel: MonoBehaviour
 	{
 		static readonly bool DEBUG_GRAPHPANEL = false;
 
-		public GraphPanelSettings graphPanelSettings = new GraphPanelSettings( );
+		public ScrollablePanelSettings graphPanelSettings = new ScrollablePanelSettings( );
 
-		private Dictionary<EOrthoDirection, GraphScrollBarPanel> _scrollBars = new Dictionary<EOrthoDirection, GraphScrollBarPanel>( );
+		private Dictionary<EOrthoDirection, ScrollableScrollBarPanel> _scrollBars = new Dictionary<EOrthoDirection, ScrollableScrollBarPanel>( );
 
 		public RectTransform graphViewPanelRT;
 		public Transform scrollBarContainer;
-		public GraphViewPanel graphViewPanel;
+		public ScrollablePanelView graphViewPanel;
 		public UnityEngine.UI.Button cancelGrabButton;
 
 		public bool InitOnAwake = false;
@@ -50,9 +50,9 @@ namespace RJWS.Graph
 			SetUpScrollBars( );
 		}
 
-		public GraphScrollBarPanel GetScrollBar(EOrthoDirection dirn)
+		public ScrollableScrollBarPanel GetScrollBar(EOrthoDirection dirn)
 		{
-			GraphScrollBarPanel result;
+			ScrollableScrollBarPanel result;
 			if (false == _scrollBars.TryGetValue(dirn, out result))
 			{
 				if (_scrollPrefab == null)
@@ -60,7 +60,7 @@ namespace RJWS.Graph
 					_scrollPrefab = Resources.Load<GameObject>( "Graph/Prefabs/ScrollBarPanel" );
 				}
 				GameObject go = GameObject.Instantiate( _scrollPrefab );
-				result = go.GetComponent<GraphScrollBarPanel>( );
+				result = go.GetComponent<ScrollableScrollBarPanel>( );
 				result.Init( this, dirn, graphPanelSettings.scrollSettings.GetScrollBarSettings( dirn ) );
 				_scrollBars.Add(dirn, result);
 				if (DEBUG_GRAPHPANEL)
@@ -151,7 +151,7 @@ namespace RJWS.Graph
 					{
 						sb = new System.Text.StringBuilder( );
 						sb.Append( "GP: SetUpCancelGrab" );
-						foreach (KeyValuePair<EOrthoDirection, GraphScrollBarPanel> kvp in _scrollBars)
+						foreach (KeyValuePair<EOrthoDirection, ScrollableScrollBarPanel> kvp in _scrollBars)
 						{
 							sb.Append( "\n-" ).Append( kvp.Key ).Append( " " ).Append( kvp.Value.cachedRT.rect );
 						}
@@ -165,17 +165,38 @@ namespace RJWS.Graph
 					Vector2 anchorMax = Vector2.zero;
 					Vector2 pivot = Vector2.zero;
 
-					if (_scrollBars[EOrthoDirection.Horizontal].ePosition== ELowHigh.Low)
+					if (_scrollBars[EOrthoDirection.Horizontal].ePosition== ELowHigh.High)
+					{
+						anchorMin.y = 1f;
+						anchorMax.y = 1f;
+						pivot.y = 1f;
+					}
+					else if (_scrollBars[EOrthoDirection.Horizontal].ePosition == ELowHigh.Low)
+					{
+						anchorMin.y = 0f;
+						anchorMax.y = 0f;
+						pivot.y = 0f;
+					}
+					else
+					{
+						Debug.LogError( "Hor posn = " + _scrollBars[EOrthoDirection.Horizontal].ePosition );
+                    }
+
+					if (_scrollBars[EOrthoDirection.Vertical].ePosition == ELowHigh.High)
 					{
 						anchorMin.x = 1f;
 						anchorMax.x = 1f;
 						pivot.x = 1f;
 					}
-					if (_scrollBars[EOrthoDirection.Vertical].ePosition == ELowHigh.Low)
+					else if (_scrollBars[EOrthoDirection.Vertical].ePosition == ELowHigh.Low)
 					{
-						anchorMin.y = 1f;
-						anchorMax.y = 1f;
-						pivot.y = 1f;
+						anchorMin.x = 0f;
+						anchorMax.x = 0f;
+						pivot.x = 0f;
+					}
+					else
+					{
+						Debug.LogError( "Vert posn = " + _scrollBars[EOrthoDirection.Vertical].ePosition );
 					}
 					cancelGrabButtonRT.anchorMin = anchorMin;
 					cancelGrabButtonRT.anchorMax = anchorMax;

@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 using RJWS.Core.TransformExtensions;
 
-namespace RJWS.Graph
+namespace RJWS.UI
 {
 	public class ObjectGrabber: MonoBehaviour
 	{

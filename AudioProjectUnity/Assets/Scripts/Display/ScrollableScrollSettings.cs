@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using RJWS.Core.Settings;
 
-namespace RJWS.UI
+namespace RJWS.UI.Scrollable
 {
 	[System.Serializable]
-	public class ScrollSettings : RJWS.Core.Settings.Settings__Base
+	public class ScrollableScrollSettings : RJWS.Core.Settings.Settings__Base
 	{
-		public ScrollBarSettings horizontal = new ScrollBarSettings( "Horizontal");
-		public ScrollBarSettings vertical = new ScrollBarSettings( "Vertical" );
+		public ScrollableScrollBarSettings horizontal = new ScrollableScrollBarSettings( "Horizontal");
+		public ScrollableScrollBarSettings vertical = new ScrollableScrollBarSettings( "Vertical" );
 
 		public bool linkedScaling = true;
 
-		public ScrollSettings() : base ("ScrollSettings")
+		public ScrollableScrollSettings() : base ("ScrollSettings")
 		{ }
 
-		public ScrollBarSettings GetScrollBarSettings( EOrthoDirection dirn)
+		public ScrollableScrollBarSettings GetScrollBarSettings( EOrthoDirection dirn)
 		{
 			if (dirn == EOrthoDirection.Horizontal)
 			{
@@ -41,9 +41,9 @@ namespace RJWS.UI
 
 		protected override Settings__Base CloneBase( )
 		{
-			ScrollSettings clone = new ScrollSettings( );
-			clone.horizontal = horizontal.Clone<ScrollBarSettings>( );
-			clone.vertical = vertical.Clone<ScrollBarSettings>( );
+			ScrollableScrollSettings clone = new ScrollableScrollSettings( );
+			clone.horizontal = horizontal.Clone<ScrollableScrollBarSettings>( );
+			clone.vertical = vertical.Clone<ScrollableScrollBarSettings>( );
 			clone.linkedScaling = linkedScaling;
 			return clone;
 		}

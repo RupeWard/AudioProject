@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using RJWS.Core.TransformExtensions;
 
-namespace RJWS.Graph
+namespace RJWS.UI
 {
 	public class ObjectGrabManager : RJWS.Core.Singleton.SingletonSceneLifetime<ObjectGrabManager>
 	{

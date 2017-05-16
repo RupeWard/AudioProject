@@ -4,23 +4,23 @@ using UnityEngine;
 
 using RJWS.Core.Settings;
 
-namespace RJWS.UI
+namespace RJWS.UI.Scrollable
 {
 	[System.Serializable]
-	public class ScrollBarSettings : RJWS.Core.Settings.Settings__Base
+	public class ScrollableScrollBarSettings : RJWS.Core.Settings.Settings__Base
 	{
 		public ELowHigh position = ELowHigh.High;
 		public float width = 40f;
 		public bool allowPositionChangeOnExternalZoom = false;
 		public bool allowPositionChangeOnInternalZoom = false;
 
-		public ScrollBarSettings(string n): base( n )
+		public ScrollableScrollBarSettings(string n): base( n )
 		{
 		}
 
 		protected override Settings__Base CloneBase()
 		{
-			ScrollBarSettings clone = new ScrollBarSettings( name );
+			ScrollableScrollBarSettings clone = new ScrollableScrollBarSettings( name );
 			clone.position = position;
 			clone.width = width;
 			return clone;

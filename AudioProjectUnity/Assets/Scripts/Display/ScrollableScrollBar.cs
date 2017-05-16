@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using RJWS.Core.Extensions;
 
-namespace RJWS.Graph
+namespace RJWS.UI.Scrollable
 {
-	public class GraphScrollBar : MonoBehaviour
+	public class ScrollableScrollBar : MonoBehaviour
 	{
 		public static readonly bool DEBUG_SCROLLBAR = true;
 		public static readonly bool DEBUG_MOVE = false;
 
-		private Dictionary<ELowHigh, GraphScrollBarEnd> _ends = new Dictionary<ELowHigh, GraphScrollBarEnd>( );
-		private GraphScrollBarMiddle _middle;
+		private Dictionary<ELowHigh, ScrollableScrollBarEnd> _ends = new Dictionary<ELowHigh, ScrollableScrollBarEnd>( );
+		private ScrollableScrollBarMiddle _middle;
 
 		public System.Action<EOrthoDirection, float, float> onScrollBarChanged; // size, pos as fractions
 
@@ -21,7 +21,7 @@ namespace RJWS.Graph
 			get;
 		}
 
-		public GraphScrollBarPanel scrollBarPanel
+		public ScrollableScrollBarPanel scrollBarPanel
 		{
 			get;
 			private set;
@@ -34,7 +34,7 @@ namespace RJWS.Graph
 
 		private Vector2 _sizeRange;
 
-		public void Init( GraphScrollBarPanel sbp)
+		public void Init( ScrollableScrollBarPanel sbp)
 		{
 			scrollBarPanel = sbp;
 			GameObject endPrefab = Resources.Load<GameObject>( "Graph/Prefabs/ScrollBarEnd" );
@@ -50,7 +50,7 @@ namespace RJWS.Graph
 				if (eend != ELowHigh.None)
 				{
 					GameObject go = GameObject.Instantiate( endPrefab );
-					_ends[eend] = go.GetComponent<GraphScrollBarEnd>( );
+					_ends[eend] = go.GetComponent<ScrollableScrollBarEnd>( );
 					_ends[eend].Init( this, eend );
 					_sizeRange.x += _ends[eend].cachedRT.sizeDelta.x;
 				}
@@ -61,7 +61,7 @@ namespace RJWS.Graph
 
 			GameObject middlePrefab = Resources.Load<GameObject>( "Graph/Prefabs/ScrollBarMiddle" );
 			GameObject mgo = GameObject.Instantiate( middlePrefab );
-			_middle = mgo.GetComponent<GraphScrollBarMiddle>( );
+			_middle = mgo.GetComponent<ScrollableScrollBarMiddle>( );
 			_middle.Init( this );
 			_sizeRange.x += _middle.cachedRT.sizeDelta.x;
         }

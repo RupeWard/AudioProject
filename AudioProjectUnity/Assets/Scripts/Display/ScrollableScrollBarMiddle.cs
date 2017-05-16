@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using RJWS.Core.TransformExtensions;
 
-namespace RJWS.Graph
+namespace RJWS.UI.Scrollable
 {
-	public class GraphScrollBarMiddle : MonoBehaviour
+	public class ScrollableScrollBarMiddle : MonoBehaviour
 	{
 		public RectTransform bgRT;
 		public ObjectGrabber objectGrabber;
@@ -16,14 +16,14 @@ namespace RJWS.Graph
 			get;
 		}
 
-		private GraphScrollBar _graphScrollBar;
+		private ScrollableScrollBar _graphScrollBar;
 
 		private void Awake( )
 		{
 			cachedRT = GetComponent<RectTransform>( );
 		}
 
-		public void Init( GraphScrollBar gsb)
+		public void Init( ScrollableScrollBar gsb)
 		{
 			_graphScrollBar = gsb;
 

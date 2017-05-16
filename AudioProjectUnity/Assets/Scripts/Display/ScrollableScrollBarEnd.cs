@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using RJWS.Core.TransformExtensions;
 
-namespace RJWS.Graph
+namespace RJWS.UI.Scrollable
 {
-	public class GraphScrollBarEnd : MonoBehaviour
+	public class ScrollableScrollBarEnd : MonoBehaviour
 	{
 		public RectTransform bgRT;
 		public ObjectGrabber objectGrabber;
 
-		public GraphScrollBarEnd otherEnd;
+		public ScrollableScrollBarEnd otherEnd;
 		public GameObject secondaryIndicator;
 
 		private ELowHigh _end = ELowHigh.None;
@@ -23,7 +23,7 @@ namespace RJWS.Graph
 			get;
 		}
 
-		private GraphScrollBar _graphScrollBar;
+		private ScrollableScrollBar _graphScrollBar;
 		private bool _isInitialised = false;
 		private bool _isInsideBar = true;
 
@@ -33,7 +33,7 @@ namespace RJWS.Graph
 			secondaryIndicator.SetActive( false );
 		}
 
-		public void Init( GraphScrollBar gsb, ELowHigh ee)
+		public void Init( ScrollableScrollBar gsb, ELowHigh ee)
 		{
 			_graphScrollBar = gsb;
 			_end = ee;
