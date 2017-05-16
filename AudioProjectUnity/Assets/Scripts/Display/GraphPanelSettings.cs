@@ -10,6 +10,7 @@ namespace RJWS.Graph
 	public class GraphPanelSettings : Settings__Base
 	{
 		public UI.ScrollSettings scrollSettings = new UI.ScrollSettings( );
+		public Vector2 contentSize = Vector2.zero;
 
 		public GraphPanelSettings(): base ("GraphPanelSettings")
 		{ }
@@ -18,6 +19,7 @@ namespace RJWS.Graph
 		{
 			GraphPanelSettings clone = new GraphPanelSettings( );
 			clone.scrollSettings = scrollSettings.Clone<UI.ScrollSettings>( );
+			clone.contentSize = contentSize;
 			return clone;
 		}
 

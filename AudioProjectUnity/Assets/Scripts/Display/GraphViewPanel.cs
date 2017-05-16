@@ -8,6 +8,8 @@ namespace RJWS.Graph
 	{
 		public RectTransform contentPanelRT;
 
+		private Vector3 _baseScale = Vector3.one;
+
 		public RectTransform cachedRT
 		{
 			get;
@@ -19,10 +21,31 @@ namespace RJWS.Graph
 			cachedRT = GetComponent<RectTransform>( );
 		}
 
-		public void InitContent()
+		private GraphPanel _graphPanel;
+
+		public void InitContent(GraphPanel gp)
 		{
-			contentPanelRT.localScale = Vector3.one;
-			contentPanelRT.sizeDelta = cachedRT.sizeDelta;
+			_graphPanel = gp;
+			Vector2 cSize = _graphPanel.graphPanelSettings.contentSize;
+			if (cSize.sqrMagnitude > 0f)
+			{
+				contentPanelRT.sizeDelta = cSize;
+
+				float xScale = cachedRT.sizeDelta.x / cSize.x;
+				float yScale = cachedRT.sizeDelta.y / cSize.y;
+
+				if (_graphPanel.graphPanelSettings.scrollSettings.linkedScaling)
+				{
+					xScale = yScale = Mathf.Min( xScale, yScale );
+				}
+				_baseScale = new Vector3( xScale, yScale, 1f );
+				contentPanelRT.localScale = _baseScale;
+			}
+			else
+			{
+				contentPanelRT.sizeDelta = cachedRT.sizeDelta;
+				contentPanelRT.localScale = Vector3.one;
+			}
 			contentPanelRT.anchoredPosition = Vector2.zero;
 		}
 
@@ -35,14 +58,14 @@ namespace RJWS.Graph
 			{
 				case EOrthoDirection.Horizontal:
 					{
-						scale.x = 1f / sizeFraction;
-						anchoredPos.x = scale.x * relPosFraction * cachedRT.sizeDelta.x;
+						scale.x = _baseScale.x * 1f / sizeFraction;
+						anchoredPos.x = scale.x * relPosFraction * contentPanelRT.sizeDelta.x;// cachedRT.sizeDelta.x;
 						break;
 					}
 				case EOrthoDirection.Vertical:
 					{
-						scale.y = 1f / sizeFraction;
-						anchoredPos.y = scale.y * relPosFraction * cachedRT.sizeDelta.y;
+						scale.y = _baseScale.y * 1f / sizeFraction;
+						anchoredPos.y = scale.y * relPosFraction * contentPanelRT.sizeDelta.y;// cachedRT.sizeDelta.y;
 						break;
 					}
 			}

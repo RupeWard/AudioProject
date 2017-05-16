@@ -127,7 +127,7 @@ namespace RJWS.Graph
 				}
 			}
 			graphViewPanelRT.anchoredPosition = anchoredPos;
-			graphViewPanel.InitContent( );
+			graphViewPanel.InitContent( this);
 
 			SetUpCancelGrabButton( );
         }
