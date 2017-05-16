@@ -86,7 +86,7 @@ namespace RJWS.Graph
 					DoScrollBarChangedAction( );
 					didChange = true;
 				}
-				else if (scrollBarPanel.settings.allowExternalPositionChange)
+				else if (scrollBarPanel.settings.allowPositionChangeOnExternalZoom)
 				{
 					if (highOffset > 0)
 					{
@@ -120,9 +120,9 @@ namespace RJWS.Graph
 			if (0.5f * _sizeRange.y + anchoredPos.x + 0.5f * size.x <= _sizeRange.y && 0.5f * _sizeRange.y + anchoredPos.x - 0.5f * size.x >= 0f)
 			{
 				cachedRT.anchoredPosition = anchoredPos;
-			}
 
-			DoScrollBarChangedAction( );
+				DoScrollBarChangedAction( );
+			}
 		}
 
 		public void HandleEndMoved( ELowHigh lowHigh, float delta, bool doubleEnded)
@@ -185,8 +185,22 @@ namespace RJWS.Graph
 
 			if (size.x >= _sizeRange.x && size.x <= _sizeRange.y)
 			{
-				if (0.5f * _sizeRange.y + anchoredPos.x + 0.5f * size.x <= _sizeRange.y && 0.5f * _sizeRange.y + anchoredPos.x - 0.5f * size.x >= 0f)
+				float highOffset = (0.5f * _sizeRange.y + anchoredPos.x + 0.5f * size.x) - _sizeRange.y;
+				float lowOffset = 0.5f * size.x - (0.5f * _sizeRange.y + anchoredPos.x);
+				if (highOffset <= 0 && lowOffset <= 0f)
 				{
+					canChange = true;
+				}
+				else if (scrollBarPanel.settings.allowPositionChangeOnInternalZoom)
+				{
+					if (lowOffset > 0f)
+					{
+						anchoredPos.x = anchoredPos.x + lowOffset;
+					}
+					else
+					{
+						anchoredPos.x = anchoredPos.x - highOffset;
+					}
 					canChange = true;
 				}
 			}

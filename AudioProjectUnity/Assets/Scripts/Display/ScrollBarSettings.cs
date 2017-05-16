@@ -11,7 +11,8 @@ namespace RJWS.UI
 	{
 		public ELowHigh position = ELowHigh.High;
 		public float width = 40f;
-		public bool allowExternalPositionChange = false;
+		public bool allowPositionChangeOnExternalZoom = false;
+		public bool allowPositionChangeOnInternalZoom = false;
 
 		public ScrollBarSettings(string n): base( n )
 		{
