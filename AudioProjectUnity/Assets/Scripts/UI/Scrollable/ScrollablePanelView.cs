@@ -9,6 +9,8 @@ namespace RJWS.UI.Scrollable
 		public RectTransform contentPanelRT;
 
 		private Vector3 _baseScale = Vector3.one;
+		private ScrollablePanel _scrollablePanel;
+
 
 		public RectTransform cachedRT
 		{
@@ -21,12 +23,10 @@ namespace RJWS.UI.Scrollable
 			cachedRT = GetComponent<RectTransform>( );
 		}
 
-		private ScrollablePanel _graphPanel;
-
-		public void InitContent(ScrollablePanel gp)
+		public void InitContent(ScrollablePanel sp)
 		{
-			_graphPanel = gp;
-			Vector2 cSize = _graphPanel.graphPanelSettings.contentSize;
+			_scrollablePanel = sp;
+			Vector2 cSize = _scrollablePanel.settings.contentSize;
 			if (cSize.sqrMagnitude > 0f)
 			{
 				contentPanelRT.sizeDelta = cSize;
@@ -34,7 +34,7 @@ namespace RJWS.UI.Scrollable
 				float xScale = cachedRT.sizeDelta.x / cSize.x;
 				float yScale = cachedRT.sizeDelta.y / cSize.y;
 
-				if (_graphPanel.graphPanelSettings.scrollSettings.linkedScaling)
+				if (_scrollablePanel.settings.scrollSettings.linkedScaling)
 				{
 					xScale = yScale = Mathf.Min( xScale, yScale );
 				}

@@ -28,7 +28,7 @@ public class SceneControllerTestScene : SceneController_Base
 		{
 			GameObject.Destroy( _graphPanel.gameObject );
 		}
-		GameObject graphPanelPrefab = Resources.Load<GameObject>( "Graph/Prefabs/GraphPanel" );
+		GameObject graphPanelPrefab = Resources.Load<GameObject>( "UI/Prefabs/ScrollablePanel" );
 
 		_graphPanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent<ScrollablePanel>( );
 		_graphPanel.cachedRT.SetParent( canvasRT );
@@ -47,11 +47,11 @@ public class SceneControllerTestScene : SceneController_Base
 		_graphPanel.cachedRT.sizeDelta = new Vector2( canvasRT.rect.width - permanentButtonsRT.rect.width, canvasRT.rect.height );
 		if (graphSettings != null)
 		{
-			_graphPanel.graphPanelSettings = graphSettings.Clone< ScrollablePanelSettings >();
+			_graphPanel.settings = graphSettings.Clone< ScrollablePanelSettings >();
 		}
 		else
 		{
-			graphSettings = _graphPanel.graphPanelSettings.Clone<ScrollablePanelSettings>( );
+			graphSettings = _graphPanel.settings.Clone<ScrollablePanelSettings>( );
 		}
 		_graphPanel.Init( );
 

@@ -8,13 +8,12 @@ namespace RJWS.UI.Scrollable
 	{
 		static readonly bool DEBUG_GRAPHPANEL = false;
 
-		public ScrollablePanelSettings graphPanelSettings = new ScrollablePanelSettings( );
+		public ScrollablePanelSettings settings = new ScrollablePanelSettings( );
 
 		private Dictionary<EOrthoDirection, ScrollableScrollBarPanel> _scrollBars = new Dictionary<EOrthoDirection, ScrollableScrollBarPanel>( );
 
-		public RectTransform graphViewPanelRT;
 		public Transform scrollBarContainer;
-		public ScrollablePanelView graphViewPanel;
+		public ScrollablePanelView scrollablePanelView;
 		public UnityEngine.UI.Button cancelGrabButton;
 
 		public bool InitOnAwake = false;
@@ -57,11 +56,11 @@ namespace RJWS.UI.Scrollable
 			{
 				if (_scrollPrefab == null)
 				{
-					_scrollPrefab = Resources.Load<GameObject>( "Graph/Prefabs/ScrollBarPanel" );
+					_scrollPrefab = Resources.Load<GameObject>( "UI/Prefabs/ScrollBarPanel" );
 				}
 				GameObject go = GameObject.Instantiate( _scrollPrefab );
 				result = go.GetComponent<ScrollableScrollBarPanel>( );
-				result.Init( this, dirn, graphPanelSettings.scrollSettings.GetScrollBarSettings( dirn ) );
+				result.Init( this, dirn, settings.scrollSettings.GetScrollBarSettings( dirn ) );
 				_scrollBars.Add(dirn, result);
 				if (DEBUG_GRAPHPANEL)
 				{
@@ -73,7 +72,7 @@ namespace RJWS.UI.Scrollable
 
 		public void HandleScrollBarChanged( EOrthoDirection direction, float sizeFraction, float posFraction)
 		{
-			graphViewPanel.HandleViewChange( direction, sizeFraction, posFraction );
+			scrollablePanelView.HandleViewChange( direction, sizeFraction, posFraction );
 		}
 
 		public void SetUpScrollBars()
@@ -81,16 +80,16 @@ namespace RJWS.UI.Scrollable
 			GetScrollBar( EOrthoDirection.Horizontal).SetUp( );
 			GetScrollBar( EOrthoDirection.Vertical).SetUp( );
 
-			float horSbWidth = graphPanelSettings.scrollSettings.GetScrollBarWidth( EOrthoDirection.Horizontal );
-			float vertSbWidth = graphPanelSettings.scrollSettings.GetScrollBarWidth( EOrthoDirection.Vertical);
+			float horSbWidth = settings.scrollSettings.GetScrollBarWidth( EOrthoDirection.Horizontal );
+			float vertSbWidth = settings.scrollSettings.GetScrollBarWidth( EOrthoDirection.Vertical);
 
-			graphViewPanelRT.sizeDelta =
+			scrollablePanelView.cachedRT.sizeDelta =
 				new Vector2(
 					cachedRT.rect.width - vertSbWidth,
 					cachedRT.rect.height - horSbWidth );
 			Vector2 anchoredPos = Vector2.zero;
 
-			switch(graphPanelSettings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Horizontal))
+			switch(settings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Horizontal))
 			{
 				case ELowHigh.Low:
 				{
@@ -104,11 +103,11 @@ namespace RJWS.UI.Scrollable
 				}
 				default:
 				{
-					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Horizontal) );
+					Debug.LogError( "Bad ELowHigh = " + settings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Horizontal) );
 					break;
 				}
 			}
-			switch (graphPanelSettings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Vertical))
+			switch (settings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Vertical))
 			{
 				case ELowHigh.Low:
 				{
@@ -122,12 +121,12 @@ namespace RJWS.UI.Scrollable
 				}
 				default:
 				{
-					Debug.LogError( "Bad ELowHigh = " + graphPanelSettings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Vertical) );
+					Debug.LogError( "Bad ELowHigh = " + settings.scrollSettings.GetScrollBarPosition(EOrthoDirection.Vertical) );
 					break;
 				}
 			}
-			graphViewPanelRT.anchoredPosition = anchoredPos;
-			graphViewPanel.InitContent( this);
+			scrollablePanelView.cachedRT.anchoredPosition = anchoredPos;
+			scrollablePanelView.InitContent( this);
 
 			SetUpCancelGrabButton( );
         }
