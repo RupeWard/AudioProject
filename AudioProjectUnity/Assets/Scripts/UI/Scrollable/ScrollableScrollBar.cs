@@ -66,6 +66,7 @@ namespace RJWS.UI.Scrollable
 			_sizeRange.x += _middle.cachedRT.sizeDelta.x;
         }
 
+
 		public bool SetSizeFraction(float fraction)
 		{
 			bool didChange = false;

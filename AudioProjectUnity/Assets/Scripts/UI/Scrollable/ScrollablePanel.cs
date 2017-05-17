@@ -16,6 +16,8 @@ namespace RJWS.UI.Scrollable
 		public ScrollablePanelView scrollablePanelView;
 		public UnityEngine.UI.Button cancelGrabButton;
 
+		public ObjectGrabber grabber;
+
 		public bool InitOnAwake = false;
 
 		public RectTransform cachedRT
@@ -40,6 +42,7 @@ namespace RJWS.UI.Scrollable
 
 		private void Start()
 		{
+			grabber.onMovementAction += HandleGrabberMoved;
 		}
 
 		private GameObject _scrollPrefab = null;
@@ -216,6 +219,28 @@ namespace RJWS.UI.Scrollable
 			}
 		}
 
+		public void HandleClick()
+		{
+			if (ObjectGrabManager.Instance.HasGrabbed)
+			{
+				if (ObjectGrabManager.Instance.IsGrabbed(grabber))
+				{
+					ObjectGrabManager.Instance.CancelCurrentGrab( );
+				}
+			}
+			else
+			{
+				ObjectGrabManager.Instance.HandleGrabRequest( grabber );
+			}
+		}
+
+		public void HandleGrabberMoved(Vector2 delta)
+		{
+			// move content
+			// adjust scrollbars
+			_scrollBars[EOrthoDirection.Horizontal].scrollBar.HandleMiddleMoved( delta.x );
+			_scrollBars[EOrthoDirection.Vertical].scrollBar.HandleMiddleMoved( delta.y );
+		}
 	}
 
 }
