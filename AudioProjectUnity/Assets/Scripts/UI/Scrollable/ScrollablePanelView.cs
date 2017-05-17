@@ -59,13 +59,13 @@ namespace RJWS.UI.Scrollable
 				case EOrthoDirection.Horizontal:
 					{
 						scale.x = _baseScale.x * 1f / sizeFraction;
-						anchoredPos.x = scale.x * relPosFraction * contentPanelRT.sizeDelta.x;// cachedRT.sizeDelta.x;
+						anchoredPos.x = scale.x * relPosFraction * contentPanelRT.sizeDelta.x;
 						break;
 					}
 				case EOrthoDirection.Vertical:
 					{
 						scale.y = _baseScale.y * 1f / sizeFraction;
-						anchoredPos.y = scale.y * relPosFraction * contentPanelRT.sizeDelta.y;// cachedRT.sizeDelta.y;
+						anchoredPos.y = scale.y * relPosFraction * contentPanelRT.sizeDelta.y;
 						break;
 					}
 			}

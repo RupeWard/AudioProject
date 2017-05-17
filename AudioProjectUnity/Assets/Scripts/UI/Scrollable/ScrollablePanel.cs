@@ -17,6 +17,10 @@ namespace RJWS.UI.Scrollable
 		public UnityEngine.UI.Button cancelGrabButton;
 
 		public ObjectGrabber grabber;
+		public GameObject grabberLeft;
+		public GameObject grabberRight;
+		public GameObject grabberUp;
+		public GameObject grabberDown;
 
 		public bool InitOnAwake = false;
 
@@ -43,6 +47,9 @@ namespace RJWS.UI.Scrollable
 		private void Start()
 		{
 			grabber.onMovementAction += HandleGrabberMoved;
+			grabber.onActivateAction += HandleGrabberActivated;
+
+			ActivateGrabberArrows( false );
 		}
 
 		private GameObject _scrollPrefab = null;
@@ -236,10 +243,51 @@ namespace RJWS.UI.Scrollable
 
 		public void HandleGrabberMoved(Vector2 delta)
 		{
-			// move content
-			// adjust scrollbars
-			_scrollBars[EOrthoDirection.Horizontal].scrollBar.HandleMiddleMoved( delta.x );
 			_scrollBars[EOrthoDirection.Vertical].scrollBar.HandleMiddleMoved( delta.y );
+			_scrollBars[EOrthoDirection.Horizontal].scrollBar.HandleMiddleMoved( delta.x );
+			ActivateGrabberArrows(true );
+		}
+
+		private void ActivateGrabberArrows(bool b)
+		{
+			grabberDown.SetActive( b );
+			grabberUp.SetActive( b );
+			grabberLeft.SetActive( b );
+			grabberRight.SetActive( b );
+			if (b)
+			{
+				DeactivateUnusableGrabberArrows( );
+			}
+		}
+
+		public void HandleGrabberActivated(bool b)
+		{
+			ActivateGrabberArrows( b );
+		}
+
+		private void DeactivateUnusableGrabberArrows()
+		{
+			if (!_scrollBars[EOrthoDirection.Vertical].scrollBar.CanMoveUp())
+			{
+				grabberUp.SetActive( false );
+			}
+			if (!_scrollBars[EOrthoDirection.Vertical].scrollBar.CanMoveDown( ))
+			{
+				grabberDown.SetActive( false );
+			}
+			if (!_scrollBars[EOrthoDirection.Horizontal].scrollBar.CanMoveUp( ))
+			{
+				grabberRight.SetActive( false );
+			}
+			if (!_scrollBars[EOrthoDirection.Horizontal].scrollBar.CanMoveDown( ))
+			{
+				grabberLeft.SetActive( false );
+			}
+		}
+
+		private bool AnyActiveGrabberArrows()
+		{
+			return (grabberUp.activeSelf || grabberDown.activeSelf || grabberLeft.activeSelf || grabberRight.activeSelf);
 		}
 	}
 

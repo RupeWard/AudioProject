@@ -23,6 +23,8 @@ namespace RJWS.UI.Scrollable
 			ScrollableScrollBarSettings clone = new ScrollableScrollBarSettings( name );
 			clone.position = position;
 			clone.width = width;
+			clone.allowPositionChangeOnExternalZoom = allowPositionChangeOnExternalZoom;
+			clone.allowPositionChangeOnInternalZoom = allowPositionChangeOnInternalZoom;
 			return clone;
 		}
 	}

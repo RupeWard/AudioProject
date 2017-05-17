@@ -23,7 +23,7 @@ namespace RJWS.UI.Scrollable
 			get;
 		}
 
-		private ScrollableScrollBar _graphScrollBar;
+		private ScrollableScrollBar _scrollBar;
 		private bool _isInitialised = false;
 		private bool _isInsideBar = true;
 
@@ -35,16 +35,16 @@ namespace RJWS.UI.Scrollable
 
 		public void Init( ScrollableScrollBar gsb, ELowHigh ee)
 		{
-			_graphScrollBar = gsb;
+			_scrollBar = gsb;
 			_end = ee;
 
 			gameObject.name = "ScrollEnd_"+ ee.ToString( );
 
-			cachedRT.SetParent( _graphScrollBar.cachedRT );
+			cachedRT.SetParent( _scrollBar.cachedRT );
 			cachedRT.localScale = new Vector3( 1f, 1f, 1f );
 			SetInitialPos( );
 
-			if (_graphScrollBar.scrollBarPanel.eDirection == EOrthoDirection.Horizontal)
+			if (_scrollBar.scrollBarPanel.eDirection == EOrthoDirection.Horizontal)
 			{
 				objectGrabber.onXMovementAction += HandleMovement;
 			}
@@ -66,7 +66,7 @@ namespace RJWS.UI.Scrollable
 				return;
 			}
 
-			bool bInside = (_graphScrollBar.SpaceAtEnd(_end) < cachedRT.rect.width);
+			bool bInside = (_scrollBar.SpaceAtEnd(_end) < cachedRT.rect.width);
 			if (bInside != _isInsideBar)
 			{
 				_isInsideBar = bInside;
@@ -121,7 +121,7 @@ namespace RJWS.UI.Scrollable
 
 		private void SetInitialPos()
 		{
-			float height = _graphScrollBar.cachedRT.rect.height;
+			float height = _scrollBar.cachedRT.rect.height;
 			switch (_end)
 			{
 				case ELowHigh.Low:
@@ -169,7 +169,7 @@ namespace RJWS.UI.Scrollable
 
 		public void HandleMovement( float delta)
 		{
-			_graphScrollBar.HandleEndMoved( _end, delta, _doubleEndedMode );
+			_scrollBar.HandleEndMoved( _end, delta, _doubleEndedMode );
 		}
 
 		public void HandleGrabberClick()

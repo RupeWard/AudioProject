@@ -126,6 +126,16 @@ namespace RJWS.UI.Scrollable
 			}
 		}
 
+		public bool CanMoveUp()
+		{
+			return SpaceAtEnd( ELowHigh.High ) > 0.5f;
+		}
+
+		public bool CanMoveDown( )
+		{
+			return SpaceAtEnd( ELowHigh.Low) > 0.5f;
+		}
+
 		public void HandleEndMoved( ELowHigh lowHigh, float delta, bool doubleEnded)
 		{
 			if (DEBUG_MOVE)
@@ -223,11 +233,11 @@ namespace RJWS.UI.Scrollable
 		public bool IsAtRangeEnd( ELowHigh eLowHigh )
 		{
 			bool result = false;
-			if ((eLowHigh == ELowHigh.Low || eLowHigh == ELowHigh.None) && (cachedRT.sizeDelta.x < _sizeRange.x + 0.1f))
+			if ((eLowHigh == ELowHigh.Low || eLowHigh == ELowHigh.None) && (cachedRT.sizeDelta.x < _sizeRange.x + 0.2f))
 			{
 				result = true;
 			}
-			if ((eLowHigh == ELowHigh.High || eLowHigh == ELowHigh.None) && (cachedRT.sizeDelta.x >  _sizeRange.y- 0.1f ))
+			if ((eLowHigh == ELowHigh.High || eLowHigh == ELowHigh.None) && (cachedRT.sizeDelta.x >  _sizeRange.y- 0.2f ))
 			{
 				result = true;
 			}
