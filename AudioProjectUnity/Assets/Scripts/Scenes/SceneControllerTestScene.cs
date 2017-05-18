@@ -14,24 +14,24 @@ public class SceneControllerTestScene : SceneController_Base
 
 	//	static private readonly bool DEBUG_LOCAL = false;
 
-	private ScrollablePanel _graphPanel;
-	public ScrollablePanelSettings graphSettings;
+	private ScrollablePanel _scrollablePanel;
+	public ScrollablePanelSettings scrollablePanelSettings;
 
 	protected override void PostStart( )
 	{
-		RefreshGraphPanel( );
+		RefreshScrollablePanel( );
 	}
 
-	private void RefreshGraphPanel()
+	private void RefreshScrollablePanel()
 	{
-		if (_graphPanel != null)
+		if (_scrollablePanel != null)
 		{
-			GameObject.Destroy( _graphPanel.gameObject );
+			GameObject.Destroy( _scrollablePanel.gameObject );
 		}
 		GameObject graphPanelPrefab = Resources.Load<GameObject>( "UI/Prefabs/ScrollablePanel" );
 
-		_graphPanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent<ScrollablePanel>( );
-		_graphPanel.cachedRT.SetParent( canvasRT );
+		_scrollablePanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent<ScrollablePanel>( );
+		_scrollablePanel.cachedRT.SetParent( canvasRT );
 		permanentButtonsRT.sizeDelta = new Vector2( Mathf.Max( permanentButtonsRT.sizeDelta.x, RJWS.AppManager.Instance.minClickablePixels ), permanentButtonsRT.sizeDelta.y );
 
 		foreach (Transform t in permanentButtonsRT.transform)
@@ -44,16 +44,16 @@ public class SceneControllerTestScene : SceneController_Base
 			}
 		}
 
-		_graphPanel.cachedRT.sizeDelta = new Vector2( canvasRT.rect.width - permanentButtonsRT.rect.width, canvasRT.rect.height );
-		if (graphSettings != null)
+		_scrollablePanel.cachedRT.sizeDelta = new Vector2( canvasRT.rect.width - permanentButtonsRT.rect.width, canvasRT.rect.height );
+		if (scrollablePanelSettings != null)
 		{
-			_graphPanel.settings = graphSettings.Clone< ScrollablePanelSettings >();
+			_scrollablePanel.settings = scrollablePanelSettings.Clone< ScrollablePanelSettings >();
 		}
 		else
 		{
-			graphSettings = _graphPanel.settings.Clone<ScrollablePanelSettings>( );
+			scrollablePanelSettings = _scrollablePanel.settings.Clone<ScrollablePanelSettings>( );
 		}
-		_graphPanel.Init( );
+		_scrollablePanel.Init( );
 
 	}
 
@@ -69,6 +69,6 @@ public class SceneControllerTestScene : SceneController_Base
 
 	public void HandleRefreshButton()
 	{
-		RefreshGraphPanel( );
+		RefreshScrollablePanel( );
 	}
 }

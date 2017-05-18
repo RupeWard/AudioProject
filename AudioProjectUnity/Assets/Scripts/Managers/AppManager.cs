@@ -19,6 +19,8 @@ namespace RJWS
 			float minInches = MIN_CLICKABLE_mm / 25.4f;
 			minClickablePixels = minInches * Screen.dpi;
 		}
+
+
 	}
 
 }
