@@ -19,6 +19,8 @@ namespace RJWS.Audio
 			Name = n;
 		}
 
+		abstract public Vector2 GetValueRange( );
+
 		abstract public float GetValueForTimeSecs( float seconds);
 
 		abstract protected void DebugDescribeDetails( System.Text.StringBuilder sb );

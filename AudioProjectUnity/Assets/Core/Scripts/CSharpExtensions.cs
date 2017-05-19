@@ -122,6 +122,16 @@ namespace RJWS.Core.Extensions
 			v.Set( other.x, other.y );
 		}
 
+		public static float MidPoint(this Vector2 v)
+		{
+			return 0.5f * (v.x + v.y);
+		}
+
+		public static float Length(this Vector2 v)
+		{
+			return Mathf.Abs( v.y - v.x);
+		}
+
 #endregion Vector
 
 	}

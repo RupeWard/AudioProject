@@ -7,6 +7,10 @@ namespace RJWS.Audio
 	abstract public class PeriodicWaveFormGenerator : AbstractWaveFormGenerator
 	{
 		protected float _wavelengthSecs;
+		public float waveLengthSecs
+		{
+			get { return _wavelengthSecs;  }
+		}
 
 		protected PeriodicWaveFormGenerator(string n, float w) : base( n )
 		{

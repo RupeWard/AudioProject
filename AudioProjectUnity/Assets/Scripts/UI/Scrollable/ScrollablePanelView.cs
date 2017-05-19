@@ -49,6 +49,8 @@ namespace RJWS.UI.Scrollable
 			contentPanelRT.anchoredPosition = Vector2.zero;
 		}
 
+		public System.Action<EOrthoDirection, float> onScaleChangeAction;
+
 		public void HandleViewChange( EOrthoDirection direction, float sizeFraction, float posFraction )
 		{
 			Vector3 scale = contentPanelRT.localScale;
@@ -59,12 +61,20 @@ namespace RJWS.UI.Scrollable
 				case EOrthoDirection.Horizontal:
 					{
 						scale.x = _baseScale.x * 1f / sizeFraction;
+						if (onScaleChangeAction != null)
+						{
+							onScaleChangeAction( EOrthoDirection.Horizontal, scale.x );
+						}
 						anchoredPos.x = scale.x * relPosFraction * contentPanelRT.sizeDelta.x;
 						break;
 					}
 				case EOrthoDirection.Vertical:
 					{
 						scale.y = _baseScale.y * 1f / sizeFraction;
+						if (onScaleChangeAction != null)
+						{
+							onScaleChangeAction( EOrthoDirection.Vertical, scale.y );
+						}
 						anchoredPos.y = scale.y * relPosFraction * contentPanelRT.sizeDelta.y;
 						break;
 					}

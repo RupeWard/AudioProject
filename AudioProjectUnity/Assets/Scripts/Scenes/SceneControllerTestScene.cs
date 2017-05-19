@@ -10,7 +10,10 @@ public class SceneControllerTestScene : SceneController_Base
 	public RectTransform permanentButtonsRT;
 
 	public NewPeriodicWaveFormOverlay newPeriodicWaveFormOverlay;
-	
+
+	private GraphPanel _graphPanel;
+	public GameObject graphPanelPrefab;
+
 	override public SceneManager.EScene Scene( )
 	{
 		return SceneManager.EScene.TestScene;
@@ -91,6 +94,14 @@ public class SceneControllerTestScene : SceneController_Base
 		if (wfg != null)
 		{
 			Debug.Log( wfg.DebugDescribe( ) );
+		}
+		if (_graphPanel == null)
+		{
+			_graphPanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent< GraphPanel>();
+			_graphPanel.Init( _scrollablePanel);
+			_graphPanel.xRange = new Vector2( 0f, wfg.waveLengthSecs );
+			_graphPanel.yRange = wfg.GetValueRange( );
+			_graphPanel.DrawDefaultAxes( );
 		}
 	}
 }

@@ -7,10 +7,17 @@ namespace RJWS.Audio
 	public class WaveFormGenerator_Saw: PeriodicWaveFormGenerator
 	{
 		private float _amplitude;
+		private Vector2 _valueRange;
+
+		override public Vector2 GetValueRange()
+		{
+			return _valueRange;
+		}
 
 		public WaveFormGenerator_Saw( string n, float w, float a): base( n,w )
 		{
 			_amplitude = a;
+			_valueRange = new Vector2( -1f * _amplitude, _amplitude );
 		}
 
 		override public float GetValueForPhase( float phase )
