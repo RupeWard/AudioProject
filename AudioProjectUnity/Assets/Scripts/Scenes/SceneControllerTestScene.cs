@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+
 using RJWS.UI.Scrollable;
+using RJWS.Core.DebugDescribable;
 
 public class SceneControllerTestScene : SceneController_Base
 {
 	public RectTransform canvasRT;
 	public RectTransform permanentButtonsRT;
+
+	public NewPeriodicWaveFormOverlay newPeriodicWaveFormOverlay;
 	
 	override public SceneManager.EScene Scene( )
 	{
@@ -20,6 +24,7 @@ public class SceneControllerTestScene : SceneController_Base
 	protected override void PostStart( )
 	{
 		RefreshScrollablePanel( );
+		newPeriodicWaveFormOverlay.Close( );
 	}
 
 	private void RefreshScrollablePanel()
@@ -28,7 +33,7 @@ public class SceneControllerTestScene : SceneController_Base
 		{
 			GameObject.Destroy( _scrollablePanel.gameObject );
 		}
-		GameObject graphPanelPrefab = Resources.Load<GameObject>( "UI/Prefabs/ScrollablePanel" );
+		GameObject graphPanelPrefab = Resources.Load<GameObject>( "Prefabs/UI/ScrollablePanel" );
 
 		_scrollablePanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent<ScrollablePanel>( );
 		_scrollablePanel.cachedRT.SetParent( canvasRT );
@@ -59,6 +64,7 @@ public class SceneControllerTestScene : SceneController_Base
 
 	protected override void PostAwake( )
 	{
+		newPeriodicWaveFormOverlay.onOkButton += NewWaveformCreated;
 	}
 
 	public void QuitScene()
@@ -70,5 +76,21 @@ public class SceneControllerTestScene : SceneController_Base
 	public void HandleRefreshButton()
 	{
 		RefreshScrollablePanel( );
+	}
+
+	public void HandleNewWaveFormButton()
+	{
+		Debug.Log( "Press" );
+
+		newPeriodicWaveFormOverlay.Init( "WF" );
+
+	}
+
+	public void NewWaveformCreated( RJWS.Audio.PeriodicWaveFormGenerator wfg )
+	{
+		if (wfg != null)
+		{
+			Debug.Log( wfg.DebugDescribe( ) );
+		}
 	}
 }

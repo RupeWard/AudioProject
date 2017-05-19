@@ -66,7 +66,7 @@ namespace RJWS.UI.Scrollable
 			{
 				if (_scrollPrefab == null)
 				{
-					_scrollPrefab = Resources.Load<GameObject>( "UI/Prefabs/ScrollBarPanel" );
+					_scrollPrefab = Resources.Load<GameObject>( "Prefabs/UI/ScrollBarPanel" );
 				}
 				GameObject go = GameObject.Instantiate( _scrollPrefab );
 				result = go.GetComponent<ScrollableScrollBarPanel>( );

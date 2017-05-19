@@ -37,7 +37,7 @@ namespace RJWS.UI.Scrollable
 		public void Init( ScrollableScrollBarPanel sbp)
 		{
 			scrollBarPanel = sbp;
-			GameObject endPrefab = Resources.Load<GameObject>( "UI/Prefabs/ScrollBarEnd" );
+			GameObject endPrefab = Resources.Load<GameObject>( "Prefabs/UI/ScrollBarEnd" );
 
 			Vector2 size = scrollBarPanel.cachedRT.sizeDelta;
 			size.y -= 10f;
@@ -59,7 +59,7 @@ namespace RJWS.UI.Scrollable
 			_ends[ELowHigh.Low].otherEnd = _ends[ELowHigh.High];
 			_ends[ELowHigh.High].otherEnd = _ends[ELowHigh.Low];
 
-			GameObject middlePrefab = Resources.Load<GameObject>( "UI/Prefabs/ScrollBarMiddle" );
+			GameObject middlePrefab = Resources.Load<GameObject>( "Prefabs/UI/ScrollBarMiddle" );
 			GameObject mgo = GameObject.Instantiate( middlePrefab );
 			_middle = mgo.GetComponent<ScrollableScrollBarMiddle>( );
 			_middle.Init( this );
