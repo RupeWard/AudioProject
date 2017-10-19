@@ -157,7 +157,7 @@ namespace RJWS.UI.Scrollable
 
 		public void HandleClick()
 		{
-			Debug.Log( "SBE "+Time.time + " Click on " + transform.GetPathInHierarchy( ) );
+//			Debug.Log( "SBE "+Time.time + " Click on " + transform.GetPathInHierarchy( ) );
 			if (!objectGrabber.isActivated)
 			{
 				if (ObjectGrabManager.Instance.HandleGrabRequest( objectGrabber ))

@@ -87,7 +87,7 @@ namespace RJWS.UI
 
 		public void CancelCurrentGrab()
 		{
-			Debug.Log( "CancelGrab" );
+//			Debug.Log( "CancelGrab" );
 			if (_currentGrab != null)
 			{
 				_currentGrab.Deactivate( );

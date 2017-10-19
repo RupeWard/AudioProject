@@ -83,7 +83,7 @@ public class SceneControllerTestScene : SceneController_Base
 
 	public void HandleNewWaveFormButton()
 	{
-		Debug.Log( "Press" );
+//		Debug.Log( "Press" );
 
 		newPeriodicWaveFormOverlay.Init( "WF" );
 

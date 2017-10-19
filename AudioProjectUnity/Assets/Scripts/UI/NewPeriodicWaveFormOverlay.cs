@@ -18,7 +18,7 @@ public class NewPeriodicWaveFormOverlay : MonoBehaviour
 
 	public void Init(string wfName)
 	{
-		Debug.Log( "Init" );
+//		Debug.Log( "Init" );
 
 		gameObject.SetActive( true );
 
