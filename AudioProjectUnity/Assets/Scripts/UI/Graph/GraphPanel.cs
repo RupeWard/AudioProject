@@ -6,6 +6,28 @@ using RJWS.Core.Extensions;
 
 public class GraphPanel : MonoBehaviour
 {
+	private GameObject _graphPointDisplayPrefab_BACKING = null;
+    private GameObject _graphPointDisplayPrefab
+	{
+		get
+		{
+			if (_graphPointDisplayPrefab_BACKING == null)
+			{
+				_graphPointDisplayPrefab_BACKING = Resources.Load<GameObject>( "Prefabs/Graph/GraphPoint" );
+			}
+			return _graphPointDisplayPrefab_BACKING;
+		}
+	}
+
+	private GraphPointDisplay CreateGraphPoint()
+	{
+		GraphPointDisplay newGpd = (GameObject.Instantiate( _graphPointDisplayPrefab )).GetComponent<GraphPointDisplay>( );
+		newGpd.cachedRT.SetParent( pointsContainer );
+		newGpd.cachedRT.anchoredPosition = Vector2.zero;
+		newGpd.cachedTransform.localScale = Vector3.one;		
+		return newGpd;
+	}
+
 	public RectTransform cachedRT
 	{
 		get;
@@ -163,4 +185,34 @@ public class GraphPanel : MonoBehaviour
 		return GetYLocationLerp( y.x, y.y, fraction );
 	}
 
+	private HashSet<GraphPointDisplay> _graphPointDisplays = new HashSet<GraphPointDisplay>( );
+	 
+	private RJWS.Grph.Graph _graph;
+	public void DisplayGraph( RJWS.Grph.Graph graph )
+	{
+		ClearGraph( );
+
+		_graph = graph;
+		foreach (RJWS.Grph.GraphPoint gpt in graph.points)
+		{
+			AddGraphPoint( gpt );
+		}
+	}
+
+	private void AddGraphPoint(RJWS.Grph.GraphPoint graphPoint)
+	{
+		GraphPointDisplay newDisplay = CreateGraphPoint( );
+		newDisplay.Init( this, graphPoint );
+
+		_graphPointDisplays.Add( newDisplay );
+	}
+
+	private void ClearGraph()
+	{
+		// TODO
+		foreach( GraphPointDisplay gpd in _graphPointDisplays)
+		{
+			GameObject.Destroy( gpd.gameObject );
+		}
+	}
 }

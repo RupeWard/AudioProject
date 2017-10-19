@@ -3,29 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using RJWS.Core.DebugDescribable;
+using System;
 
 namespace RJWS.Audio
 {
-	abstract public class AbstractWaveFormGenerator: IDebugDescribable 
+	abstract public class AbstractWaveFormGenerator: Grph.AbstractGraphGenerator
 	{
-		public string Name
-		{
-			get;
-			private set;
-		}
-
 		protected AbstractWaveFormGenerator(string n)
+			:base( n )
 		{
-			Name = n;
 		}
-
-		abstract public Vector2 GetValueRange( );
 
 		abstract public float GetValueForTimeSecs( float seconds);
 
+		public override float GetYForX( float x )
+		{
+			return GetValueForTimeSecs( x );
+		}
+
 		abstract protected void DebugDescribeDetails( System.Text.StringBuilder sb );
 
-		public void DebugDescribe(System.Text.StringBuilder sb)
+		public override void DebugDescribe( System.Text.StringBuilder sb )
 		{
 			sb.Append( "[WF " );
 			DebugDescribeDetails( sb );

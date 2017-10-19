@@ -102,6 +102,9 @@ public class SceneControllerTestScene : SceneController_Base
 			_graphPanel.xRange = new Vector2( 0f, wfg.waveLengthSecs );
 			_graphPanel.yRange = wfg.GetValueRange( );
 			_graphPanel.DrawDefaultAxes( );
+
+			RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( wfg, _graphPanel.xRange, 20 );
+			_graphPanel.DisplayGraph( newGraph );
 		}
 	}
 }
