@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace RJWS.Grph
+using RJWS.Core.DebugDescribable;
+
+namespace RJWS.Grph 
 {
 	[System.Serializable]
-	public class GraphPoint
+	public class GraphPoint : IDebugDescribable
 	{
 		[SerializeField]
 		private Vector2 _position;
@@ -64,6 +66,13 @@ namespace RJWS.Grph
 			_position.x = x;
 			_position.y = gen.GetYForX( x );
 		}
+
+		public void DebugDescribe(System.Text.StringBuilder sb)
+		{
+			sb.Append( "[GP: " ).Append( _position.x ).Append(", ").Append(_position.y ).Append( "]" );
+		}
+
+		#region comparers
 
 		public class ComparerX : IComparer<GraphPoint>
 		{
@@ -221,6 +230,7 @@ namespace RJWS.Grph
 			}
 		}
 
+		#endregion comparers
 	}
 
 

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GraphPointDisplay: MonoBehaviour
+using RJWS.Core.DebugDescribable;
+
+public class GraphPointDisplay: MonoBehaviour, IDebugDescribable
 {
 	private GraphPanel _graphPanel;
 
@@ -77,6 +79,22 @@ public class GraphPointDisplay: MonoBehaviour
 	{
 		_graphPoint.onPtchanged -= HandleGraphPointChanged;
 	}
+
+	public void DebugDescribe( System.Text.StringBuilder sb )
+	{
+		sb.Append( "[" );
+		_graphPoint.DebugDescribe( sb );
+		sb.Append( "]" );
+	}
+
+#if UNITY_EDITOR
+	[ContextMenu( "DebugDescribe" )]
+	private void DebugDescribeMenuItem( )
+	{
+		Debug.Log( this.DebugDescribe( ) );
+	}
+#endif
+
 
 	private void HandleGraphPointChanged( RJWS.Grph.GraphPoint gpt)
 	{

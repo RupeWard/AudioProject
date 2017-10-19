@@ -25,12 +25,12 @@ namespace RJWS.Audio
 
 		override public float GetValueForPhase( float phase )
 		{
-			return _amplitude * Mathf.Sin( phase * 2f * TwoPi );
+			return _amplitude * Mathf.Sin( phase * TwoPi );
 		}
 
 		override protected void DebugDescribeDetails( System.Text.StringBuilder sb )
 		{
-			sb.Append( "Sine, f=" ).Append( 1f / _wavelengthSecs ).Append( " a=" ).Append( _amplitude );
+			sb.Append( "Sine, w=").Append(_wavelengthSecs).Append("s, f=" ).Append( 1f / _wavelengthSecs ).Append( " a=" ).Append( _amplitude );
 		}
 
 	}
