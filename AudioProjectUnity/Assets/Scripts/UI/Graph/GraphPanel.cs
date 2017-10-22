@@ -143,6 +143,12 @@ public class GraphPanel : MonoBehaviour
 
 	public void DrawDefaultAxes()
 	{
+		foreach (GraphAxis ga in _axes)
+		{
+			GameObject.Destroy( ga.gameObject );
+		}
+		_axes.Clear( );
+
 		AxisDefn xDefn = new AxisDefn( );
 		xDefn.axisName = "XAxis";
 
@@ -255,9 +261,11 @@ public class GraphPanel : MonoBehaviour
 		{
 			GameObject.Destroy( gpd.gameObject );
 		}
+		_graphPointDisplays.Clear( );
 		foreach (GraphLineDisplay gpd in _graphLineDisplays)
 		{
 			GameObject.Destroy( gpd.gameObject );
 		}
+		_graphLineDisplays.Clear( );
 	}
 }

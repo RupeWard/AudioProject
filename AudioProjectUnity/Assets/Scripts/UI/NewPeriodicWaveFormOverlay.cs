@@ -7,14 +7,16 @@ public class NewPeriodicWaveFormOverlay : MonoBehaviour
 {
 	public InputField frequencyInputField;
 	public InputField amplitudeInputField;
+	public InputField periodInputField;
 	public InputField nameInputField;
 	public Dropdown typeDropDown;
 
 	public System.Action onCancelButton;
-	public System.Action< RJWS.Audio.PeriodicWaveFormGenerator > onOkButton;
+	public System.Action< RJWS.Audio.PeriodicWaveFormGenerator, int > onOkButton;
 
 	private float _frequencyHz = 440f;
 	private float _amplitude = 1f;
+	private int _numPeriods = 1;
 
 	public void Init(string wfName)
 	{
@@ -25,11 +27,30 @@ public class NewPeriodicWaveFormOverlay : MonoBehaviour
 		nameInputField.text = wfName;
 		SetFrequencyInputField( );
 		SetAmplitudeInputField( );
+		SetPeriodsInputField( );
 	}
 
 	public void Close()
 	{
 		gameObject.SetActive( false );
+	}
+
+	private void SetPeriodsInputField( )
+	{
+		periodInputField.text = _numPeriods.ToString( );
+	}
+
+	public void OnPeriodsInputFieldEndEdit( string s )
+	{
+		int i;
+		if (int.TryParse( periodInputField.text, out i ))
+		{
+			if (i > 0)
+			{
+				_numPeriods = i;
+			}
+		}
+		SetPeriodsInputField( );
 	}
 
 	private void SetFrequencyInputField()
@@ -104,7 +125,7 @@ public class NewPeriodicWaveFormOverlay : MonoBehaviour
 		}
 		if (onOkButton != null)
 		{
-			onOkButton( newGenerator );
+			onOkButton( newGenerator, _numPeriods );
 		}
 		Close( );
 	}

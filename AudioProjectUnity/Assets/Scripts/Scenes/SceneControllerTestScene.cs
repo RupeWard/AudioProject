@@ -89,7 +89,9 @@ public class SceneControllerTestScene : SceneController_Base
 
 	}
 
-	public void NewWaveformCreated( RJWS.Audio.PeriodicWaveFormGenerator wfg )
+	public int nPerWavelength = 32;
+
+	public void NewWaveformCreated( RJWS.Audio.PeriodicWaveFormGenerator wfg, int numPeriods )
 	{
 		if (wfg != null)
 		{
@@ -99,14 +101,15 @@ public class SceneControllerTestScene : SceneController_Base
 		{
 			_graphPanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent< GraphPanel>();
 			_graphPanel.Init( _scrollablePanel);
-			_graphPanel.xRange = new Vector2( 0f, wfg.waveLengthSecs );
-			Vector2 yRange = wfg.GetValueRange( );
-			yRange.x = yRange.x - 0.1f * yRange.magnitude;
-			yRange.y = yRange.y + 0.1f * yRange.magnitude;
-			_graphPanel.yRange = yRange;
-			_graphPanel.DrawDefaultAxes( );
 		}
-		RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( wfg, _graphPanel.xRange, 32 );
+		_graphPanel.xRange = new Vector2( 0f, wfg.waveLengthSecs * numPeriods );
+		Vector2 yRange = wfg.GetValueRange( );
+		yRange.x = yRange.x - 0.1f * yRange.magnitude;
+		yRange.y = yRange.y + 0.1f * yRange.magnitude;
+		_graphPanel.yRange = yRange;
+		_graphPanel.DrawDefaultAxes( );
+
+		RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( wfg, _graphPanel.xRange, numPeriods* nPerWavelength +1 );
 		_graphPanel.DisplayGraph( newGraph );
 	}
 }

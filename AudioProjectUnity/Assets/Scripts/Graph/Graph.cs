@@ -58,6 +58,7 @@ namespace RJWS.Grph
 		{
 			float currentX = xRange.x;
 			AddPoint( currentX );
+
 			for (int i = 1; i < (numPoints-1); i++)
 			{
 				currentX = Mathf.Lerp( xRange.x, xRange.y, (float)i / (numPoints - 1));
