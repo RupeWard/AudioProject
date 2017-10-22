@@ -63,8 +63,18 @@ namespace RJWS.Grph
 
 		public GraphPoint( float x, AbstractGraphGenerator gen)
 		{
+			InitPos(x, gen.GetYForX( x ));
+		}
+
+		public GraphPoint( float x, float y)
+		{
+			InitPos( x, y );
+		}
+
+		private void InitPos(float x, float y)
+		{
 			_position.x = x;
-			_position.y = gen.GetYForX( x );
+			_position.y = y;
 		}
 
 		public void DebugDescribe(System.Text.StringBuilder sb)

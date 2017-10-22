@@ -14,6 +14,8 @@ public class SceneControllerTestScene : SceneController_Base
 	private GraphPanel _graphPanel;
 	public GameObject graphPanelPrefab;
 
+	public AudioClip testAudioClip;
+
 	override public SceneManager.EScene Scene( )
 	{
 		return SceneManager.EScene.TestScene;
@@ -86,6 +88,54 @@ public class SceneControllerTestScene : SceneController_Base
 //		Debug.Log( "Press" );
 
 		newPeriodicWaveFormOverlay.Init( "WF" );
+
+	}
+
+	public void HandleLoadWaveformButton()
+	{
+		float lengthSecs = testAudioClip.length;
+
+		int nSamples = Mathf.FloorToInt( testAudioClip.frequency * lengthSecs);
+
+		float[] buffer = new float[nSamples];
+
+		if (testAudioClip.GetData( buffer, 0 ))
+		{
+			Vector2 yRange = new Vector2( float.MaxValue, float.MinValue );
+
+			for (int i = 0; i < buffer.Length; i++)
+			{
+				if (buffer[i] < yRange.x)
+				{
+					yRange.x = buffer[i];
+				}
+				if (buffer[i] > yRange.y)
+				{
+					yRange.y = buffer[i];
+				}
+			}
+
+			Debug.Log( "Got " + nSamples + " samples" );
+
+			if (_graphPanel == null)
+			{
+				_graphPanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent<GraphPanel>( );
+				_graphPanel.Init( _scrollablePanel );
+			}
+			_graphPanel.xRange = new Vector2( 0f, testAudioClip.length );
+			yRange.x = yRange.x - 0.1f * yRange.magnitude;
+			yRange.y = yRange.y + 0.1f * yRange.magnitude;
+			_graphPanel.yRange = yRange;
+			_graphPanel.DrawDefaultAxes( );
+
+			RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( buffer, _graphPanel.xRange);
+			_graphPanel.DisplayGraph( newGraph );
+		}
+		else
+		{
+			Debug.LogError( "Failed to get " + nSamples + " samples" );
+		}
+
 
 	}
 

@@ -46,7 +46,44 @@ namespace RJWS.Grph
 			return success;
 		}
 
-		
+		private bool AddPoint( float x, float y )
+		{
+			bool success = false;
+
+			GraphPoint pt = new GraphPoint( x, y );
+			for (int index = 0; index < points.Count; index++)
+			{
+				if (Mathf.Approximately( x, points[index].x ))
+				{
+					Debug.LogWarning( "Already have a point with x = " + x );
+					return false;
+				}
+				if (points[index].x > x)
+				{
+					// insert here
+					points.Insert( index, pt );
+					success = true;
+				}
+			}
+			if (!success)
+			{
+				points.Add( pt );
+				success = true;
+			}
+			return success;
+		}
+
+		public Graph ( float[] data, Vector2 xRange)
+		{
+			points = new List<GraphPoint>( );
+			
+			for (int i = 0; i < data.Length; i++)
+			{
+				float currentX = Mathf.Lerp( xRange.x, xRange.y, (float)i/(data.Length-1));
+				AddPoint( currentX, data[i] );
+			}
+		}
+
 		public Graph( AbstractGraphGenerator gen, Vector2 xRange, int numPoints )
 		{
 			points = new List<GraphPoint>( );
