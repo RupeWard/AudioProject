@@ -12,6 +12,8 @@ public class GraphPointDisplay: MonoBehaviour, IDebugDescribable
 
 	public System.Action onSetDirty;
 
+	public RJWS.UI.ObjectGrabber objectGrabber;
+
 	private RectTransform _cachedRT;
 	public RectTransform cachedRT
 	{
@@ -76,8 +78,63 @@ public class GraphPointDisplay: MonoBehaviour, IDebugDescribable
 		_graphPanel = panel;
 		_graphPoint = gpt;
 
+		objectGrabber.onMovementAction += HandleMovement;
+		objectGrabber.onXMovementAction += HandleXMovement;
+		objectGrabber.onYMovementAction += HandleYMovement;
+		objectGrabber.onDoubleClickAction += HandleGrabberDoubleClick;
+		objectGrabber.onActivateAction += HandleGrabberActivated;
+
 		RegisterListeners( );
 		UpdateDisplay( );
+	}
+
+	public void HandleClick( )
+	{
+		//			Debug.Log( "SBE "+Time.time + " Click on " + transform.GetPathInHierarchy( ) );
+		if (!objectGrabber.isActivated)
+		{
+			if (RJWS.UI.ObjectGrabManager.Instance.HandleGrabRequest( objectGrabber ))
+			{
+				Debug.Log( "Grabbed " + this.DebugDescribe( ) );
+			}
+		}
+	}
+
+	public void HandleMovement( Vector2 v)
+	{
+		Debug.Log( "Move point " + v + this.DebugDescribe( ) );
+	}
+
+	public void HandleXMovement( float delta )
+	{
+		Debug.Log( "Move X point " + delta + this.DebugDescribe( ) );
+	}
+
+	public void HandleYMovement( float delta )
+	{
+		Debug.Log( "Move Y point "+delta + this.DebugDescribe( ) );
+	}
+
+	public void HandleGrabberClick( )
+	{
+		Debug.Log( "Clicked point " + this.DebugDescribe( ) );
+	}
+
+	public void HandleGrabberDoubleClick( )
+	{
+		Debug.Log( "Double Clicked point " + this.DebugDescribe( ) );
+	}
+
+	public void HandleGrabberActivated( bool b)
+	{
+		if (b)
+		{
+			Debug.Log( "Activated point " + this.DebugDescribe( ) );
+		}
+		else
+		{
+			Debug.Log( "Dectivated point " + this.DebugDescribe( ) );
+		}
 	}
 
 	private void OnDestroy()

@@ -44,7 +44,7 @@ public class GraphPanel : MonoBehaviour
 	private GraphLineDisplay CreateGraphLine()
 	{
 		GraphLineDisplay newGpd = (GameObject.Instantiate( _graphLineDisplayPrefab )).GetComponent<GraphLineDisplay>( );
-		newGpd.cachedRT.SetParent( pointsContainer );
+		newGpd.cachedRT.SetParent( linesContainer );
 		newGpd.cachedRT.anchoredPosition = Vector2.zero;
 		newGpd.cachedTransform.localScale = Vector3.one;		
 		return newGpd;
