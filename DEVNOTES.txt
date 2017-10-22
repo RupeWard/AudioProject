@@ -1,0 +1,7 @@
+
+Add connecting lines
+Point to handle Zoom etc
+Add grabber to point
+
+Add numperiods option to creator
+

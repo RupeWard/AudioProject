@@ -19,9 +19,31 @@ public class GraphPanel : MonoBehaviour
 		}
 	}
 
-	private GraphPointDisplay CreateGraphPoint()
+	private GraphPointDisplay CreateGraphPoint( )
 	{
 		GraphPointDisplay newGpd = (GameObject.Instantiate( _graphPointDisplayPrefab )).GetComponent<GraphPointDisplay>( );
+		newGpd.cachedRT.SetParent( pointsContainer );
+		newGpd.cachedRT.anchoredPosition = Vector2.zero;
+		newGpd.cachedTransform.localScale = Vector3.one;
+		return newGpd;
+	}
+
+	private GameObject _graphLineDisplayPrefab_BACKING = null;
+	private GameObject _graphLineDisplayPrefab
+	{
+		get
+		{
+			if (_graphLineDisplayPrefab_BACKING == null)
+			{
+				_graphLineDisplayPrefab_BACKING = Resources.Load<GameObject>( "Prefabs/Graph/GraphLine" );
+			}
+			return _graphLineDisplayPrefab_BACKING;
+		}
+	}
+
+	private GraphLineDisplay CreateGraphLine()
+	{
+		GraphLineDisplay newGpd = (GameObject.Instantiate( _graphLineDisplayPrefab )).GetComponent<GraphLineDisplay>( );
 		newGpd.cachedRT.SetParent( pointsContainer );
 		newGpd.cachedRT.anchoredPosition = Vector2.zero;
 		newGpd.cachedTransform.localScale = Vector3.one;		
@@ -50,6 +72,7 @@ public class GraphPanel : MonoBehaviour
 	}
 
 	public RectTransform axesContainer;
+	public RectTransform linesContainer;
 	public RectTransform pointsContainer;
 
 	public GameObject axisPrefab;
@@ -186,31 +209,53 @@ public class GraphPanel : MonoBehaviour
 	}
 
 	private HashSet<GraphPointDisplay> _graphPointDisplays = new HashSet<GraphPointDisplay>( );
-	 
+	private HashSet<GraphLineDisplay> _graphLineDisplays = new HashSet<GraphLineDisplay>( );
+
 	private RJWS.Grph.Graph _graph;
 	public void DisplayGraph( RJWS.Grph.Graph graph )
 	{
 		ClearGraph( );
 
 		_graph = graph;
+
+		GraphPointDisplay previousPt = null;
 		foreach (RJWS.Grph.GraphPoint gpt in graph.points)
 		{
-			AddGraphPoint( gpt );
+			GraphPointDisplay newPt = AddGraphPoint( gpt );
+			AddGraphLine( previousPt, newPt );
+			previousPt = newPt;
 		}
 	}
 
-	private void AddGraphPoint(RJWS.Grph.GraphPoint graphPoint)
+	private GraphLineDisplay AddGraphLine( GraphPointDisplay gpd0, GraphPointDisplay gpd1)
+	{
+		GraphLineDisplay newLine = null;
+        if (gpd0 != null)
+		{
+			newLine = CreateGraphLine( );
+			newLine.Init( this, gpd0, gpd1 );
+			_graphLineDisplays.Add( newLine );
+		}
+		return newLine;
+	}
+
+	private GraphPointDisplay AddGraphPoint( RJWS.Grph.GraphPoint graphPoint)
 	{
 		GraphPointDisplay newDisplay = CreateGraphPoint( );
 		newDisplay.Init( this, graphPoint );
 
 		_graphPointDisplays.Add( newDisplay );
+		return newDisplay;
 	}
 
 	private void ClearGraph()
 	{
 		// TODO
 		foreach( GraphPointDisplay gpd in _graphPointDisplays)
+		{
+			GameObject.Destroy( gpd.gameObject );
+		}
+		foreach (GraphLineDisplay gpd in _graphLineDisplays)
 		{
 			GameObject.Destroy( gpd.gameObject );
 		}

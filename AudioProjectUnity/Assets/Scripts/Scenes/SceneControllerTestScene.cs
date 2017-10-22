@@ -100,11 +100,13 @@ public class SceneControllerTestScene : SceneController_Base
 			_graphPanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent< GraphPanel>();
 			_graphPanel.Init( _scrollablePanel);
 			_graphPanel.xRange = new Vector2( 0f, wfg.waveLengthSecs );
-			_graphPanel.yRange = wfg.GetValueRange( );
+			Vector2 yRange = wfg.GetValueRange( );
+			yRange.x = yRange.x - 0.1f * yRange.magnitude;
+			yRange.y = yRange.y + 0.1f * yRange.magnitude;
+			_graphPanel.yRange = yRange;
 			_graphPanel.DrawDefaultAxes( );
-
-			RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( wfg, _graphPanel.xRange, 20 );
-			_graphPanel.DisplayGraph( newGraph );
 		}
+		RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( wfg, _graphPanel.xRange, 32 );
+		_graphPanel.DisplayGraph( newGraph );
 	}
 }

@@ -19,21 +19,34 @@ namespace RJWS.Grph
 			points.Sort( GraphPoint.ComparerX.up );
 		}
 
-		private void AddPoint(float x, bool andSort = false)
+		private bool AddPoint(float x)
 		{
+			bool success = false;
+
 			GraphPoint pt = new GraphPoint( x, _generator );
-			points.Add( pt );
-			if (andSort)
+			for (int index = 0; index < points.Count; index++)
 			{
-				SortPoints( );
+				if (Mathf.Approximately(x, points[index].x))
+				{
+					Debug.LogWarning( "Already have a point with x = " + x );
+					return false;
+				}
+				if (points[index].x > x )
+				{
+					// insert here
+					points.Insert( index, pt );
+					success = true;
+				}
 			}
+			if (!success)
+			{
+				points.Add( pt );
+				success = true;
+			}
+			return success;
 		}
 
-		private void AddPointAndSort( float x)
-		{
-			AddPoint( x, true );
-		}
-
+		
 		public Graph( AbstractGraphGenerator gen, Vector2 xRange, int numPoints )
 		{
 			points = new List<GraphPoint>( );
