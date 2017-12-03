@@ -1,7 +1,10 @@
 
-Add connecting lines
 Point to handle Zoom etc
 Add grabber to point
 
-Add numperiods option to creator
+Turn points off when too many
+Point/line to know when offscreen
 
+Basic audio
+
+Modify/save/load 

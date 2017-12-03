@@ -78,6 +78,8 @@ public class GraphPointDisplay: MonoBehaviour, IDebugDescribable
 		_graphPanel = panel;
 		_graphPoint = gpt;
 
+		cachedRT.sizeDelta = GraphDisplayManager.Instance.pointSize * Vector2.one;
+
 		objectGrabber.onMovementAction += HandleMovement;
 		objectGrabber.onXMovementAction += HandleXMovement;
 		objectGrabber.onYMovementAction += HandleYMovement;
