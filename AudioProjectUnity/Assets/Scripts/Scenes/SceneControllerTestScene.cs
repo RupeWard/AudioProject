@@ -115,7 +115,6 @@ public class SceneControllerTestScene : SceneController_Base
 				}
 			}
 
-			Debug.Log( "Got " + nSamples + " samples" );
 
 			if (_graphPanel == null)
 			{
@@ -127,6 +126,8 @@ public class SceneControllerTestScene : SceneController_Base
 			yRange.y = yRange.y + 0.1f * yRange.magnitude;
 			_graphPanel.yRange = yRange;
 			_graphPanel.DrawDefaultAxes( );
+
+			Debug.Log( "Got " + nSamples + " samples with xrange = " + _graphPanel.xRange + ", yrange = " + yRange );
 
 			RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( buffer, _graphPanel.xRange);
 			_graphPanel.DisplayGraph( newGraph );
