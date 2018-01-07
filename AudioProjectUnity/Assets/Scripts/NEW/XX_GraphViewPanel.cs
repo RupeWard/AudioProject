@@ -112,11 +112,11 @@ public class XX_GraphViewPanel : MonoBehaviour
 		{
 			if (DEBUG_LOCAL)
 			{
-				debugsb.Append( "\n- scale dirty = " + displayScale );
+				debugsb.Append( "\n- scale dirty = " + displayScaleReadonly );
 			}
 			for (int i = 0; i < numPoints; i++)
 			{
-				_graphPtDisplays[i].HandleScaling( displayScale );
+				_graphPtDisplays[i].HandleScaling( displayScaleReadonly );
 			}
 			_displayScaleDirty = false;
 		}
@@ -124,7 +124,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 		{
 			if (DEBUG_LOCAL)
 			{
-				debugsb.Append( "\n- pos dirty = " + displayPos+", first/last = "+firstX+" / "+lastX );
+				debugsb.Append( "\n- pos dirty = " + displayPosReadonly+", first/last = "+firstX+" / "+lastX );
 			}
 			float xstep = (lastX- firstX) / (numPoints - 1);
 			if (DEBUG_LOCAL)
@@ -176,7 +176,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 		cachedRT = GetComponent<RectTransform>( );
 	}
 
-	public Vector2 displayScale
+	public Vector2 displayScaleReadonly // TODO refactor
 	{
 		get
 		{
@@ -184,7 +184,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 		}
 	}
 
-	public Vector2 displayPos
+	public Vector2 displayPosReadonly // TODO refactor
 	{
 		get
 		{
@@ -225,7 +225,6 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 		scrollablePanel.scrollablePanelView.onScaleChangeAction += HandleDisplayScaleChanged;
 		scrollablePanel.scrollablePanelView.onPosChangeAction += HandleDisplayPosChanged;
-		//		scrollablePanel.scrollablePanelView.onViewChangeAction += HandleDisplayViewChanged;
 	}
 
 	private bool _displayScaleDirty= false;
@@ -267,6 +266,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 			scrollBarScale[dirn] = scaleFraction;
 			_displayScale[dirn] = 1f / scaleFraction;
 			_displayScaleDirty = true;
+			_displayPosDirty = true;
 		}
 	}
 
