@@ -6,10 +6,18 @@ using RJWS.Core.Extensions;
 
 public class XX_GraphViewPanel : MonoBehaviour
 {
-	private bool _isDirty = false;
 	public void SetDirty( )
 	{
-		_isDirty = true;
+		_displayPosDirty = true;
+		_displayScaleDirty = true;
+	}
+
+	public bool IsDirty
+	{
+		get
+		{
+			return _displayScaleDirty || _displayPosDirty;
+		}
 	}
 
 	public GameObject graphPointPrefab;
@@ -80,36 +88,82 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	private void LateUpdate( )
 	{
-		if (_isDirty || _displayScaleDirty)
+		if (!IsDirty)
+			return;
+
+		if (DEBUG_LOCAL)
 		{
-			float xstep = (xRange.y - xRange.x) / (numPoints - 1);
+			debugsb.Length = 0;
+			debugsb.Append( "Updated GraphPoints:" );
+			if (_displayPosDirty)
+			{
+				debugsb.Append( " Pos" );
+			}
+			if (_displayScaleDirty)
+			{
+				debugsb.Append( " Scl" );
+			}
+			debugsb.Append( ", xRange = (" + xRange.x + ", " + xRange.y + "), yRange = " + yRange + ", N = " + numPoints );
+		}
+
+		RecalculatePos( );
+
+		if (_displayScaleDirty)
+		{
 			if (DEBUG_LOCAL)
 			{
-				debugsb.Length = 0;
-				debugsb.Append( "Positioning GraphPoints. xRange = (" + xRange.x+", "+xRange.y + "), yRange = " + yRange + ", N = " + numPoints + ", xstep = " + xstep );
-				if (_displayScaleDirty)
-				{
-					debugsb.Append( "\n - displayscale = " + _displayScale );
-				}
+				debugsb.Append( "\n- scale dirty = " + displayScale );
 			}
 			for (int i = 0; i < numPoints; i++)
 			{
-				float x = xRange.x + xstep * i;
+				_graphPtDisplays[i].HandleScaling( displayScale );
+			}
+			_displayScaleDirty = false;
+		}
+		if (_displayPosDirty)
+		{
+			if (DEBUG_LOCAL)
+			{
+				debugsb.Append( "\n- pos dirty = " + displayPos+", first/last = "+firstX+" / "+lastX );
+			}
+			float xstep = (lastX- firstX) / (numPoints - 1);
+			if (DEBUG_LOCAL)
+			{
+				debugsb.Append( "\n- xstep = " + xstep );
+			}
+			for (int i = 0; i < numPoints; i++)
+			{
+				float x = firstX + xstep * i;
 				float y = _graphGenerator.GetYForX( x );
 				_graphPtDisplays[i].Value = new Vector2( x,y);
-				if (_displayScaleDirty)
-				{
-					_graphPtDisplays[i].HandleScaling( _displayScale );
-				}
 			}
-			_isDirty = false;
-			_displayScaleDirty = false;
-			if (DEBUG_LOCAL)
+			_displayPosDirty = false;
+		}
+		if (DEBUG_LOCAL)
+		{
+			if (debugsb.Length > 0)
 			{
 				Debug.Log( debugsb.ToString( ) );
 			}
 		}
 	}
+
+	public float firstX
+	{
+		get
+		{
+			return xRange.x + _displayPos[RJWS.EOrthoDirection.Horizontal] * (xRange.y - xRange.x);
+		}
+	}
+
+	public float lastX
+	{
+		get
+		{
+			return firstX + _displayScale[RJWS.EOrthoDirection.Horizontal] * (xRange.y - xRange.x);
+		}
+	}
+
 
 	public RectTransform cachedRT
 	{
@@ -122,13 +176,19 @@ public class XX_GraphViewPanel : MonoBehaviour
 		cachedRT = GetComponent<RectTransform>( );
 	}
 
-	private Vector2 _displayScale = Vector2.one;
-
 	public Vector2 displayScale
 	{
 		get
 		{
-			return _displayScale;
+			return new Vector2(_displayScale[RJWS.EOrthoDirection.Horizontal], _displayScale[RJWS.EOrthoDirection.Vertical]);
+		}
+	}
+
+	public Vector2 displayPos
+	{
+		get
+		{
+			return new Vector2( _displayPos[RJWS.EOrthoDirection.Horizontal], _displayPos[RJWS.EOrthoDirection.Vertical] );
 		}
 	}
 
@@ -158,45 +218,154 @@ public class XX_GraphViewPanel : MonoBehaviour
 	{
 		RectTransform parent = scrollablePanel.scrollablePanelView.contentPanelRT;
 		cachedRT.SetParent( parent.transform);
-		_displayScale.x = parent.transform.localScale.x;
-		_displayScale.y = parent.transform.localScale.y;
+		_displayScale[RJWS.EOrthoDirection.Horizontal] = parent.transform.localScale.x;
+		_displayScale[RJWS.EOrthoDirection.Vertical] = parent.transform.localScale.y;
 
 		cachedRT.sizeDelta = parent.sizeDelta;
 
 		scrollablePanel.scrollablePanelView.onScaleChangeAction += HandleDisplayScaleChanged;
-		scrollablePanel.scrollablePanelView.onViewChangeAction += HandleDisplayViewChanged;
+		scrollablePanel.scrollablePanelView.onPosChangeAction += HandleDisplayPosChanged;
+		//		scrollablePanel.scrollablePanelView.onViewChangeAction += HandleDisplayViewChanged;
 	}
 
 	private bool _displayScaleDirty= false;
 
+	private Dictionary<RJWS.EOrthoDirection, float> scrollBarPos = new Dictionary<RJWS.EOrthoDirection, float>( )
+	{
+		{ RJWS.EOrthoDirection.Horizontal, 0.5f },
+		{ RJWS.EOrthoDirection.Vertical, 0.5f }
+	};
+
+	private Dictionary<RJWS.EOrthoDirection, float> scrollBarScale = new Dictionary<RJWS.EOrthoDirection, float>( )
+	{
+		{ RJWS.EOrthoDirection.Horizontal, 1f },
+		{ RJWS.EOrthoDirection.Vertical, 1f }
+	};
+
+	private Dictionary<RJWS.EOrthoDirection, float> _displayPos = new Dictionary<RJWS.EOrthoDirection, float>( )
+	{
+		{ RJWS.EOrthoDirection.Horizontal, 0f },
+		{ RJWS.EOrthoDirection.Vertical, 0f }
+	};
+
+	private Dictionary<RJWS.EOrthoDirection, float> _displayScale = new Dictionary<RJWS.EOrthoDirection, float>( )
+	{
+		{ RJWS.EOrthoDirection.Horizontal, 1f },
+		{ RJWS.EOrthoDirection.Vertical, 1f }
+	};
+
 	public void HandleDisplayViewChanged( RJWS.EOrthoDirection dirn, float scaleFraction, float posFraction)
 	{
 		HandleDisplayScaleChanged( dirn, scaleFraction );
+		HandleDisplayPosChanged( dirn, posFraction);
 	}
 
+	public void HandleDisplayScaleChanged( RJWS.EOrthoDirection dirn, float scaleFraction)
+	{
+		if (scaleFraction != scrollBarScale[dirn])
+		{
+			scrollBarScale[dirn] = scaleFraction;
+			_displayScale[dirn] = 1f / scaleFraction;
+			_displayScaleDirty = true;
+		}
+	}
+
+	public void HandleDisplayPosChanged( RJWS.EOrthoDirection dirn, float posFraction )
+	{
+		if (posFraction != scrollBarPos[dirn])
+		{
+			scrollBarPos[dirn] = posFraction;
+			_displayScaleDirty = true;
+		}
+	}
+
+	private bool _displayPosDirty = false;
+
+	private List<RJWS.EOrthoDirection> _dirnEnums = new List<RJWS.EOrthoDirection>( )
+	{
+		RJWS.EOrthoDirection.Horizontal,
+		RJWS.EOrthoDirection.Vertical
+	};
+
+	public void RecalculatePos()
+	{
+		if (!IsDirty)
+		{
+			return;
+		}
+
+		foreach (RJWS.EOrthoDirection dirn in _dirnEnums)
+		{
+			float posFraction = scrollBarPos[dirn];
+			posFraction -= _displayScale[dirn] * 0.5f;
+			if (posFraction != _displayPos[dirn])
+			{
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "DisplayPos changed " + dirn + " " + posFraction + " from "
+						+ _displayPos[dirn] );
+
+					_displayPos[dirn] = posFraction;
+					_displayPosDirty = true;
+				}
+				else
+				{
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( "X DisplayPos " + dirn + " UNchanged : " + posFraction );
+					}
+				}
+
+			}
+		}
+	}
+
+	/*
 	public void HandleDisplayScaleChanged(RJWS.EOrthoDirection dirn, float scale)
 	{
-		if (DEBUG_LOCAL)
-		{
-			Debug.Log( "DisplayScaleChanged : " + dirn + ", " + scale );
-		}
+		scale = 1f / scale;
 		if (dirn == RJWS.EOrthoDirection.Horizontal)
 		{
 			if (scale != _displayScale.x)
 			{
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "DisplayScale changed : " + dirn + ", " + scale + " from "
+						+ _displayScale.x );
+				}
 				_displayScale.x = scale;
 				_displayScaleDirty = true;
+			}
+			else
+			{
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "X DisplayScale UNchanged : " + dirn + ", " + _displayScale.x );
+				}
 			}
 		}
 		else if (dirn == RJWS.EOrthoDirection.Vertical)
 		{
 			if (scale != _displayScale.y)
 			{
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "DisplayScale changed : " + dirn + ", " + scale + " from "
+						+ _displayScale.y );
+				}
 				_displayScale.y = scale;
 				_displayScaleDirty = true;
 			}
+			else
+			{
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "X DisplayScale UNchanged : " + dirn + ", " + _displayScale.y );
+				}
+			}
 		}
 	}
+	*/
 
 	public static float LerpFree( float from, float to, float fraction )
 	{

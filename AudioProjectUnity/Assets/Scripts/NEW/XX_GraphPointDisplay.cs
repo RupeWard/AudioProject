@@ -24,7 +24,7 @@ public class XX_GraphPointDisplay : MonoBehaviour
 			cachedRT.anchoredPosition = _graphViewPanel.GetLocation(_value);
 			if (DEBUG_LOCAL)
 			{
-				Debug.Log( gameObject.name + ": val = " + _value + ", pos = " + cachedRT.anchoredPosition );
+				Debug.Log( gameObject.name + ": val = (" + _value.x+","+_value.y + "), pos = " + cachedRT.anchoredPosition );
 			}
 		}
 	}

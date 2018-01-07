@@ -6,6 +6,8 @@ namespace RJWS.UI.Scrollable
 {
 	public class ScrollablePanelView : MonoBehaviour
 	{
+		static private readonly bool DEBUG_LOCAL = true;
+
 		public RectTransform contentPanelRT;
 
 		private Vector3 _baseScale = Vector3.one;
@@ -50,10 +52,16 @@ namespace RJWS.UI.Scrollable
 		}
 
 		public System.Action<EOrthoDirection, float> onScaleChangeAction;
+		public System.Action<EOrthoDirection, float> onPosChangeAction;
 		public System.Action<EOrthoDirection, float, float> onViewChangeAction;
+
 
 		public void HandleViewChange( EOrthoDirection direction, float sizeFraction, float posFraction )
 		{
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "SPV HandleViewChange: " + direction + " size = " + sizeFraction + ", pos = " + posFraction );
+			}
 			Vector3 scale = contentPanelRT.localScale;
 			Vector2 anchoredPos = contentPanelRT.anchoredPosition;
 			float relPosFraction = 0.5f - posFraction;
@@ -66,7 +74,16 @@ namespace RJWS.UI.Scrollable
 						{
 							onScaleChangeAction( EOrthoDirection.Horizontal, scale.x );
 						}
-						anchoredPos.x = scale.x * relPosFraction * contentPanelRT.sizeDelta.x;
+
+						float pos = scale.x * relPosFraction * contentPanelRT.sizeDelta.x;
+						if (!Mathf.Approximately(pos, anchoredPos.x ))
+						{
+							anchoredPos.x = pos;
+							if (onPosChangeAction != null)
+							{
+								onPosChangeAction( direction, posFraction );
+							}
+						}
 						break;
 					}
 				case EOrthoDirection.Vertical:
@@ -76,17 +93,21 @@ namespace RJWS.UI.Scrollable
 						{
 							onScaleChangeAction( EOrthoDirection.Vertical, scale.y );
 						}
-						anchoredPos.y = scale.y * relPosFraction * contentPanelRT.sizeDelta.y;
+						float pos = scale.y * relPosFraction * contentPanelRT.sizeDelta.y;
+						if (!Mathf.Approximately(pos, anchoredPos.y))
+						{
+							anchoredPos.y = pos;
+							if (onPosChangeAction != null)
+							{
+								onPosChangeAction( direction, posFraction );
+							}
+						}
 						break;
 					}
 			}
 
 			contentPanelRT.localScale = scale;
 			contentPanelRT.anchoredPosition = anchoredPos;
-			if (onViewChangeAction != null)
-			{
-				onViewChangeAction( direction, sizeFraction, posFraction );
-			}
 		}
 
 
