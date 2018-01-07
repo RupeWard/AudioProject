@@ -9,6 +9,7 @@ public class XX_GraphPointDisplay : MonoBehaviour
 	private XX_GraphViewPanel _graphViewPanel;
 
 	public UnityEngine.UI.Image image;
+	public float size = 1;
 
 	private Vector2 _value = Vector2.zero;
 	public Vector2 Value
@@ -73,4 +74,8 @@ public class XX_GraphPointDisplay : MonoBehaviour
 		gameObject.name = "Point_" + num.ToString( );
 	}
 
+	public void HandleScaling( Vector2 screenFraction )
+	{
+		image.transform.localScale = new Vector2( size * screenFraction.x, size * screenFraction.y );
+	}
 }

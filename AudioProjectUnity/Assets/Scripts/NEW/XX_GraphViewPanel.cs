@@ -76,22 +76,38 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	private static readonly bool DEBUG_LOCAL = true;
 
+	System.Text.StringBuilder debugsb = new System.Text.StringBuilder( );
+
 	private void LateUpdate( )
 	{
-		if (_isDirty)
+		if (_isDirty || _displayScaleDirty)
 		{
 			float xstep = (xRange.y - xRange.x) / (numPoints - 1);
 			if (DEBUG_LOCAL)
 			{
-				Debug.Log( "Positioning GraphPoints. xRange = (" + xRange.x+", "+xRange.y + "), yRange = " + yRange + ", N = " + numPoints + ", xstep = " + xstep );
+				debugsb.Length = 0;
+				debugsb.Append( "Positioning GraphPoints. xRange = (" + xRange.x+", "+xRange.y + "), yRange = " + yRange + ", N = " + numPoints + ", xstep = " + xstep );
+				if (_displayScaleDirty)
+				{
+					debugsb.Append( "\n - displayscale = " + _displayScale );
+				}
 			}
 			for (int i = 0; i < numPoints; i++)
 			{
 				float x = xRange.x + xstep * i;
 				float y = _graphGenerator.GetYForX( x );
 				_graphPtDisplays[i].Value = new Vector2( x,y);
+				if (_displayScaleDirty)
+				{
+					_graphPtDisplays[i].HandleScaling( _displayScale );
+				}
 			}
 			_isDirty = false;
+			_displayScaleDirty = false;
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( debugsb.ToString( ) );
+			}
 		}
 	}
 
@@ -148,15 +164,28 @@ public class XX_GraphViewPanel : MonoBehaviour
 		cachedRT.sizeDelta = parent.sizeDelta;
 
 		scrollablePanel.scrollablePanelView.onScaleChangeAction += HandleDisplayScaleChanged;
+		scrollablePanel.scrollablePanelView.onViewChangeAction += HandleDisplayViewChanged;
+	}
+
+	private bool _displayScaleDirty= false;
+
+	public void HandleDisplayViewChanged( RJWS.EOrthoDirection dirn, float scaleFraction, float posFraction)
+	{
+		HandleDisplayScaleChanged( dirn, scaleFraction );
 	}
 
 	public void HandleDisplayScaleChanged(RJWS.EOrthoDirection dirn, float scale)
 	{
+		if (DEBUG_LOCAL)
+		{
+			Debug.Log( "DisplayScaleChanged : " + dirn + ", " + scale );
+		}
 		if (dirn == RJWS.EOrthoDirection.Horizontal)
 		{
 			if (scale != _displayScale.x)
 			{
 				_displayScale.x = scale;
+				_displayScaleDirty = true;
 			}
 		}
 		else if (dirn == RJWS.EOrthoDirection.Vertical)
@@ -164,6 +193,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 			if (scale != _displayScale.y)
 			{
 				_displayScale.y = scale;
+				_displayScaleDirty = true;
 			}
 		}
 	}

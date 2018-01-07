@@ -50,6 +50,7 @@ namespace RJWS.UI.Scrollable
 		}
 
 		public System.Action<EOrthoDirection, float> onScaleChangeAction;
+		public System.Action<EOrthoDirection, float, float> onViewChangeAction;
 
 		public void HandleViewChange( EOrthoDirection direction, float sizeFraction, float posFraction )
 		{
@@ -82,6 +83,10 @@ namespace RJWS.UI.Scrollable
 
 			contentPanelRT.localScale = scale;
 			contentPanelRT.anchoredPosition = anchoredPos;
+			if (onViewChangeAction != null)
+			{
+				onViewChangeAction( direction, sizeFraction, posFraction );
+			}
 		}
 
 
