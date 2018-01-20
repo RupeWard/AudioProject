@@ -21,8 +21,10 @@ public class XX_GraphViewPanel : MonoBehaviour
 	}
 
 	public GameObject graphPointPrefab;
+	public GameObject graphConnectorPrefab;
 
 	private List<XX_GraphPointDisplay> _graphPtDisplays = new List<XX_GraphPointDisplay>( );
+	private List<XX_GraphConnectorDisplay> _graphConnectorDisplays = new List<XX_GraphConnectorDisplay>( );
 
 	private int _numPointsBACKING = 0;
 	public int numPoints
@@ -60,6 +62,19 @@ public class XX_GraphViewPanel : MonoBehaviour
 			_graphPtDisplays.RemoveAt( 0 );
 			SetDirty( );
 		}
+		while (_graphConnectorDisplays.Count < numPoints -1)
+		{
+			XX_GraphConnectorDisplay newConnector = Instantiate( graphConnectorPrefab ).GetComponent<XX_GraphConnectorDisplay>( );
+			_graphConnectorDisplays.Add( newConnector );
+			SetDirty( );
+		}
+		while (_graphConnectorDisplays.Count > numPoints -1)
+		{
+			GameObject.Destroy( _graphConnectorDisplays[0].gameObject );
+			_graphConnectorDisplays.RemoveAt( 0 );
+			SetDirty( );
+		}
+
 		for (int i = 0; i < _graphPtDisplays.Count; i++)
 		{
 			_graphPtDisplays[i].Init( this, i );
@@ -78,6 +93,12 @@ public class XX_GraphViewPanel : MonoBehaviour
 			else
 			{
 				_graphPtDisplays[i].nextPt = _graphPtDisplays[i + 1];
+			}
+			if (i < _graphConnectorDisplays.Count)
+			{
+				_graphConnectorDisplays[i].Init( this, i );
+				_graphConnectorDisplays[i].previousPt = _graphPtDisplays[i];
+				_graphConnectorDisplays[i].nextPt = _graphPtDisplays[i + 1];
 			}
 		}
 	}
@@ -136,6 +157,10 @@ public class XX_GraphViewPanel : MonoBehaviour
 				float x = firstX + xstep * i;
 				float y = _graphGenerator.GetYForX( x );
 				_graphPtDisplays[i].Value = new Vector2( x,y);
+				if (i > 0)
+				{
+					_graphConnectorDisplays[i-1].UpdateDisplay( );
+				}
 			}
 			_displayPosDirty = false;
 		}

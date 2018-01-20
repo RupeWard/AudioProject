@@ -1,9 +1,11 @@
+Graph from Wav
+Different types of points
 
-Point to handle Zoom etc
+Add axes
+Add lines
+
 Add grabber to point
 
-Turn points off when too many
-Point/line to know when offscreen
 
 Basic audio
 
