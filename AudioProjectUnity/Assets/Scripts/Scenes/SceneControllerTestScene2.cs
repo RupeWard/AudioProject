@@ -93,51 +93,43 @@ public class SceneControllerTestScene2 : SceneController_Base
 
 	public void HandleLoadWaveformButton()
 	{
-		/*
 		float lengthSecs = testAudioClip.length;
-
+		Debug.Log( "Clip frequency = " + testAudioClip.frequency+", L="+lengthSecs );
 		int nSamples = Mathf.FloorToInt( testAudioClip.frequency * lengthSecs);
 
 		float[] buffer = new float[nSamples];
 
 		if (testAudioClip.GetData( buffer, 0 ))
 		{
-			Vector2 yRange = new Vector2( float.MaxValue, float.MinValue );
-
-			for (int i = 0; i < buffer.Length; i++)
-			{
-				if (buffer[i] < yRange.x)
-				{
-					yRange.x = buffer[i];
-				}
-				if (buffer[i] > yRange.y)
-				{
-					yRange.y = buffer[i];
-				}
-			}
-
-
+			RJWS.Audio.WaveFormGenerator_Sampled wfg = new RJWS.Audio.WaveFormGenerator_Sampled( "WAV", buffer, (double)1 / testAudioClip.frequency );
 			if (_graphViewPanel == null)
 			{
 				_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent<XX_GraphViewPanel>( );
 				_graphViewPanel.Init( _scrollablePanel );
 			}
+
+			Vector2 yRange = wfg.GetValueRange( );
 			_graphViewPanel.xRange = new Vector2( 0f, testAudioClip.length );
 			yRange.x = yRange.x - 0.1f * yRange.magnitude;
 			yRange.y = yRange.y + 0.1f * yRange.magnitude;
 			_graphViewPanel.yRange = yRange;
+
+			_graphViewPanel.ChangeGraph( wfg, nPerWavelength );
+
+			/*
+
+
 			//_graphViewPanel.DrawDefaultAxes( );
 
 			Debug.Log( "Got " + nSamples + " samples with xrange = " + _graphViewPanel.xRange + ", yrange = " + yRange );
 
 //			RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( buffer, _graphPanel.xRange);
-			_graphViewPanel.ChangeGraph( newGraph );
+			*/
 		}
 		else
 		{
 			Debug.LogError( "Failed to get " + nSamples + " samples" );
 		}
-		*/
 
 	}
 

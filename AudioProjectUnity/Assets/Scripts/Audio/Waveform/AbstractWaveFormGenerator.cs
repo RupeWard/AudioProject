@@ -14,6 +14,8 @@ namespace RJWS.Audio
 		{
 		}
 
+		abstract public bool IsTimeValid( float seconds );
+
 		abstract public float GetValueForTimeSecs( float seconds);
 
 		public override float GetYForX( float x )

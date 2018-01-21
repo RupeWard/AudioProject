@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,6 +26,10 @@ namespace RJWS.Audio
 			return GetValueForPhase( phase );
 		}
 
+		public override bool IsTimeValid( float seconds )
+		{
+			return true;
+		}
 	}
 
 }
