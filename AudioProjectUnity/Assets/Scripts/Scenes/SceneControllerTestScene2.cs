@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 using RJWS.UI.Scrollable;
 using RJWS.Core.DebugDescribable;
+using RJWS.Core.Extensions;
 
 public class SceneControllerTestScene2 : SceneController_Base
 {
@@ -147,5 +149,20 @@ public class SceneControllerTestScene2 : SceneController_Base
 
 //		RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( wfg, _graphPanel.xRange, numPeriods* nPerWavelength +1 );
 		_graphViewPanel.ChangeGraph( wfg, nPerWavelength, xRange);
+
+		_graphViewPanel.AddAxes(
+			new List< XX_AxisDefn>()
+			{
+				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.x ),
+				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.y ),
+				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
+				XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0.5f ),
+				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0f ),
+                XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0.75f ),
+                XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, 0.2f )
+			}
+			);
+
+		
 	}
 }

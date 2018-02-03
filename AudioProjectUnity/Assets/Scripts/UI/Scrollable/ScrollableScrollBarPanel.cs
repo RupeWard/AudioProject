@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RJWS.Core.UI;
+using RJWS.Enums;
 
 namespace RJWS.UI.Scrollable
 {

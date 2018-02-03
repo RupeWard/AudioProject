@@ -8,16 +8,9 @@ namespace RJWS.Audio
 {
 	abstract public class AbstractWaveFormGenerator: Grph.AbstractGraphGenerator
 	{
-		public string Name
-		{
-			get;
-			private set;
-		}
-
 		protected AbstractWaveFormGenerator(string n)
 			: base( n )
 		{
-			Name = n;
 		}
 
 		abstract public bool IsTimeValid( double seconds );

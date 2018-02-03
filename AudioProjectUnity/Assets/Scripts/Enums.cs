@@ -17,28 +17,45 @@ namespace RJWS
 		Vertical
 	}
 
-	static class EnumsHelpers
+	namespace Enums
 	{
-		public static EOrthoDirection OrthogonalDirection( this EOrthoDirection dirn )
+		static class EnumsHelpers
 		{
-			if (dirn == EOrthoDirection.Horizontal)
+			public static EOrthoDirection OrthogonalDirection( this EOrthoDirection dirn )
 			{
-				return EOrthoDirection.Vertical;
+				if (dirn == EOrthoDirection.Horizontal)
+				{
+					return EOrthoDirection.Vertical;
+				}
+				else if (dirn == EOrthoDirection.Vertical)
+				{
+					return EOrthoDirection.Horizontal;
+				}
+				else
+				{
+					Debug.LogError( "No OrthogonalDirection for " + dirn );
+					return dirn;
+				}
 			}
-			else if (dirn == EOrthoDirection.Vertical)
+
+			public static string ToChar( this EOrthoDirection dirn )
 			{
-				return EOrthoDirection.Horizontal;
-			}
-			else
-			{
-				Debug.LogError( "No OrthogonalDirection for " + dirn );
-				return dirn;
+				if (dirn == EOrthoDirection.Horizontal)
+				{
+					return "H";
+				}
+				else if (dirn == EOrthoDirection.Vertical)
+				{
+					return "V";
+				}
+				else
+				{
+					Debug.LogError( "No string for OrthogonalDirection: " + dirn );
+					return "X";
+				}
 			}
 		}
-	}
 
-	public class Enums
-	{
 
 	}
 

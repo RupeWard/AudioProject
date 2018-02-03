@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using RJWS.Core.Extensions;
 
-public class XX_GraphAxis : MonoBehaviour
+public class XX_GraphAxisDisplay : MonoBehaviour
 {
 	public static readonly bool DEBUG_AXES = false;
 
@@ -17,35 +17,112 @@ public class XX_GraphAxis : MonoBehaviour
 		private set;
 	}
 
-	private AxisDefn _axisDefn = null;
+	public XX_AxisDefn axisDefn
+	{
+		get;
+		private set;
+	}
 
 	public RJWS.EOrthoDirection Direction
 	{
-		get { return _axisDefn.eDirection; }
+		get { return axisDefn.eDirection; }
+	}
+
+	float SnapInRangeF( float v, Vector2 range, float snap)
+	{
+		v = SnapRoundF( v, snap );
+		while (v < (range.x /*+ snap*/))
+		{
+			v += snap;
+		}
+		while (v > (range.y /*- snap*/))
+		{
+			v -= snap;
+		}
+		return v;
+	}
+
+	float SnapRoundF(float f, float snap)
+	{
+		float snapped = (f % snap) * snap;
+		if ( f - snapped > 0.5f * snap)
+		{
+			snapped += snap;
+		}
+		return snapped;
 	}
 
 	public float Value
 	{
-		get { return _axisDefn.value; }
+		get
+		{
+			switch (axisDefn.axisType)
+			{
+				case XX_AxisDefn.EAxisType.FixedValue:
+					{
+						return axisDefn.value;
+					}
+				case XX_AxisDefn.EAxisType.ScreenFractionValue:
+					{
+						Vector2 viewValueRange;
+						float value;
+						switch (axisDefn.eDirection)
+						{
+							case RJWS.EOrthoDirection.Horizontal:
+								{
+									viewValueRange = new Vector2( _graphViewPanel.firstY, _graphViewPanel.lastY );
+									value = Mathf.Lerp( _graphViewPanel.firstY, _graphViewPanel.lastY, axisDefn.value );
+									break;
+								}
+							case RJWS.EOrthoDirection.Vertical:
+								{
+									viewValueRange = new Vector2( _graphViewPanel.firstX, _graphViewPanel.lastX );
+									value = Mathf.Lerp( _graphViewPanel.firstX, _graphViewPanel.lastX, axisDefn.value );
+									break;
+								}
+							default:
+								{
+									Debug.LogError( "Unhandled direction: " + axisDefn.eDirection );
+									viewValueRange = new Vector2( 0f, 1f );
+									value = 0f;
+									break;
+								}
+						}
+						return value;
+//						return SnapInRangeF( value, viewValueRange, axisDefn.snap );
+					}
+				default:
+					{
+						Debug.LogError( "Unhandled type: " + axisDefn.axisType);
+						return axisDefn.value;
+					}
+			}
+
+		}
 	}
 
 	public string AxisName
 	{
-		get { return _axisDefn.axisName; }
+		get { return axisDefn.axisName; }
 	}
 
 	private List<GraphAxisTick> _ticks = new List<GraphAxisTick>( );
 
-	protected XX_GraphViewPanel _graphPanel;
-	public XX_GraphViewPanel graphPanel
+	protected XX_GraphViewPanel _graphViewPanel;
+	public XX_GraphViewPanel graphViewPanel
 	{
-		get { return _graphPanel; }
+		get { return _graphViewPanel; }
 	}
 
 	private void Awake()
 	{
 		cachedRT = GetComponent<RectTransform>( );
+		if (axisImage == null)
+		{
+			axisImage = GetComponent<UnityEngine.UI.Image>( );
+		}
 	}
+
 	/*
 	private Vector2 ViewRange( )
 	{
@@ -64,20 +141,21 @@ public class XX_GraphAxis : MonoBehaviour
 	}
 	*/
 
-	public void init( XX_GraphViewPanel p, AxisDefn d )
+	public void Init( XX_GraphViewPanel p, XX_AxisDefn d )
 	{
-		_axisDefn = d;
+		axisDefn = d;
 
 		gameObject.name = d.axisName;
 
-		_graphPanel = p;
+		_graphViewPanel = p;
 
-		cachedRT.SetParent(_graphPanel.axesContainer);
+		cachedRT.SetParent(_graphViewPanel.axesContainer);
 		transform.localScale = Vector3.one;
-
-		SetSpriteSize( _axisDefn.value );
+		
+		SetSpriteSize(  );
 		CreateTicks( );
 
+		axisImage.color = _graphViewPanel.graphDisplaySettings.GetColor( axisDefn );
 		adjustPosition( );
 	}
 
@@ -149,8 +227,8 @@ public class XX_GraphAxis : MonoBehaviour
 				{
 					cachedRT.anchoredPosition
 						= new Vector2(
-							graphPanel.GetXLocation(_graphPanel.xRange.MidPoint()),
-							graphPanel.GetYLocation( Value )
+							graphViewPanel.GetXLocation(_graphViewPanel.xRange.MidPoint()),
+							graphViewPanel.GetYLocation( Value )
 							);
 					break;
 				}
@@ -158,8 +236,8 @@ public class XX_GraphAxis : MonoBehaviour
 				{
 					cachedRT.anchoredPosition
 						= new Vector2(
-							_graphPanel.GetXLocation( Value ),
-							graphPanel.GetYLocation( _graphPanel.yRange.MidPoint()) 
+							_graphViewPanel.GetXLocation( Value ),
+							graphViewPanel.GetYLocation( _graphViewPanel.yRange.MidPoint()) 
 							);
 					break;
 				}
@@ -175,7 +253,7 @@ public class XX_GraphAxis : MonoBehaviour
 		*/
 	}
 
-	public void SetSpriteSize( float f )
+	public void SetSpriteSize( )
 	{
 		switch (Direction)
 		{
@@ -183,8 +261,8 @@ public class XX_GraphAxis : MonoBehaviour
 				{
 					cachedRT.sizeDelta  
 						= new Vector2(
-									   graphPanel.cachedRT.sizeDelta.x,
-									   _axisDefn.axisLineWidth);
+									   graphViewPanel.cachedRT.sizeDelta.x,
+									   graphViewPanel.graphDisplaySettings.defaultAxisWidth * axisDefn.axisLineWidth);
 
 					break;
 				}
@@ -192,8 +270,8 @@ public class XX_GraphAxis : MonoBehaviour
 				{
 					cachedRT.sizeDelta
 						= new Vector2(
-									   _axisDefn.axisLineWidth,
-									   graphPanel.cachedRT.sizeDelta.y);
+									   graphViewPanel.graphDisplaySettings.defaultAxisWidth * axisDefn.axisLineWidth,
+									   graphViewPanel.cachedRT.sizeDelta.y);
 					break;
 				}
 		}
@@ -204,11 +282,11 @@ public class XX_GraphAxis : MonoBehaviour
 	{
 		if (Direction == RJWS.EOrthoDirection.Horizontal)
 		{
-			cachedRT.sizeDelta = new Vector2( cachedRT.sizeDelta.x, _axisDefn.axisLineWidth / scale );
+			cachedRT.sizeDelta = new Vector2( cachedRT.sizeDelta.x, axisDefn.axisLineWidth / scale );
 		}
 		else if (Direction == RJWS.EOrthoDirection.Vertical)
 		{
-			cachedRT.sizeDelta = new Vector2( _axisDefn.axisLineWidth / scale, cachedRT.sizeDelta.y );
+			cachedRT.sizeDelta = new Vector2( axisDefn.axisLineWidth / scale, cachedRT.sizeDelta.y );
 		}
 	}
 	/*

@@ -20,11 +20,16 @@ public class XX_GraphViewPanel : MonoBehaviour
 		}
 	}
 
+	public XX_GraphDisplaySettings graphDisplaySettings = new XX_GraphDisplaySettings( );
+
 	public GameObject graphPointPrefab;
 	public GameObject graphConnectorPrefab;
+	public GameObject graphAxisPrefab;
 
 	private List<XX_GraphPointDisplay> _graphPtDisplays = new List<XX_GraphPointDisplay>( );
 	private List<XX_GraphConnectorDisplay> _graphConnectorDisplays = new List<XX_GraphConnectorDisplay>( );
+
+	private List<XX_GraphAxisDisplay> _graphAxisDisplays = new List<XX_GraphAxisDisplay>( );
 
 	private int _numPointsBACKING = 0;
 	public int numPoints
@@ -40,10 +45,23 @@ public class XX_GraphViewPanel : MonoBehaviour
 		}
 	}
 
+	private void ClearAxes()
+	{
+		for (int i = 0; i < _graphAxisDisplays.Count; i++)
+		{
+			GameObject.Destroy( _graphAxisDisplays[i].gameObject );
+		}
+		_graphAxisDisplays.Clear( );
+	}
+	
 	private RJWS.Grph.AbstractGraphGenerator _graphGenerator;
 
-	public void ChangeGraph( RJWS.Audio.AbstractWaveFormGenerator graphGenerator, int n, Vector2 pxRange )
+	public void ChangeGraph( RJWS.Audio.AbstractWaveFormGenerator graphGenerator, int n, Vector2 pxRange, bool clearAxes = true )
 	{
+		if (clearAxes)
+		{
+			ClearAxes( );
+		}
 		numPoints = n;
 		_graphGenerator = graphGenerator;
 
@@ -56,6 +74,22 @@ public class XX_GraphViewPanel : MonoBehaviour
 		xRange = pxRange;
 
 		SetDirty( );
+	}
+
+	public void AddAxis(XX_AxisDefn axisDefn)
+	{
+		XX_GraphAxisDisplay newAxisDisplay = Instantiate( graphAxisPrefab ).GetComponent<XX_GraphAxisDisplay>( );
+		newAxisDisplay.Init( this, axisDefn );
+		_graphAxisDisplays.Add( newAxisDisplay );
+		SetDirty( );
+	}
+
+	public void AddAxes( IEnumerable<XX_AxisDefn> defns)
+	{
+		foreach (XX_AxisDefn defn in defns)
+		{
+			AddAxis( defn );
+		}
 	}
 
 	private void HandleNumPointsChanged( )
@@ -172,6 +206,13 @@ public class XX_GraphViewPanel : MonoBehaviour
 					_graphConnectorDisplays[i-1].UpdateDisplay( );
 				}
 			}
+			for (int i = 0; i < _graphAxisDisplays.Count; i++)
+			{
+				if (_graphAxisDisplays[i].axisDefn.axisType != XX_AxisDefn.EAxisType.FixedValue)
+				{
+					_graphAxisDisplays[i].adjustPosition( );
+				}
+			}
 			_displayPosDirty = false;
 		}
 		if (DEBUG_LOCAL)
@@ -213,6 +254,38 @@ public class XX_GraphViewPanel : MonoBehaviour
 		get
 		{
 			return (double)firstX + (double)_displayScale[RJWS.EOrthoDirection.Horizontal] * (double)(xRange.y - xRange.x);
+		}
+	}
+
+	public float firstY
+	{
+		get
+		{
+			return yRange.x + _displayPos[RJWS.EOrthoDirection.Vertical] * (yRange.y - yRange.x);
+		}
+	}
+
+	public double firstYD
+	{
+		get
+		{
+			return (double)yRange.x + (double)_displayPos[RJWS.EOrthoDirection.Vertical] * (double)(yRange.y - yRange.x);
+		}
+	}
+
+	public float lastY
+	{
+		get
+		{
+			return firstY + _displayScale[RJWS.EOrthoDirection.Vertical] * (yRange.y - yRange.x);
+		}
+	}
+
+	public double lastYD
+	{
+		get
+		{
+			return (double)firstY + (double)_displayScale[RJWS.EOrthoDirection.Vertical] * (double)(yRange.y - yRange.x);
 		}
 	}
 
