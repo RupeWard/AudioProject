@@ -7,26 +7,26 @@ namespace RJWS.Audio
 {
 	abstract public class PeriodicWaveFormGenerator : AbstractWaveFormGenerator
 	{
-		protected float _wavelengthSecs;
-		public float waveLengthSecs
+		protected double _wavelengthSecs;
+		public double waveLengthSecs
 		{
 			get { return _wavelengthSecs;  }
 		}
 
-		protected PeriodicWaveFormGenerator(string n, float w) : base( n )
+		protected PeriodicWaveFormGenerator(string n, double w) : base( n )
 		{
 			_wavelengthSecs = w;
 		}
 
-		abstract public float GetValueForPhase( float phase );
+		abstract public float GetValueForPhase( double phase );
 
-		override public float GetValueForTimeSecs( float seconds )
+		override public float GetValueForTimeSecs( double seconds )
 		{
-			float phase = (seconds % _wavelengthSecs) / _wavelengthSecs;
+			double phase = (seconds % _wavelengthSecs) / _wavelengthSecs;
 			return GetValueForPhase( phase );
 		}
 
-		public override bool IsTimeValid( float seconds )
+		public override bool IsTimeValid( double seconds )
 		{
 			return true;
 		}

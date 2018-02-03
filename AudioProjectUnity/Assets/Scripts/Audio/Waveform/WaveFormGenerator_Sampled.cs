@@ -43,45 +43,45 @@ namespace RJWS.Audio
 			}
 		}
 
-		public override bool IsTimeValid( float seconds )
+		public override bool IsTimeValid( double seconds )
 		{
-			float indexF = (float)(seconds / _sampleRate);
-			return (indexF >= 0f && indexF <= (float)(_samples.Length-1));
+			double index = (seconds / _sampleRate);
+			return (index >= 0 && index <= (double)(_samples.Length-1));
         }
 
-		override public float GetValueForTimeSecs( float seconds )
+		override public float GetValueForTimeSecs( double seconds )
 		{
 			float value = 0f;
 
-			float indexF = (float) (seconds / _sampleRate);
+			double index = (seconds / _sampleRate);
 
-			if (indexF < 0f || indexF > (float)(_samples.Length-1))
+			if (index < 0 || index > (_samples.Length-1))
 			{
-				Debug.LogWarning( "Time " + seconds + " out of range: index="+indexF+": "+this.DebugDescribe() );
-				if (indexF < 0f)
+				Debug.LogWarning( "Time " + seconds + " out of range: index="+index+": "+this.DebugDescribe() );
+				if (index < 0)
 				{
-					indexF = 0f;
+					index = 0;
 				}
-				else if (indexF > (float)(_samples.Length - 1))
+				else if (index > (double)(_samples.Length - 1))
 				{
-					indexF = (float)(_samples.Length - 1);
+					index = (double)(_samples.Length - 1);
 				}
 			}
 
-			int baseIndex = Mathf.FloorToInt( indexF );
+			int baseIndex = (int)System.Math.Floor( index );
 			if (baseIndex >= _samples.Length - 1)
 			{
 				return _samples[_samples.Length - 1];
 			}
 
-			float fractionalPart = indexF - baseIndex;
+			double fractionalPart = index - baseIndex;
 			try
 			{
-				value = Mathf.Lerp( _samples[baseIndex], _samples[baseIndex + 1], fractionalPart );
+				value = RJWS.MathsHelpers.FLerpD( _samples[baseIndex], _samples[baseIndex + 1], fractionalPart );
 			}
 			catch (System.Exception ex)
 			{
-				Debug.LogError( "Index out of range: indexF=" + indexF + ", baseIndex=" + baseIndex + ", frac=" + fractionalPart + ": " + this.DebugDescribe( )+"\n"+ex.ToString() );
+				Debug.LogError( "Index out of range: index=" + index + ", baseIndex=" + baseIndex + ", frac=" + fractionalPart + ": " + this.DebugDescribe( )+"\n"+ex.ToString() );
 			}
 
 			return value;

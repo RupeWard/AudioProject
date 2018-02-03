@@ -3,22 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using RJWS.Core.DebugDescribable;
-using System;
 
 namespace RJWS.Audio
 {
 	abstract public class AbstractWaveFormGenerator: Grph.AbstractGraphGenerator
 	{
-		protected AbstractWaveFormGenerator(string n)
-			:base( n )
+		public string Name
 		{
+			get;
+			private set;
 		}
 
-		abstract public bool IsTimeValid( float seconds );
+		protected AbstractWaveFormGenerator(string n)
+			: base( n )
+		{
+			Name = n;
+		}
 
-		abstract public float GetValueForTimeSecs( float seconds);
+		abstract public bool IsTimeValid( double seconds );
 
-		public override float GetYForX( float x )
+		abstract public float GetValueForTimeSecs( double seconds);
+
+		public override float GetYForX( double x )
 		{
 			return GetValueForTimeSecs( x );
 		}
@@ -31,5 +37,6 @@ namespace RJWS.Audio
 			DebugDescribeDetails( sb );
 			sb.Append( "]" );
 		}
+
 	}
 }

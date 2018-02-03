@@ -42,10 +42,20 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	private RJWS.Grph.AbstractGraphGenerator _graphGenerator;
 
-	public void ChangeGraph( RJWS.Grph.AbstractGraphGenerator graphGenerator, int n )
+	public void ChangeGraph( RJWS.Audio.AbstractWaveFormGenerator graphGenerator, int n, Vector2 pxRange )
 	{
 		numPoints = n;
 		_graphGenerator = graphGenerator;
+
+		Vector2 yR = _graphGenerator.GetValueRange( );
+		float yExtra = 0.1f * yR.magnitude;
+		yR.x = yR.x - yExtra;
+		yR.y = yR.y + yExtra;
+		yRange = yR;
+
+		xRange = pxRange;
+
+		SetDirty( );
 	}
 
 	private void HandleNumPointsChanged( )
@@ -147,16 +157,16 @@ public class XX_GraphViewPanel : MonoBehaviour
 			{
 				debugsb.Append( "\n- pos dirty = " + displayPosReadonly+", first/last = "+firstX+" / "+lastX );
 			}
-			float xstep = (lastX- firstX) / (numPoints - 1);
+			double xstepD = (lastXD- firstXD) / (numPoints - 1);
 			if (DEBUG_LOCAL)
 			{
-				debugsb.Append( "\n- xstep = " + xstep );
+				debugsb.Append( "\n- xstep = " + xstepD );
 			}
 			for (int i = 0; i < numPoints; i++)
 			{
-				float x = firstX + xstep * i;
+				double x = firstXD + xstepD * i;
 				float y = _graphGenerator.GetYForX( x );
-				_graphPtDisplays[i].Value = new Vector2( x,y);
+				_graphPtDisplays[i].Value = new Vector2( (float)x,y);
 				if (i > 0)
 				{
 					_graphConnectorDisplays[i-1].UpdateDisplay( );
@@ -181,6 +191,15 @@ public class XX_GraphViewPanel : MonoBehaviour
 		}
 	}
 
+	public double firstXD
+	{
+		get
+		{
+			return (double)xRange.x + (double)_displayPos[RJWS.EOrthoDirection.Horizontal] * (double)(xRange.y - xRange.x);
+		}
+	}
+
+
 	public float lastX
 	{
 		get
@@ -188,6 +207,15 @@ public class XX_GraphViewPanel : MonoBehaviour
 			return firstX + _displayScale[RJWS.EOrthoDirection.Horizontal] * (xRange.y - xRange.x);
 		}
 	}
+
+	public double lastXD
+	{
+		get
+		{
+			return (double)firstX + (double)_displayScale[RJWS.EOrthoDirection.Horizontal] * (double)(xRange.y - xRange.x);
+		}
+	}
+
 
 
 	public RectTransform cachedRT

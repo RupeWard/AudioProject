@@ -6,7 +6,7 @@ namespace RJWS.Audio
 {
 	public interface IWaveFormProvider 
 	{
-		float GetValueForTime( float time);
+		float GetValueForTime( double time);
 		string WaveFormName( );
 	}
 }

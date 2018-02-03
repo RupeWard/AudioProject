@@ -153,7 +153,7 @@ public class SceneControllerTestScene : SceneController_Base
 			_graphPanel = GameObject.Instantiate( graphPanelPrefab ).GetComponent< GraphPanel>();
 			_graphPanel.Init( _scrollablePanel);
 		}
-		_graphPanel.xRange = new Vector2( 0f, wfg.waveLengthSecs * numPeriods );
+		_graphPanel.xRange = new Vector2( 0f, (float)(wfg.waveLengthSecs * numPeriods) );
 		Vector2 yRange = wfg.GetValueRange( );
 		yRange.x = yRange.x - 0.1f * yRange.magnitude;
 		yRange.y = yRange.y + 0.1f * yRange.magnitude;

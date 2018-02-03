@@ -17,15 +17,15 @@ namespace RJWS.Audio
 			return _valueRange;
 		}
 
-		public WaveFormGenerator_Sine( string n, float w, float a) : base( n, w )
+		public WaveFormGenerator_Sine( string n, double w, float a) : base( n, w )
 		{
 			_amplitude = a;
 			_valueRange = new Vector2( -1f * _amplitude, _amplitude );
 		}
 
-		override public float GetValueForPhase( float phase )
+		override public float GetValueForPhase( double phase )
 		{
-			return _amplitude * Mathf.Sin( phase * TwoPi );
+			return (float)(System.Math.Sin( phase * TwoPi ) * _amplitude);
 		}
 
 		override protected void DebugDescribeDetails( System.Text.StringBuilder sb )

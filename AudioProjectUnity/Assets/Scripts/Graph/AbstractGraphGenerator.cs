@@ -21,7 +21,7 @@ namespace RJWS.Grph
 
 		abstract public Vector2 GetValueRange( );
 
-		abstract public float GetYForX( float x);
+		abstract public float GetYForX( double x);
 
 		abstract public void DebugDescribe( System.Text.StringBuilder sb );
 	}

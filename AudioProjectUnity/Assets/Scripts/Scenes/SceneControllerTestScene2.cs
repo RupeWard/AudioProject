@@ -108,13 +108,8 @@ public class SceneControllerTestScene2 : SceneController_Base
 				_graphViewPanel.Init( _scrollablePanel );
 			}
 
-			Vector2 yRange = wfg.GetValueRange( );
-			_graphViewPanel.xRange = new Vector2( 0f, testAudioClip.length );
-			yRange.x = yRange.x - 0.1f * yRange.magnitude;
-			yRange.y = yRange.y + 0.1f * yRange.magnitude;
-			_graphViewPanel.yRange = yRange;
-
-			_graphViewPanel.ChangeGraph( wfg, nPerWavelength );
+			Vector2 xRange = new Vector2( 0f, testAudioClip.length );
+			_graphViewPanel.ChangeGraph( wfg, nPerWavelength, xRange );
 
 			/*
 
@@ -146,15 +141,11 @@ public class SceneControllerTestScene2 : SceneController_Base
 			_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent< XX_GraphViewPanel>();
 			_graphViewPanel.Init( _scrollablePanel);
 		}
-		_graphViewPanel.xRange = new Vector2( 0f, wfg.waveLengthSecs * numPeriods );
-		Vector2 yRange = wfg.GetValueRange( );
-		float yExtra = 0.1f * yRange.magnitude;
-		yRange.x = yRange.x - yExtra;
-		yRange.y = yRange.y + yExtra;
-		_graphViewPanel.yRange = yRange;
+
+		Vector2 xRange = new Vector2( 0f, (float)(wfg.waveLengthSecs * numPeriods) );
 		//_graphViewPanel.DrawDefaultAxes( );
 
 //		RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( wfg, _graphPanel.xRange, numPeriods* nPerWavelength +1 );
-		_graphViewPanel.ChangeGraph( wfg, nPerWavelength);
+		_graphViewPanel.ChangeGraph( wfg, nPerWavelength, xRange);
 	}
 }
