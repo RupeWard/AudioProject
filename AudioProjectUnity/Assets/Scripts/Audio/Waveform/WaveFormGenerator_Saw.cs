@@ -9,8 +9,14 @@ namespace RJWS.Audio
 		private float _amplitude;
 		private Vector2 _valueRange;
 
-		override public Vector2 GetValueRange()
+		override public Vector2 GetValueRange( Vector2? xRange )
 		{
+			if (xRange == null)
+			{
+				return _valueRange;
+			}
+
+			// TODO implement
 			return _valueRange;
 		}
 

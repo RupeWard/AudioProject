@@ -19,7 +19,7 @@ namespace RJWS.Grph
 			Name = n;
 		}
 
-		abstract public Vector2 GetValueRange( );
+		abstract public Vector2 GetValueRange( Vector2? xRange = null );
 
 		abstract public float GetYForX( double x);
 
