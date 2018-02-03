@@ -278,6 +278,28 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 
 	}
 
+	public void HandleScaling( Vector2 screenFraction )
+	{
+		switch(Direction)
+		{
+			case RJWS.EOrthoDirection.Horizontal:
+				{
+					axisImage.transform.localScale = new Vector2( 1f, screenFraction.y );
+					break;
+				}
+			case RJWS.EOrthoDirection.Vertical:
+				{
+					axisImage.transform.localScale = new Vector2( screenFraction.x, 1f );
+					break;
+				}
+			default:
+				{
+					Debug.LogError( "Unhandled direction " + Direction );
+					break;
+				}
+		}
+	}
+
 	public void AdjustWidth(float scale)
 	{
 		if (Direction == RJWS.EOrthoDirection.Horizontal)

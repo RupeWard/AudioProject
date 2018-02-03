@@ -112,6 +112,19 @@ public class SceneControllerTestScene2 : SceneController_Base
 
 			Vector2 xRange = new Vector2( 0f, testAudioClip.length );
 			_graphViewPanel.ChangeGraph( wfg, nPerWavelength, xRange );
+			_graphViewPanel.AddAxes(
+				new List<XX_AxisDefn>( )
+				{
+					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.x ),
+					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.y ),
+					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
+					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0.75f ),
+					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0f ),
+					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, wfg.GetValueRange().MidPoint() ),
+					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, 0.25f )
+				}
+			);
+
 
 			/*
 

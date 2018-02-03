@@ -1,10 +1,26 @@
-Graph from Wav
+Axes 
+- label
+- snap
+- ticks
+- test axes
+
+Settings
+- edit panel
+- display points/lines options
+
+Follow points
+- loop/no loop
+
+Wav loader
+Wav saver
+
 Different types of points
 
-Add axes
-Add lines
-
-Add grabber to point
+Point edit
+- Add grabber to point
+- point selection
+- point fixed state
+- types of movement - solo, linear, spline
 
 
 Basic audio

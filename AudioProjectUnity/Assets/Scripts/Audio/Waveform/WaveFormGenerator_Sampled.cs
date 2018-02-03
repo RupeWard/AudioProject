@@ -12,7 +12,7 @@ namespace RJWS.Audio
 
 		private Vector2 _valueRange;
 
-		override public Vector2 GetValueRange( Vector2? xRange )
+		override public Vector2 GetValueRange( Vector2? xRange = null )
 		{
 			if (xRange == null)
 			{

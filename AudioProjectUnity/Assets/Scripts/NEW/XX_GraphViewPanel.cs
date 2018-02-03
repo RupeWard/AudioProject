@@ -183,6 +183,10 @@ public class XX_GraphViewPanel : MonoBehaviour
 			{
 				_graphPtDisplays[i].HandleScaling( displayScaleReadonly );
 			}
+			for (int i=0; i < _graphAxisDisplays.Count; i++)
+			{
+				_graphAxisDisplays[i].HandleScaling( displayScaleReadonly );
+			}
 			_displayScaleDirty = false;
 		}
 		if (_displayPosDirty)
