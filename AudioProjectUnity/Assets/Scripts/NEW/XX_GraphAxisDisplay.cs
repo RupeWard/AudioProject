@@ -28,14 +28,16 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		get { return axisDefn.eDirection; }
 	}
 
+	/* What does snapping mean, really?
+
 	float SnapInRangeF( float v, Vector2 range, float snap)
 	{
 		v = SnapRoundF( v, snap );
-		while (v < (range.x /*+ snap*/))
+		while (v < (range.x + snap))
 		{
 			v += snap;
 		}
-		while (v > (range.y /*- snap*/))
+		while (v > (range.y - snap))
 		{
 			v -= snap;
 		}
@@ -44,13 +46,23 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 
 	float SnapRoundF(float f, float snap)
 	{
-		float snapped = (f % snap) * snap;
-		if ( f - snapped > 0.5f * snap)
+		float numSnaps = Mathf.Abs( f ) / snap;
+		float snapBelow = numSnaps * snap * Mathf.Sign( f );
+		if ( f < 0f)
 		{
-			snapped += snap;
+			snapBelow -= snap;
 		}
-		return snapped;
+
+		if (f - snapBelow > 0.5f * snap)
+		{
+			return snapBelow + snap;
+		}
+		else
+		{
+			return snapBelow;
+		}
 	}
+*/
 
 	public float Value
 	{
@@ -89,7 +101,6 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 								}
 						}
 						return value;
-//						return SnapInRangeF( value, viewValueRange, axisDefn.snap );
 					}
 				default:
 					{

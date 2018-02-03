@@ -1,6 +1,5 @@
 Axes 
 - label
-- snap
 - ticks
 - test axes
 
