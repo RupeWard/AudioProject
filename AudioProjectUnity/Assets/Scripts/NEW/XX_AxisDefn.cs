@@ -12,16 +12,19 @@ public class XX_AxisDefn
 		ScreenFractionValue
 	}
 	public EAxisType axisType = EAxisType.FixedValue;
-
+	
 	public float snap = 0.1f;
 
 	public string axisName = "Axis";
 	public RJWS.EOrthoDirection eDirection = RJWS.EOrthoDirection.Horizontal;
 	public float value = 0f;
-	public float tickLabelSize = 12f;
+	public float tickLabelSizeScaling = 1f; // default from settings
+	public float tickLineWidthScaling = 1f; // default from settings
+	public float tickLineLengthScaling = 1f; // default from settings
 	public float tickBase = 0f;
 	public float tickSpacing = 0.2f;
-	public float axisLineWidth = 1f;
+	public float axisLineWidthScaling = 1f; // default from settings
+	public float axisLabelSizeScaling = 1f; // default from settings
 
 	public static XX_AxisDefn CreateFixed(RJWS.EOrthoDirection dirn, float v)
 	{

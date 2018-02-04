@@ -11,6 +11,8 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 
 	public Image axisImage;
 
+	public UnityEngine.UI.Text valueText;
+
 	public RectTransform cachedRT
 	{
 		get;
@@ -125,6 +127,11 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		get { return _graphViewPanel; }
 	}
 
+	public void SetValueText()
+	{
+		valueText.text = Value.ToString( );
+	}
+
 	private void Awake()
 	{
 		cachedRT = GetComponent<RectTransform>( );
@@ -162,12 +169,20 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 
 		cachedRT.SetParent(_graphViewPanel.axesContainer);
 		transform.localScale = Vector3.one;
-		
+
+		if (axisDefn.eDirection == RJWS.EOrthoDirection.Horizontal)
+		{
+			RectTransform valueLabelRT = valueText.transform.parent.GetComponent<RectTransform>( );
+			valueLabelRT.pivot = valueLabelRT.anchorMin = valueLabelRT.anchorMax = new Vector2( 1f, 0.5f );
+			valueLabelRT.anchoredPosition = Vector2.zero;
+		}
+
 		SetSpriteSize(  );
 		CreateTicks( );
 
 		axisImage.color = _graphViewPanel.graphDisplaySettings.GetColor( axisDefn );
 		adjustPosition( );
+		SetValueText( );
 	}
 
 	public void CreateTicks( )
@@ -253,7 +268,8 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 					break;
 				}
 		}
-
+	
+		SetValueText( );
 		/*
 		foreach (GraphTick t in ticks_)
 		{
@@ -273,7 +289,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 					cachedRT.sizeDelta  
 						= new Vector2(
 									   graphViewPanel.cachedRT.sizeDelta.x,
-									   graphViewPanel.graphDisplaySettings.defaultAxisWidth * axisDefn.axisLineWidth);
+									   graphViewPanel.graphDisplaySettings.defaultAxisWidth * axisDefn.axisLineWidthScaling);
 
 					break;
 				}
@@ -281,7 +297,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 				{
 					cachedRT.sizeDelta
 						= new Vector2(
-									   graphViewPanel.graphDisplaySettings.defaultAxisWidth * axisDefn.axisLineWidth,
+									   graphViewPanel.graphDisplaySettings.defaultAxisWidth * axisDefn.axisLineWidthScaling,
 									   graphViewPanel.cachedRT.sizeDelta.y);
 					break;
 				}
@@ -315,11 +331,11 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 	{
 		if (Direction == RJWS.EOrthoDirection.Horizontal)
 		{
-			cachedRT.sizeDelta = new Vector2( cachedRT.sizeDelta.x, axisDefn.axisLineWidth / scale );
+			cachedRT.sizeDelta = new Vector2( cachedRT.sizeDelta.x, axisDefn.axisLineWidthScaling / scale );
 		}
 		else if (Direction == RJWS.EOrthoDirection.Vertical)
 		{
-			cachedRT.sizeDelta = new Vector2( axisDefn.axisLineWidth / scale, cachedRT.sizeDelta.y );
+			cachedRT.sizeDelta = new Vector2( axisDefn.axisLineWidthScaling / scale, cachedRT.sizeDelta.y );
 		}
 	}
 	/*
