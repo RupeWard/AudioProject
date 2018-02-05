@@ -12,6 +12,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 	public Image axisImage;
 
 	public UnityEngine.UI.Text valueText;
+	public RectTransform valueLabelRT;
 
 	public RectTransform cachedRT
 	{
@@ -141,6 +142,21 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		}
 	}
 
+	private void OnDestroy()
+	{
+		GameObject.Destroy( valueLabelRT.gameObject );
+	}
+
+	private void OnEnable()
+	{
+		valueLabelRT.gameObject.SetActive( true );
+	}
+
+	private void OnDisable( )
+	{
+		valueLabelRT.gameObject.SetActive( false );
+	}
+
 	/*
 	private Vector2 ViewRange( )
 	{
@@ -164,18 +180,28 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		axisDefn = d;
 
 		gameObject.name = d.axisName;
-
+		valueLabelRT.gameObject.name = gameObject.name + " (ValueLabel)";
 		_graphViewPanel = p;
+
 
 		cachedRT.SetParent(_graphViewPanel.axesContainer);
 		transform.localScale = Vector3.one;
 
 		if (axisDefn.eDirection == RJWS.EOrthoDirection.Horizontal)
 		{
-			RectTransform valueLabelRT = valueText.transform.parent.GetComponent<RectTransform>( );
-			valueLabelRT.pivot = valueLabelRT.anchorMin = valueLabelRT.anchorMax = new Vector2( 1f, 0.5f );
-			valueLabelRT.anchoredPosition = Vector2.zero;
+			valueLabelRT.SetParent( _graphViewPanel.VerticalOverlaysPanel);
+			valueLabelRT.anchorMin = new Vector2(0f, 0f);
+			valueLabelRT.anchorMax = new Vector2(0f, 0f);
+			valueLabelRT.pivot = new Vector2( 0f, 0.5f );
 		}
+		else
+		{
+			valueLabelRT.SetParent( _graphViewPanel.HorizontalOverlaysPanel);
+			valueLabelRT.anchorMin = new Vector2( 0f, 0f );
+			valueLabelRT.anchorMax = new Vector2( 0f, 0f );
+			valueLabelRT.pivot = new Vector2( 0.5f, 0f );
+		}
+		valueLabelRT.anchoredPosition = Vector2.zero;
 
 		SetSpriteSize(  );
 		CreateTicks( );
@@ -247,28 +273,41 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 
 	public void adjustPosition( )
 	{
+		Vector2 labelPos = Vector2.zero;
+		Vector2 axisPos = Vector2.zero;
+
 		switch (Direction)
 		{
 			case RJWS.EOrthoDirection.Horizontal:
 				{
-					cachedRT.anchoredPosition
-						= new Vector2(
+					axisPos = new Vector2(
 							graphViewPanel.GetXLocation(_graphViewPanel.xRange.MidPoint()),
 							graphViewPanel.GetYLocation( Value )
 							);
+					
+					labelPos = new Vector2(
+						0,
+//							graphViewPanel.GetXLocation(_graphViewPanel.lastX),
+							graphViewPanel.GetYLocation( Value ));
 					break;
 				}
 			case RJWS.EOrthoDirection.Vertical:
 				{
-					cachedRT.anchoredPosition
-						= new Vector2(
+					axisPos = new Vector2(
 							_graphViewPanel.GetXLocation( Value ),
 							graphViewPanel.GetYLocation( _graphViewPanel.yRange.MidPoint()) 
+							);
+					labelPos = new Vector2(
+							_graphViewPanel.GetXLocation( Value ),
+							0f
+//							graphViewPanel.GetYLocation(_graphViewPanel.lastY)
 							);
 					break;
 				}
 		}
-	
+		cachedRT.anchoredPosition = axisPos;
+        valueLabelRT.anchoredPosition = labelPos;
+
 		SetValueText( );
 		/*
 		foreach (GraphTick t in ticks_)

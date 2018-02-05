@@ -22,6 +22,10 @@ namespace RJWS.UI.Scrollable
 		public GameObject grabberUp;
 		public GameObject grabberDown;
 
+		public RectTransform overlaysPanel;
+		public RectTransform verticalOverlaysPanel;
+		public RectTransform horizontalOverlaysPanel;
+
 		public bool InitOnAwake = false;
 
 		public RectTransform cachedRT
@@ -83,6 +87,8 @@ namespace RJWS.UI.Scrollable
 		public void HandleScrollBarChanged( EOrthoDirection direction, float sizeFraction, float posFraction)
 		{
 			scrollablePanelView.HandleViewChange( direction, sizeFraction, posFraction );
+			verticalOverlaysPanel.sizeDelta = new Vector2( verticalOverlaysPanel.sizeDelta.x, scrollablePanelView.contentPanelRT.sizeDelta.y);
+			horizontalOverlaysPanel.sizeDelta = new Vector2( scrollablePanelView.contentPanelRT.sizeDelta.x, horizontalOverlaysPanel.sizeDelta.y);
 		}
 
 		public void SetUpScrollBars()
@@ -137,7 +143,7 @@ namespace RJWS.UI.Scrollable
 			}
 			scrollablePanelView.cachedRT.anchoredPosition = anchoredPos;
 			scrollablePanelView.InitContent( this);
-
+			overlaysPanel.sizeDelta = verticalOverlaysPanel.sizeDelta = horizontalOverlaysPanel.sizeDelta = scrollablePanelView.contentPanelRT.sizeDelta;
 			SetUpCancelGrabButton( );
         }
 

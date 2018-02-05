@@ -306,6 +306,11 @@ public class XX_GraphViewPanel : MonoBehaviour
 		cachedRT = GetComponent<RectTransform>( );
 	}
 
+	private void OnEnable()
+	{
+		SetDirty( );
+	}
+
 	public Vector2 displayScaleReadonly // TODO refactor
 	{
 		get
@@ -344,15 +349,40 @@ public class XX_GraphViewPanel : MonoBehaviour
 		{  RJWS.EOrthoDirection.Vertical, new Vector2()}
 	};
 
-    public void Init( RJWS.UI.Scrollable.ScrollablePanel scrollablePanel )
+	public RectTransform OverlaysPanel
 	{
+		get;
+		private set;
+	}
+
+	public RectTransform HorizontalOverlaysPanel
+	{
+		get;
+		private set;
+	}
+
+	public RectTransform VerticalOverlaysPanel
+	{
+		get;
+		private set;
+	}
+
+	public RJWS.UI.Scrollable.ScrollablePanel _scrollablePanel;
+
+	public void Init( RJWS.UI.Scrollable.ScrollablePanel scrollablePanel )
+	{
+		_scrollablePanel = scrollablePanel;
+
+		OverlaysPanel = scrollablePanel.overlaysPanel;
+		HorizontalOverlaysPanel = scrollablePanel.horizontalOverlaysPanel;
+		VerticalOverlaysPanel = scrollablePanel.verticalOverlaysPanel;
+
 		RectTransform parent = scrollablePanel.scrollablePanelView.contentPanelRT;
 		cachedRT.SetParent( parent.transform);
 		_displayScale[RJWS.EOrthoDirection.Horizontal] = parent.transform.localScale.x;
 		_displayScale[RJWS.EOrthoDirection.Vertical] = parent.transform.localScale.y;
 
 		cachedRT.sizeDelta = parent.sizeDelta;
-
 		scrollablePanel.scrollablePanelView.onScaleChangeAction += HandleDisplayScaleChanged;
 		scrollablePanel.scrollablePanelView.onPosChangeAction += HandleDisplayPosChanged;
 	}
@@ -405,7 +435,17 @@ public class XX_GraphViewPanel : MonoBehaviour
 		if (posFraction != scrollBarPos[dirn])
 		{
 			scrollBarPos[dirn] = posFraction;
-			_displayScaleDirty = true;
+			_displayPosDirty = true;
+		}
+		if (dirn == RJWS.EOrthoDirection.Horizontal)
+		{
+			HorizontalOverlaysPanel.localScale = new Vector3( _scrollablePanel.scrollablePanelView.contentPanelRT.localScale.x, HorizontalOverlaysPanel.localScale.y, 1f );
+			HorizontalOverlaysPanel.position = new Vector2( _scrollablePanel.scrollablePanelView.contentPanelRT.position.x, HorizontalOverlaysPanel.position.y );
+		}
+		if (dirn == RJWS.EOrthoDirection.Vertical)
+		{
+			VerticalOverlaysPanel.localScale = new Vector3( VerticalOverlaysPanel.localScale.x, _scrollablePanel.scrollablePanelView.contentPanelRT.localScale.y, 1f );
+			VerticalOverlaysPanel.anchoredPosition = new Vector2( VerticalOverlaysPanel.anchoredPosition.x, _scrollablePanel.scrollablePanelView.contentPanelRT.anchoredPosition.y );
 		}
 	}
 
@@ -507,6 +547,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 		float xFraction = (xIn - xRange.x) / (xRange.y - xRange.x);
 		return LerpFree( 0, cachedRT.sizeDelta.x, xFraction ); 
 	}
+	
 
 	public float GetYLocation( float yIn )
 	{
