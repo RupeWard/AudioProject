@@ -427,6 +427,16 @@ public class XX_GraphViewPanel : MonoBehaviour
 			_displayScale[dirn] = 1f / scaleFraction;
 			_displayScaleDirty = true;
 			_displayPosDirty = true;
+			if (dirn == RJWS.EOrthoDirection.Horizontal)
+			{
+				HorizontalOverlaysPanel.localScale = new Vector3( _scrollablePanel.scrollablePanelView.contentPanelRT.localScale.x, HorizontalOverlaysPanel.localScale.y, 1f );
+				HorizontalOverlaysPanel.position = new Vector2( _scrollablePanel.scrollablePanelView.contentPanelRT.position.x, HorizontalOverlaysPanel.position.y );
+			}
+			if (dirn == RJWS.EOrthoDirection.Vertical)
+			{
+				VerticalOverlaysPanel.localScale = new Vector3( VerticalOverlaysPanel.localScale.x, _scrollablePanel.scrollablePanelView.contentPanelRT.localScale.y, 1f );
+				VerticalOverlaysPanel.anchoredPosition = new Vector2( VerticalOverlaysPanel.anchoredPosition.x, _scrollablePanel.scrollablePanelView.contentPanelRT.anchoredPosition.y );
+			}
 		}
 	}
 

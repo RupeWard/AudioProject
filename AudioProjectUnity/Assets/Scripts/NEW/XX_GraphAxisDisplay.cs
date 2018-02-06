@@ -130,7 +130,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 
 	public void SetValueText()
 	{
-		valueText.text = Value.ToString( );
+		valueText.text = Value.ToString( "F4");
 	}
 
 	private void Awake()
@@ -209,6 +209,8 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		axisImage.color = _graphViewPanel.graphDisplaySettings.GetColor( axisDefn );
 		adjustPosition( );
 		SetValueText( );
+
+		_fullLabelSize = valueLabelRT.sizeDelta;
 	}
 
 	public void CreateTicks( )
@@ -319,6 +321,8 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		*/
 	}
 
+	Vector2 _fullLabelSize;
+
 	public void SetSpriteSize( )
 	{
 		switch (Direction)
@@ -364,6 +368,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 					break;
 				}
 		}
+		valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x * screenFraction.x, _fullLabelSize.y * screenFraction.y );
 	}
 
 	public void AdjustWidth(float scale)
