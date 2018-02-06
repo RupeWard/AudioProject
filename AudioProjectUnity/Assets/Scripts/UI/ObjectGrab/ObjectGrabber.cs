@@ -9,9 +9,9 @@ namespace RJWS.UI
 {
 	public class ObjectGrabber: MonoBehaviour
 	{
-		static public readonly bool DEBUG_OBJECTGRABBER = true;
-		private static readonly bool DEBUG_DRAG = true;
-		private static readonly bool DEBUG_CLICK = true;
+		static public readonly bool DEBUG_OBJECTGRABBER = false;
+		private static readonly bool DEBUG_DRAG = false;
+		private static readonly bool DEBUG_CLICK = false;
 
 		public float relativeSize = 3f;
 

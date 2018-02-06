@@ -1,11 +1,14 @@
+VIEWPORT COORDS TO CONTENT COORDS
+
 Axes 
-- label
-- ticks
-- test axes
+[   - ticks (similar to label) ]
+- prefer fixed to floating
+- how to tell if fixed is visible (how to tell if point is visible)
+- show floating when no fixed visible?
 
 Settings
 - edit panel
-- display points/lines options
+- display points/lines/axes options
 
 Follow points
 - loop/no loop

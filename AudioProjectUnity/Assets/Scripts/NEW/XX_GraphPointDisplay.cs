@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class XX_GraphPointDisplay : MonoBehaviour
 {
-	private static readonly bool DEBUG_LOCAL = true;
+	private static readonly bool DEBUG_LOCAL = false;
 
 	private XX_GraphViewPanel _graphViewPanel;
 

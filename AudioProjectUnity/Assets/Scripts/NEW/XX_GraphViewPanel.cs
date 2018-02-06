@@ -6,6 +6,9 @@ using RJWS.Core.Extensions;
 
 public class XX_GraphViewPanel : MonoBehaviour
 {
+	private static readonly bool DEBUG_LOCAL = false;
+
+
 	public void SetDirty( )
 	{
 		_displayPosDirty = true;
@@ -146,8 +149,6 @@ public class XX_GraphViewPanel : MonoBehaviour
 			}
 		}
 	}
-
-	private static readonly bool DEBUG_LOCAL = true;
 
 	System.Text.StringBuilder debugsb = new System.Text.StringBuilder( );
 
@@ -440,7 +441,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 		}
 	}
 
-	public void HandleDisplayPosChanged( RJWS.EOrthoDirection dirn, float posFraction )
+	public void HandleDisplayPosChanged( RJWS.EOrthoDirection dirn, float posFraction)
 	{
 		if (posFraction != scrollBarPos[dirn])
 		{
