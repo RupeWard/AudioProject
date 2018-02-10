@@ -176,6 +176,8 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 	}
 	*/
 
+	public static readonly bool DEBUG_AUTO = false;
+
 	public bool IsVisible()
 	{
 		bool visible = true;
@@ -196,7 +198,10 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 			valueFraction = (val - _graphViewPanel.xRange.x) / (_graphViewPanel.xRange.y - _graphViewPanel.xRange.x);
 			visible = (valueFraction >= viewRect.xMin) && (valueFraction <= viewRect.xMax);
 		}
-		Debug.Log( "Visible = " + visible + " val = "+val+", valueFraction = " + valueFraction + ", view = " + viewRect + ", AXIS=" + axisDefn.DebugDescribe( ) );
+		if (DEBUG_AUTO)
+		{
+			Debug.Log( "Visible = " + visible + " val = " + val + ", valueFraction = " + valueFraction + ", view = " + viewRect + ", AXIS=" + axisDefn.DebugDescribe( ) );
+		}
 		return visible;
 	}
 
