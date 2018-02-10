@@ -328,7 +328,12 @@ public class XX_GraphViewPanel : MonoBehaviour
 						axis.adjustPosition( );
 					}
 				}
-			} 
+			}
+			Rect viewValues = viewValuesRect;
+			_scrollablePanel.SetLeftLabel( "MinX=" + viewValues.x.ToString("F4") + " (" + xRange.x.ToString( "F4" ) + ")" );
+			_scrollablePanel.SetRightLabel( "MaxX=" + viewValues.xMax.ToString( "F4" ) + " (" + xRange.y.ToString( "F4" ) + ")" );
+			_scrollablePanel.SetTopLabel( "MaxY=" + viewValues.yMax.ToString( "F2" ) + " (" + yRange.y.ToString( "F2" ) + ")" );
+			_scrollablePanel.SetBottomLabel( "MinY=" + viewValues.y.ToString( "F2" ) + " (" + yRange.x.ToString( "F2" ) + ")" );
 			_displayPosDirty = false;
 		}
 		if (DEBUG_LOCAL)

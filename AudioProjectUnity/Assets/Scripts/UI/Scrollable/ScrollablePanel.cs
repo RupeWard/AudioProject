@@ -26,6 +26,17 @@ namespace RJWS.UI.Scrollable
 		public RectTransform verticalOverlaysPanel;
 		public RectTransform horizontalOverlaysPanel;
 
+		public GameObject leftLabelPanel;
+		public GameObject rightLabelPanel;
+		public GameObject topLabelPanel;
+		public GameObject bottomLabelPanel;
+
+		private UnityEngine.UI.Text _leftLabelText;
+		private UnityEngine.UI.Text _rightLabelText;
+		private UnityEngine.UI.Text _topLabelText;
+		private UnityEngine.UI.Text _bottomLabelText;
+
+
 		public bool InitOnAwake = false;
 
 		public RectTransform cachedRT
@@ -42,9 +53,71 @@ namespace RJWS.UI.Scrollable
 		private void Awake()
 		{
 			cachedRT = GetComponent<RectTransform>( );
+			_leftLabelText = leftLabelPanel.GetComponentInChildren<UnityEngine.UI.Text>( );
+			_rightLabelText = rightLabelPanel.GetComponentInChildren<UnityEngine.UI.Text>( );
+			_topLabelText = topLabelPanel.GetComponentInChildren<UnityEngine.UI.Text>( );
+			_bottomLabelText = bottomLabelPanel.GetComponentInChildren<UnityEngine.UI.Text>( );
+
+			leftLabelPanel.SetActive( false );
+			rightLabelPanel.SetActive( false );
+			topLabelPanel.SetActive( false );
+			bottomLabelPanel.SetActive( false );
+
 			if (InitOnAwake)
 			{
 				Init( );
+			}
+		}
+
+		public void SetLeftLabel(string str = null)
+		{
+			if (string.IsNullOrEmpty( str ))
+			{
+				leftLabelPanel.SetActive( false );
+			}
+			else
+			{
+				leftLabelPanel.SetActive( true );
+				_leftLabelText.text = str;
+			}
+		}
+
+		public void SetRightLabel( string str = null )
+		{
+			if (string.IsNullOrEmpty(str))
+			{
+				rightLabelPanel.SetActive( false );
+			}
+			else
+			{
+				rightLabelPanel.SetActive( true );
+				_rightLabelText.text = str;
+			}
+		}
+
+		public void SetTopLabel( string str = null )
+		{
+			if (string.IsNullOrEmpty(str))
+			{
+				topLabelPanel.SetActive( false );
+			}
+			else
+			{
+				topLabelPanel.SetActive( true );
+				_topLabelText.text = str;
+			}
+		}
+
+		public void SetBottomLabel( string str )
+		{
+			if (string.IsNullOrEmpty(str))
+			{
+				bottomLabelPanel.SetActive( false );
+			}
+			else
+			{
+				bottomLabelPanel.SetActive( true );
+				_bottomLabelText.text = str;
 			}
 		}
 
