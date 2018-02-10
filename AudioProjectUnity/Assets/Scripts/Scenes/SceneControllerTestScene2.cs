@@ -118,10 +118,10 @@ public class SceneControllerTestScene2 : SceneController_Base
 					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.x ),
 					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.y ),
 					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
-					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0.75f ),
+//					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0.75f ),
 					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0f ),
-					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, wfg.GetValueRange().MidPoint() ),
-					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, 0.25f )
+					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0.9f * wfg.GetValueRange().y ),
+//					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, 0.25f )
 				}
 			);
 
@@ -168,11 +168,11 @@ public class SceneControllerTestScene2 : SceneController_Base
 			{
 				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.x ),
 				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.y ),
-				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
-				XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0.5f ),
+//				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
+//				XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0.5f ),
 				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0f ),
-                XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0.75f ),
-                XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, 0.2f )
+//                XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0.75f ),
+//                XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, 0.2f )
 			}
 			);
 

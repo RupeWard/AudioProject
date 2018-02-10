@@ -34,6 +34,12 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	private List<XX_GraphAxisDisplay> _graphAxisDisplays = new List<XX_GraphAxisDisplay>( );
 
+	private Dictionary<RJWS.EOrthoDirection, List<XX_GraphAxisDisplay> > _autoAxes = 
+		new Dictionary<RJWS.EOrthoDirection, List<XX_GraphAxisDisplay> >( );
+	private List<XX_GraphAxisDisplay> _allAutoAxes = new List<XX_GraphAxisDisplay>( );
+
+	public bool autoAxisDisplays = true;
+
 	private int _numPointsBACKING = 0;
 	public int numPoints
 	{
@@ -56,7 +62,47 @@ public class XX_GraphViewPanel : MonoBehaviour
 		}
 		_graphAxisDisplays.Clear( );
 	}
-	
+
+	private void ClearAutoAxes( )
+	{
+		foreach ( List<XX_GraphAxisDisplay> axes in _autoAxes.Values)
+		{
+			foreach(XX_GraphAxisDisplay axis in axes)
+			{
+				GameObject.Destroy( axis.gameObject );
+			}
+			axes.Clear( );
+		}
+		_autoAxes.Clear( );
+		_allAutoAxes.Clear( );
+	}
+
+
+	private void CreateAutoAxes( IEnumerable<float> horizontal, IEnumerable<float> vertical)
+	{
+		ClearAutoAxes( );
+
+		XX_AxisDefn axisDefn = new XX_AxisDefn( );
+
+		axisDefn.axisType = XX_AxisDefn.EAxisType.ScreenFractionValue;
+
+		axisDefn.eDirection = RJWS.EOrthoDirection.Horizontal;
+
+		foreach (float f in horizontal)
+		{
+			axisDefn.value = f;
+			axisDefn.axisName = "AUTO_H_" + f.ToString( );
+			AddAutoAxis( axisDefn );
+		}
+		axisDefn.eDirection = RJWS.EOrthoDirection.Vertical;
+		foreach (float f in vertical)
+		{
+			axisDefn.value = f;
+			axisDefn.axisName = "AUTO_V_" + f.ToString( );
+			AddAutoAxis( axisDefn );
+		}
+	}
+
 	private RJWS.Grph.AbstractGraphGenerator _graphGenerator;
 
 	public void ChangeGraph( RJWS.Audio.AbstractWaveFormGenerator graphGenerator, int n, Vector2 pxRange, bool clearAxes = true )
@@ -79,12 +125,29 @@ public class XX_GraphViewPanel : MonoBehaviour
 		SetDirty( );
 	}
 
-	public void AddAxis(XX_AxisDefn axisDefn)
+	private XX_GraphAxisDisplay CreateAxis( XX_AxisDefn axisDefn )
 	{
 		XX_GraphAxisDisplay newAxisDisplay = Instantiate( graphAxisPrefab ).GetComponent<XX_GraphAxisDisplay>( );
 		newAxisDisplay.Init( this, axisDefn );
-		_graphAxisDisplays.Add( newAxisDisplay );
 		SetDirty( );
+		return newAxisDisplay;
+	}
+
+	public void AddAxis(XX_AxisDefn axisDefn)
+	{
+		XX_GraphAxisDisplay newAxisDisplay = CreateAxis( axisDefn);
+		_graphAxisDisplays.Add( newAxisDisplay );
+	}
+
+	public void AddAutoAxis( XX_AxisDefn axisDefn )
+	{
+		XX_GraphAxisDisplay newAxisDisplay = CreateAxis( axisDefn );
+		if (false == _autoAxes.ContainsKey(axisDefn.eDirection))
+		{
+			_autoAxes.Add( axisDefn.eDirection, new List<XX_GraphAxisDisplay>( ) );
+		}
+		_autoAxes[axisDefn.eDirection].Add(newAxisDisplay );
+		_allAutoAxes.Add( newAxisDisplay );
 	}
 
 	public void AddAxes( IEnumerable<XX_AxisDefn> defns)
@@ -152,6 +215,18 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	System.Text.StringBuilder debugsb = new System.Text.StringBuilder( );
 
+	private Dictionary<RJWS.EOrthoDirection, bool> _directionFlags = null;
+	private void ResetDirectionFlags(bool b)
+	{
+		if (_directionFlags == null)
+		{
+			_directionFlags = new Dictionary<RJWS.EOrthoDirection, bool>( );
+		}
+		_directionFlags.Clear( );
+		_directionFlags.Add( RJWS.EOrthoDirection.Horizontal, b );
+		_directionFlags.Add( RJWS.EOrthoDirection.Vertical, b );
+	}
+
 	private void LateUpdate( )
 	{
 		if (!IsDirty)
@@ -188,6 +263,10 @@ public class XX_GraphViewPanel : MonoBehaviour
 			{
 				_graphAxisDisplays[i].HandleScaling( displayScaleReadonly );
 			}
+			for (int i = 0; i < _allAutoAxes.Count; i++)
+			{
+				_allAutoAxes[i].HandleScaling( displayScaleReadonly );
+			}
 			_displayScaleDirty = false;
 		}
 		if (_displayPosDirty)
@@ -211,13 +290,34 @@ public class XX_GraphViewPanel : MonoBehaviour
 					_graphConnectorDisplays[i-1].UpdateDisplay( );
 				}
 			}
+
+			ResetDirectionFlags(false );
 			for (int i = 0; i < _graphAxisDisplays.Count; i++)
 			{
 				if (_graphAxisDisplays[i].axisDefn.axisType != XX_AxisDefn.EAxisType.FixedValue)
 				{
 					_graphAxisDisplays[i].adjustPosition( );
 				}
+				if (_graphAxisDisplays[i].IsVisible())
+				{
+					_directionFlags[_graphAxisDisplays[i].axisDefn.eDirection] = true;
+				}
 			}
+
+			foreach (KeyValuePair<RJWS.EOrthoDirection, List< XX_GraphAxisDisplay>> kvp in _autoAxes )
+			{
+				bool showing = (false == _directionFlags[kvp.Key]);
+				Debug.Log( kvp.Key.ToString( ) + " needs auto : " + showing);
+
+				foreach ( XX_GraphAxisDisplay axis in kvp.Value)
+				{
+					axis.gameObject.SetActive( showing);
+					if (showing)
+					{
+						axis.adjustPosition( );
+					}
+				}
+			} 
 			_displayPosDirty = false;
 		}
 		if (DEBUG_LOCAL)
@@ -233,7 +333,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 	{
 		get
 		{
-			return xRange.x + _displayPos[RJWS.EOrthoDirection.Horizontal] * (xRange.y - xRange.x);
+			return xRange.x + _displayPos[RJWS.EOrthoDirection.Horizontal]  * ( xRange.y - xRange.x);
 		}
 	}
 
@@ -266,7 +366,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 	{
 		get
 		{
-			return yRange.x + _displayPos[RJWS.EOrthoDirection.Vertical] * (yRange.y - yRange.x);
+			return yRange.x + _displayPos[RJWS.EOrthoDirection.Vertical]  *( yRange.y - yRange.x);
 		}
 	}
 
@@ -274,7 +374,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 	{
 		get
 		{
-			return (double)yRange.x + (double)_displayPos[RJWS.EOrthoDirection.Vertical] * (double)(yRange.y - yRange.x);
+			return (double)yRange.x + (double)_displayPos[RJWS.EOrthoDirection.Vertical]  * (double)(yRange.y - yRange.x);
 		}
 	}
 
@@ -386,6 +486,8 @@ public class XX_GraphViewPanel : MonoBehaviour
 		cachedRT.sizeDelta = parent.sizeDelta;
 		scrollablePanel.scrollablePanelView.onScaleChangeAction += HandleDisplayScaleChanged;
 		scrollablePanel.scrollablePanelView.onPosChangeAction += HandleDisplayPosChanged;
+
+		CreateAutoAxes( new float[] { 0.2f, 0.8f }, new float[] { 0.2f, 0.8f } );
 	}
 
 	private bool _displayScaleDirty= false;

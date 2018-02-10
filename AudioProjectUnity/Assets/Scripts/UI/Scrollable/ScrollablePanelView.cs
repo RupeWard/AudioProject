@@ -6,7 +6,7 @@ namespace RJWS.UI.Scrollable
 {
 	public class ScrollablePanelView : MonoBehaviour
 	{
-		static private readonly bool DEBUG_LOCAL = true;
+		static private readonly bool DEBUG_LOCAL = false;
 
 		public RectTransform contentPanelRT;
 

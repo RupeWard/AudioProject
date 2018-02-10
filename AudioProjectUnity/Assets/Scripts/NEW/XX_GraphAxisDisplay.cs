@@ -4,6 +4,7 @@ using UnityEngine;
 
 using UnityEngine.UI;
 using RJWS.Core.Extensions;
+using RJWS.Core.DebugDescribable;
 
 public class XX_GraphAxisDisplay : MonoBehaviour
 {
@@ -175,10 +176,34 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 	}
 	*/
 
+	public bool IsVisible()
+	{
+		bool visible = true;
+
+		Rect viewRect = _graphViewPanel._scrollablePanel.scrollablePanelView.ViewRect;
+
+		float valueFraction;
+
+		float val = Value;
+
+		if (axisDefn.eDirection == RJWS.EOrthoDirection.Horizontal)
+		{
+			valueFraction = (val - _graphViewPanel.yRange.x) / (_graphViewPanel.yRange.y - _graphViewPanel.yRange.x);
+			visible = (valueFraction >= viewRect.yMin) && (valueFraction <= viewRect.yMax);
+		}
+		else
+		{
+			valueFraction = (val - _graphViewPanel.xRange.x) / (_graphViewPanel.xRange.y - _graphViewPanel.xRange.x);
+			visible = (valueFraction >= viewRect.xMin) && (valueFraction <= viewRect.xMax);
+		}
+		Debug.Log( "Visible = " + visible + " val = "+val+", valueFraction = " + valueFraction + ", view = " + viewRect + ", AXIS=" + axisDefn.DebugDescribe( ) );
+		return visible;
+	}
+
 	public void Init( XX_GraphViewPanel p, XX_AxisDefn d )
 	{
-		axisDefn = d;
-
+		axisDefn = d.clone();
+		
 		gameObject.name = d.axisName;
 		valueLabelRT.gameObject.name = gameObject.name + " (ValueLabel)";
 		_graphViewPanel = p;
@@ -288,7 +313,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 							);
 					
 					labelPos = new Vector2(
-						0,
+						0f,
 //							graphViewPanel.GetXLocation(_graphViewPanel.lastX),
 							graphViewPanel.GetYLocation( Value ));
 					break;

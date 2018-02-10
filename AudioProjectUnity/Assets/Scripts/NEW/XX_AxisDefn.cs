@@ -4,7 +4,7 @@ using UnityEngine;
 using RJWS.Enums;
 
 [System.Serializable]
-public class XX_AxisDefn 
+public class XX_AxisDefn : RJWS.Core.DebugDescribable.IDebugDescribable
 {
 	public enum EAxisType
 	{
@@ -26,7 +26,53 @@ public class XX_AxisDefn
 	public float axisLineWidthScaling = 1f; // default from settings
 	public float axisLabelSizeScaling = 1f; // default from settings
 
-	public static XX_AxisDefn CreateFixed(RJWS.EOrthoDirection dirn, float v)
+	public XX_AxisDefn clone()
+	{
+		XX_AxisDefn defn = new XX_AxisDefn( );
+
+		defn.axisType = this.axisType; ;
+
+		defn.snap = this.snap;
+
+		defn.axisName = this.axisName;
+		defn.eDirection = this.eDirection;
+		defn.value = this.value;
+		defn.tickLabelSizeScaling = this.tickLabelSizeScaling; 
+		defn.tickLineWidthScaling = this.tickLineWidthScaling;
+		defn.tickLineLengthScaling = this.tickLineLengthScaling; 
+		defn.tickBase = this.tickBase;
+		defn.tickSpacing = this.tickSpacing;
+		defn.axisLineWidthScaling = this.axisLineWidthScaling;
+		defn.axisLabelSizeScaling = this.axisLabelSizeScaling;
+
+		return defn;
+}
+
+	public void DebugDescribe( System.Text.StringBuilder sb)
+	{
+		sb.Append( "[ Axis: " ).Append( eDirection ).Append( " " );
+		if (eDirection == RJWS.EOrthoDirection.Horizontal)
+		{
+			sb.Append( "H " );
+		}
+		else
+		{
+			sb.Append( "V " );
+		}
+		if (axisType == EAxisType.FixedValue)
+		{
+			sb.Append( "Fix@" );
+		}
+		else
+		{
+			sb.Append( "Fract" );
+		}
+		sb.Append( value.ToString( ) );
+		sb.Append( "]" );
+
+	}
+
+public static XX_AxisDefn CreateFixed(RJWS.EOrthoDirection dirn, float v)
 	{
 		XX_AxisDefn defn = new XX_AxisDefn( );
 		defn.axisName = dirn.ToChar( ) + "_F_" + v.ToString( );
