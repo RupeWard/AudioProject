@@ -115,13 +115,24 @@ public class SceneControllerTestScene2 : SceneController_Base
 			_graphViewPanel.AddAxes(
 				new List<XX_AxisDefn>( )
 				{
+					// Fixed only (with auto)
+
 					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.x ),
 					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.y ),
 					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
-//					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0.75f ),
 					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0f ),
 					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0.9f * wfg.GetValueRange().y ),
-//					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, 0.25f )
+
+					/* 
+					// fractional only (no auto)
+
+					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0f ),
+					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0.75f ),
+					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 1f ),
+					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, 0f ),
+					XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, .5f ),
+                    XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, 1f )
+					*/
 				}
 			);
 

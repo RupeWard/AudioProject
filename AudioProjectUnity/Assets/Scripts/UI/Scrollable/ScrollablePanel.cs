@@ -88,7 +88,9 @@ namespace RJWS.UI.Scrollable
 		{
 			scrollablePanelView.HandleViewChange( direction, sizeFraction, posFraction );
 			verticalOverlaysPanel.sizeDelta = new Vector2( verticalOverlaysPanel.sizeDelta.x, scrollablePanelView.contentPanelRT.sizeDelta.y);
+			verticalOverlaysPanel.anchoredPosition = new Vector2(0f, scrollablePanelView.contentPanelRT.anchoredPosition.y );
 			horizontalOverlaysPanel.sizeDelta = new Vector2( scrollablePanelView.contentPanelRT.sizeDelta.x, horizontalOverlaysPanel.sizeDelta.y);
+			horizontalOverlaysPanel.anchoredPosition = new Vector2( scrollablePanelView.contentPanelRT.anchoredPosition.x, 0f);
 		}
 
 		public void SetUpScrollBars()
