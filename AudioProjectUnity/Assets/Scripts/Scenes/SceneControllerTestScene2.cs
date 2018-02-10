@@ -158,9 +158,7 @@ public class SceneControllerTestScene2 : SceneController_Base
 		}
 
 		Vector2 xRange = new Vector2( 0f, (float)(wfg.waveLengthSecs * numPeriods) );
-		//_graphViewPanel.DrawDefaultAxes( );
 
-//		RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( wfg, _graphPanel.xRange, numPeriods* nPerWavelength +1 );
 		_graphViewPanel.ChangeGraph( wfg, nPerWavelength, xRange);
 
 		_graphViewPanel.AddAxes(
@@ -168,7 +166,7 @@ public class SceneControllerTestScene2 : SceneController_Base
 			{
 				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.x ),
 				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.y ),
-//				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
+				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
 //				XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0.5f ),
 				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0f ),
 //                XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0.75f ),

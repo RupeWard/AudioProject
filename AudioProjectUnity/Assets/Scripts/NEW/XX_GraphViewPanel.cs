@@ -235,7 +235,8 @@ public class XX_GraphViewPanel : MonoBehaviour
 		if (DEBUG_LOCAL)
 		{
 			debugsb.Length = 0;
-			debugsb.Append( "Updated GraphPoints:" );
+			debugsb.Append( "Updated GraphPoints: VR=" ).Append(_scrollablePanel.scrollablePanelView.ViewRect.ToString());
+
 			if (_displayPosDirty)
 			{
 				debugsb.Append( " Pos" );
@@ -553,7 +554,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 		if (dirn == RJWS.EOrthoDirection.Horizontal)
 		{
 			HorizontalOverlaysPanel.localScale = new Vector3( _scrollablePanel.scrollablePanelView.contentPanelRT.localScale.x, HorizontalOverlaysPanel.localScale.y, 1f );
-			HorizontalOverlaysPanel.position = new Vector2( _scrollablePanel.scrollablePanelView.contentPanelRT.position.x, HorizontalOverlaysPanel.position.y );
+			HorizontalOverlaysPanel.anchoredPosition = new Vector2( _scrollablePanel.scrollablePanelView.contentPanelRT.position.x, HorizontalOverlaysPanel.position.y );
 		}
 		if (dirn == RJWS.EOrthoDirection.Vertical)
 		{
