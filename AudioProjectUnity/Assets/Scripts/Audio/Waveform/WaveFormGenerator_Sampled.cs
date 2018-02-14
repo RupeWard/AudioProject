@@ -7,6 +7,8 @@ namespace RJWS.Audio
 {
 	public class WaveFormGenerator_Sampled: AbstractWaveFormGenerator
 	{
+		static readonly private bool DEBUG_LOCAL = true;
+
 		private float[] _samples;
 		private double _sampleRate;
 
@@ -54,6 +56,74 @@ namespace RJWS.Audio
 			double index = (seconds / _sampleRate);
 			return (index >= 0 && index <= (double)(_samples.Length-1));
         }
+
+		System.Text.StringBuilder _debugSB = new System.Text.StringBuilder( );
+
+		public int GetSampleXsInInterval( double secondsStart, double length, List< double > sample, int max = int.MaxValue)
+		{
+			sample.Clear( );
+
+			double firstIndex = (secondsStart / _sampleRate);
+			int firstIndexI = (int)System.Math.Ceiling( firstIndex );
+
+			if (DEBUG_LOCAL)
+			{
+				_debugSB.Length = 0;
+				_debugSB.Append( "Getsamples in interval: S=" + secondsStart + ", L=" + length ).Append("\n-- ");
+				DebugDescribe( _debugSB );
+				_debugSB.Append( "\n-- first=" ).Append( firstIndex ).Append(" (").Append(firstIndexI).Append(")");
+			}
+
+			if (firstIndexI < 0 )
+			{
+				Debug.LogWarning( "Start Time " + secondsStart + " out of range: index=" + firstIndex+ ": " + this.DebugDescribe( ) );
+				firstIndex = 0;
+			}
+			else if (firstIndexI > (_samples.Length - 1))
+			{
+				Debug.LogWarning( "Start Time " + secondsStart + " out of range: index=" + firstIndex + ": " + this.DebugDescribe( ) );
+				return 0;
+			}
+
+			double lastIndex = ( (secondsStart + length) / _sampleRate);
+			int lastIndexI = (int)System.Math.Floor( lastIndex );
+
+			if (DEBUG_LOCAL)
+			{
+				_debugSB.Append( ", Last=" ).Append( lastIndex ).Append( " (" ).Append( lastIndexI ).Append( ")" );
+			}
+			if (lastIndexI > (_samples.Length - 1))
+			{
+				Debug.LogWarning( "EndTime " + secondsStart + " out of range: index=" + lastIndex+ ": " + this.DebugDescribe( ) );
+				lastIndexI = (_samples.Length - 1);
+			}
+			if (lastIndex < 0 )
+			{
+				Debug.LogWarning( "EndTime " + secondsStart + " out of range: index=" + lastIndex + ": " + this.DebugDescribe( ) );
+				return 0;
+			}
+
+			if (max != int.MaxValue)
+			{
+				if (lastIndexI - firstIndexI > max)
+				{
+					return 0;
+				}
+			}
+
+			int numInInterval = 0;
+			for (int index = firstIndexI; index <= lastIndexI; index++)
+			{
+				sample.Add( firstIndexI + index * _sampleRate );
+				numInInterval++;
+			}
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( _debugSB.ToString( ) );
+			}
+
+			return numInInterval;
+		}
 
 		override public float GetValueForTimeSecs( double seconds )
 		{

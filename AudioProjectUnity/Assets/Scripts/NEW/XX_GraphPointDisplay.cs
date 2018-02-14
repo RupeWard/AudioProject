@@ -11,6 +11,29 @@ public class XX_GraphPointDisplay : MonoBehaviour
 	public UnityEngine.UI.Image image;
 	public float size = 1;
 
+	public enum EPtType
+	{
+		Fractional,
+		Sampled
+	}
+
+	public EPtType PtType
+	{
+		get;
+		private set;
+	}
+
+	public class PtXComparer : IComparer< XX_GraphPointDisplay>
+	{
+		public int Compare( XX_GraphPointDisplay pt0, XX_GraphPointDisplay pt1)
+		{
+			float x0 = pt0.Value.x;
+			float x1 = pt1.Value.x;
+			return (int)Mathf.Sign( x0 - x1 );
+		}
+
+	}
+
 	private Vector2 _value = Vector2.zero;
 	public Vector2 Value
 	{
@@ -67,11 +90,12 @@ public class XX_GraphPointDisplay : MonoBehaviour
 		image.color = c;
 	}
 
-	public void Init(XX_GraphViewPanel gvp, int num)
+	public void Init(XX_GraphViewPanel gvp, string n, EPtType t)
 	{
 		_graphViewPanel = gvp;
+		PtType = t;
 		cachedTransform.SetParent( _graphViewPanel.pointsContainer );
-		gameObject.name = "Point_" + num.ToString( );
+		gameObject.name = "Point_" + n;
 	}
 
 	public void HandleScaling( Vector2 screenFraction )

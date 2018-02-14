@@ -12,12 +12,15 @@ public class XX_GraphDisplaySettings
 
 	public float defaultAxisWidth = 6f;
 
+	public Color fractionalPointColour = Color.green;
+	public Color samplePointColour = Color.red;
+
 	public Color GetColor( XX_AxisDefn axisDefn)
 	{
 		return GetColor( axisDefn.eDirection, axisDefn.axisType );
 	}
 
-public Color GetColor( RJWS.EOrthoDirection dirn, XX_AxisDefn.EAxisType axisType)
+	public Color GetColor( RJWS.EOrthoDirection dirn, XX_AxisDefn.EAxisType axisType)
 	{
 		switch (dirn)
 		{

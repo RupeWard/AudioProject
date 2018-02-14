@@ -131,7 +131,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 
 	public void SetValueText()
 	{
-		valueText.text = Value.ToString( "F4");
+		valueText.text = Value.ToString( "G3");
 	}
 
 	private void Awake()

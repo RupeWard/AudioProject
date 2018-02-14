@@ -1,4 +1,11 @@
-VIEWPORT COORDS TO CONTENT COORDS
+Closer zoom
+- connectors show if hiding
+
+Separate number settings for sampled/fractional
+
+Skip some fracional ones if too close
+
+Resetting panel scale on changegraph
 
 Axes 
 [   - ticks (similar to label) ]
