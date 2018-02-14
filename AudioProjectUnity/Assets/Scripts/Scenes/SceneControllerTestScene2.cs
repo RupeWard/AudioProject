@@ -111,7 +111,7 @@ public class SceneControllerTestScene2 : SceneController_Base
 			}
 
 			Vector2 xRange = new Vector2( 0f, testAudioClip.length );
-			_graphViewPanel.ChangeGraph( wfg, nPerWavelength, xRange );
+			_graphViewPanel.ChangeGraph( wfg, nFractionalPerWavelength, nSampledPerWavelength, xRange );
 			_graphViewPanel.AddAxes(
 				new List<XX_AxisDefn>( )
 				{
@@ -154,7 +154,8 @@ public class SceneControllerTestScene2 : SceneController_Base
 
 	}
 
-	public int nPerWavelength = 32;
+	public int nFractionalPerWavelength = 32;
+	public int nSampledPerWavelength = 20;
 
 	public void NewWaveformCreated( RJWS.Audio.PeriodicWaveFormGenerator wfg, int numPeriods )
 	{
@@ -170,7 +171,7 @@ public class SceneControllerTestScene2 : SceneController_Base
 
 		Vector2 xRange = new Vector2( 0f, (float)(wfg.waveLengthSecs * numPeriods) );
 
-		_graphViewPanel.ChangeGraph( wfg, nPerWavelength, xRange);
+		_graphViewPanel.ChangeGraph( wfg, nFractionalPerWavelength, nSampledPerWavelength, xRange);
 
 		_graphViewPanel.AddAxes(
 			new List< XX_AxisDefn>()

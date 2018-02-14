@@ -15,6 +15,16 @@ public class XX_GraphDisplaySettings
 	public Color fractionalPointColour = Color.green;
 	public Color samplePointColour = Color.red;
 
+	/*
+	public int numFractionalPoints = 32;
+	public int numSampledPoints = 16;
+
+	public int totalNumPoints
+	{
+		get { return numFractionalPoints + numSampledPoints;  }
+	}
+	*/
+
 	public Color GetColor( XX_AxisDefn axisDefn)
 	{
 		return GetColor( axisDefn.eDirection, axisDefn.axisType );

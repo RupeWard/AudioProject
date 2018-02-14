@@ -43,17 +43,39 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	public bool autoAxisDisplays = true;
 
-	private int _numPointsBACKING = 0;
-	public int numPoints
+	private int _numFractionalPointsBACKING = 0;
+	public int numFractionalPoints
 	{
-		get { return _numPointsBACKING; }
+		get { return _numFractionalPointsBACKING; }
 		set
 		{
-			if (value != _numPointsBACKING)
+			if (value != _numFractionalPointsBACKING)
 			{
-				_numPointsBACKING = value;
+				_numFractionalPointsBACKING = value;
 				HandleNumPointsChanged( );
 			}
+		}
+	}
+
+	private int _numSampledPointsBACKING = 0;
+	public int numSampledPoints
+	{
+		get { return _numSampledPointsBACKING; }
+		set
+		{
+			if (value != _numSampledPointsBACKING)
+			{
+				_numSampledPointsBACKING = value;
+				HandleNumPointsChanged( );
+			}
+		}
+	}
+
+	public int totalNumPoints
+	{
+		get
+		{
+			return numSampledPoints + numFractionalPoints;
 		}
 	}
 
@@ -108,7 +130,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	private RJWS.Grph.AbstractGraphGenerator _graphGenerator;
 
-	public void ChangeGraph( RJWS.Audio.AbstractWaveFormGenerator graphGenerator, int n, Vector2 pxRange, bool clearAxes = true )
+	public void ChangeGraph( RJWS.Audio.AbstractWaveFormGenerator graphGenerator, int nFractionalPoints, int nSampledPoints, Vector2 pxRange, bool clearAxes = true )
 	{
 		if (graphGenerator == null)
 		{
@@ -127,7 +149,10 @@ public class XX_GraphViewPanel : MonoBehaviour
 		{
 			_sampleGraphPtDisplays[i].gameObject.SetActive( false );
 		}
-		numPoints = n;
+
+		numFractionalPoints = nFractionalPoints;
+		numSampledPoints = nSampledPoints;
+
 		_graphGenerator = graphGenerator;
 
 		Vector2 yR = _graphGenerator.GetValueRange( );
@@ -176,7 +201,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	private void HandleNumPointsChanged( )
 	{
-		while (_fractionalGraphPtDisplays.Count < numPoints)
+		while (_fractionalGraphPtDisplays.Count < numFractionalPoints)
 		{
 			XX_GraphPointDisplay newPoint = Instantiate( graphPointPrefab ).GetComponent<XX_GraphPointDisplay>( );
 			_fractionalGraphPtDisplays.Add( newPoint );
@@ -184,14 +209,14 @@ public class XX_GraphViewPanel : MonoBehaviour
 			newPoint.SetColour( graphDisplaySettings.fractionalPointColour);
 			SetDirty( );
 		}
-		while (_fractionalGraphPtDisplays.Count > numPoints)
+		while (_fractionalGraphPtDisplays.Count > numFractionalPoints)
 		{
 			GameObject.Destroy( _fractionalGraphPtDisplays[0].gameObject );
 			_fractionalGraphPtDisplays.RemoveAt( 0 );
 			SetDirty( );
 		}
 
-		while (_sampleGraphPtDisplays.Count < numPoints)
+		while (_sampleGraphPtDisplays.Count < numSampledPoints)
 		{
 			XX_GraphPointDisplay newPoint = Instantiate( graphPointPrefab ).GetComponent<XX_GraphPointDisplay>( );
 			_sampleGraphPtDisplays.Add( newPoint );
@@ -200,21 +225,21 @@ public class XX_GraphViewPanel : MonoBehaviour
 			newPoint.gameObject.SetActive( false );
 			SetDirty( );
 		}
-		while (_sampleGraphPtDisplays.Count > numPoints)
+		while (_sampleGraphPtDisplays.Count > numSampledPoints)
 		{
 			GameObject.Destroy( _sampleGraphPtDisplays[0].gameObject );
 			_sampleGraphPtDisplays.RemoveAt( 0 );
 			SetDirty( );
 		}
 
-		while (_graphConnectorDisplays.Count < 2*numPoints-1)
+		while (_graphConnectorDisplays.Count <  totalNumPoints-1)
 		{
 			XX_GraphConnectorDisplay newConnector = Instantiate( graphConnectorPrefab ).GetComponent<XX_GraphConnectorDisplay>( );
 			_graphConnectorDisplays.Add( newConnector );
 			newConnector.gameObject.SetActive( false );
 			SetDirty( );
 		}
-		while (_graphConnectorDisplays.Count > 2*numPoints-1)
+		while (_graphConnectorDisplays.Count > totalNumPoints- 1)
 		{
 			GameObject.Destroy( _graphConnectorDisplays[0].gameObject );
 			_graphConnectorDisplays.RemoveAt( 0 );
@@ -297,7 +322,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 			{
 				debugsb.Append( " Scl" );
 			}
-			debugsb.Append( ", xRange = (" + xRange.x + ", " + xRange.y + "), yRange = " + yRange + ", N = " + numPoints );
+			debugsb.Append( ", xRange = (" + xRange.x + ", " + xRange.y + "), yRange = " + yRange + ", N = " + numFractionalPoints +"/"+ numSampledPoints );
 		}
 
 		RecalculatePos( );
@@ -308,11 +333,11 @@ public class XX_GraphViewPanel : MonoBehaviour
 			{
 				debugsb.Append( "\n- scale dirty = " + displayScaleReadonly );
 			}
-			for (int i = 0; i < numPoints; i++)
+			for (int i = 0; i < numFractionalPoints; i++)
 			{
 				_fractionalGraphPtDisplays[i].HandleScaling( displayScaleReadonly );
 			}
-			for (int i = 0; i < numPoints-1; i++)
+			for (int i = 0; i < numSampledPoints -1; i++)
 			{
 				_sampleGraphPtDisplays[i].HandleScaling( displayScaleReadonly );
 			}
@@ -339,12 +364,12 @@ public class XX_GraphViewPanel : MonoBehaviour
 			RJWS.Audio.WaveFormGenerator_Sampled sampledWFG = _graphGenerator as RJWS.Audio.WaveFormGenerator_Sampled;
 			if (sampledWFG != null)
 			{
-				int numSamplePts = sampledWFG.GetSampleXsInInterval( firstXD, lastXD - firstXD, _debugSamples );
+				int nSamplePts = sampledWFG.GetSampleXsInInterval( firstXD, lastXD - firstXD, _debugSamples );
 
 				int step = 1;
-				if (numSamplePts > numPoints)
+				if (nSamplePts > numSampledPoints)
 				{
-					step = Mathf.CeilToInt( (float)numSamplePts / numPoints );
+					step = Mathf.CeilToInt( (float)nSamplePts / numSampledPoints );
 				}
 
 				int samplePtIndex = 0;
@@ -352,7 +377,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 				int samplePtDisplayIndex = 0;
 
 				
-				while (samplePtDisplayIndex < _sampleGraphPtDisplays.Count && samplePtIndex < numSamplePts && samplex <= lastXD)
+				while (samplePtDisplayIndex < _sampleGraphPtDisplays.Count && samplePtIndex < nSamplePts && samplex <= lastXD)
 				{
 					samplex = _debugSamples[samplePtIndex];
 					if (samplex < lastXD)
@@ -373,8 +398,8 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 				if (DEBUG_LOCAL)
 				{
-					Debug.Log( "N=" + numSamplePts + ", step " + step + " gives " + numSamplePtsDisplayed + " displayed" );
-					debugsb.Append( "\nN=" + numSamplePts + ", step " + step + " gives " + numSamplePtsDisplayed + " displayed" );
+					Debug.Log( "N=" + nSamplePts + ", step " + step + " gives " + numSamplePtsDisplayed + " displayed" );
+					debugsb.Append( "\nN=" + nSamplePts + ", step " + step + " gives " + numSamplePtsDisplayed + " displayed" );
 					for (int i = 0; i < numSamplePtsDisplayed; i++)
 					{
 						debugsb.Append( _debugSamples[i] ).Append( ", " );
@@ -389,12 +414,12 @@ public class XX_GraphViewPanel : MonoBehaviour
 					Debug.Log( "No sampled points" );
                 }
 			}
-			double xstepD = (lastXD- firstXD) / (numPoints - 1);
+			double xstepD = (lastXD- firstXD) / (numFractionalPoints - 1);
 			if (DEBUG_LOCAL)
 			{
 				debugsb.Append( "\n- xstep = " + xstepD );
 			}
-			for (int i = 0; i < numPoints; i++)
+			for (int i = 0; i < numFractionalPoints; i++)
 			{
 				double x = firstXD + xstepD * i;
 				float y = _graphGenerator.GetYForX( x );
@@ -425,7 +450,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 			_allGraphPtDisplays.Sort( new XX_GraphPointDisplay.PtXComparer( ) );
 			if (DEBUG_LOCAL)
 			{
-				debugsb.Append( "\nMerged " ).Append( numPoints ).Append( " fractional and " ).Append( numSamplePtsDisplayed ).Append( " sampled making " ).Append(_allGraphPtDisplays.Count);
+				debugsb.Append( "\nMerged " ).Append( numFractionalPoints ).Append( " fractional and " ).Append( numSamplePtsDisplayed ).Append( " sampled making " ).Append(_allGraphPtDisplays.Count);
 				for (int i = 0; i < _allGraphPtDisplays.Count; i++)
 				{
 					debugsb.Append( "\n " ).Append( i ).Append( _allGraphPtDisplays[i].Value.x.ToString( "G4" ) );

@@ -1,11 +1,13 @@
+Separate graphpanel from graphgraph
+
 Closer zoom
 - connectors show if hiding
 
-Separate number settings for sampled/fractional
-
 Skip some fracional ones if too close
 
-Resetting panel scale on changegraph
+Resetting panel scale on changegraph (or just create new panel - maybe fits more with windowing)
+
+Put more in graph settings
 
 Axes 
 [   - ticks (similar to label) ]
