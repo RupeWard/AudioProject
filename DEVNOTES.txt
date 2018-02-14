@@ -1,3 +1,5 @@
+File browser
+
 Separate graphpanel from graphgraph
 
 Closer zoom

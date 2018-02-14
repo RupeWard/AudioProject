@@ -16,7 +16,7 @@ public class SceneControllerTestScene2 : SceneController_Base
 	private XX_GraphViewPanel _graphViewPanel;
 	public GameObject graphViewPanelPrefab;
 
-	public AudioClip testAudioClip;
+	public AudioClip[] testAudioClips = new AudioClip[2];
 
 	override public SceneManager.EScene Scene( )
 	{
@@ -93,8 +93,19 @@ public class SceneControllerTestScene2 : SceneController_Base
 
 	}
 
-	public void HandleLoadWaveformButton()
+	public void HandleLoadWaveformButton(int n)
 	{
+		if (n >= testAudioClips.Length)
+		{
+			Debug.LogError( "Only " + testAudioClips.Length + " testAudioClips, not "+n );
+			return;
+		}
+		AudioClip testAudioClip = testAudioClips[n];
+		if (testAudioClip == null)
+		{
+			Debug.LogError( "Null testaudioclip " +n+" of "+ testAudioClips.Length );
+			return;
+		}
 		float lengthSecs = testAudioClip.length;
 		Debug.Log( "Clip frequency = " + testAudioClip.frequency+", L="+lengthSecs );
 		int nSamples = Mathf.FloorToInt( testAudioClip.frequency * lengthSecs);
