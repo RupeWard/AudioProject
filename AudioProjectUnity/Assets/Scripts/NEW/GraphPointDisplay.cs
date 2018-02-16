@@ -2,104 +2,108 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GraphPointDisplay : MonoBehaviour
+namespace RJWS.Graph.Display
 {
-	private static readonly bool DEBUG_LOCAL = false;
-
-	private GraphViewPanel _graphViewPanel;
-
-	public UnityEngine.UI.Image image;
-	public float size = 1;
-
-	public enum EPtType
+	public class GraphPointDisplay : MonoBehaviour
 	{
-		Fractional,
-		Sampled
-	}
+		private static readonly bool DEBUG_LOCAL = false;
 
-	public EPtType PtType
-	{
-		get;
-		private set;
-	}
+		private GraphViewPanel _graphViewPanel;
 
-	public class PtXComparer : IComparer< GraphPointDisplay>
-	{
-		public int Compare( GraphPointDisplay pt0, GraphPointDisplay pt1)
+		public UnityEngine.UI.Image image;
+		public float size = 1;
+
+		public enum EPtType
 		{
-			float x0 = pt0.Value.x;
-			float x1 = pt1.Value.x;
-			return (int)Mathf.Sign( x0 - x1 );
+			Fractional,
+			Sampled
 		}
 
-	}
-
-	private Vector2 _value = Vector2.zero;
-	public Vector2 Value
-	{
-		get
+		public EPtType PtType
 		{
-			return _value;
+			get;
+			private set;
 		}
-		set
+
+		public class PtXComparer : IComparer<GraphPointDisplay>
 		{
-			_value = value;
-			cachedRT.anchoredPosition = _graphViewPanel.GetLocation(_value);
-			if (DEBUG_LOCAL)
+			public int Compare( GraphPointDisplay pt0, GraphPointDisplay pt1 )
 			{
-				Debug.Log( gameObject.name + ": val = (" + _value.x+","+_value.y + "), pos = " + cachedRT.anchoredPosition );
+				float x0 = pt0.Value.x;
+				float x1 = pt1.Value.x;
+				return (int)Mathf.Sign( x0 - x1 );
+			}
+
+		}
+
+		private Vector2 _value = Vector2.zero;
+		public Vector2 Value
+		{
+			get
+			{
+				return _value;
+			}
+			set
+			{
+				_value = value;
+				cachedRT.anchoredPosition = _graphViewPanel.GetLocation( _value );
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( gameObject.name + ": val = (" + _value.x + "," + _value.y + "), pos = " + cachedRT.anchoredPosition );
+				}
 			}
 		}
-	}
 
-	public RectTransform cachedRT
-	{
-		get;
-		private set;
-	}
-
-	public Transform cachedTransform
-	{
-		get;
-		private set;
-	}
-
-	public GraphPointDisplay previousPt =  null;
-	public GraphPointDisplay nextPt = null;
-	public GraphConnectorDisplay previousConnector = null;
-	public GraphConnectorDisplay nextConnector = null;
-
-	private float _xValue = float.NaN;
-	public float xValue
-	{
-		get { return _xValue; }
-		set
+		public RectTransform cachedRT
 		{
-			_xValue = value;
+			get;
+			private set;
+		}
+
+		public Transform cachedTransform
+		{
+			get;
+			private set;
+		}
+
+		public GraphPointDisplay previousPt = null;
+		public GraphPointDisplay nextPt = null;
+		public GraphConnectorDisplay previousConnector = null;
+		public GraphConnectorDisplay nextConnector = null;
+
+		private float _xValue = float.NaN;
+		public float xValue
+		{
+			get { return _xValue; }
+			set
+			{
+				_xValue = value;
+			}
+		}
+
+		private void Awake( )
+		{
+			cachedRT = GetComponent<RectTransform>( );
+			cachedTransform = transform;
+		}
+
+		public void SetColour( Color c )
+		{
+			image.color = c;
+		}
+
+		public void Init( GraphViewPanel gvp, string n, EPtType t )
+		{
+			_graphViewPanel = gvp;
+			PtType = t;
+			cachedTransform.SetParent( _graphViewPanel.pointsContainer );
+			gameObject.name = "Point_" + n;
+		}
+
+		public void HandleScaling( Vector2 screenFraction )
+		{
+			image.transform.localScale = new Vector2( size * screenFraction.x, size * screenFraction.y );
 		}
 	}
-
-	private void Awake()
-	{
-		cachedRT = GetComponent<RectTransform>();
-		cachedTransform = transform;
-	}
-
-	public void SetColour(Color c)
-	{
-		image.color = c;
-	}
-
-	public void Init(GraphViewPanel gvp, string n, EPtType t)
-	{
-		_graphViewPanel = gvp;
-		PtType = t;
-		cachedTransform.SetParent( _graphViewPanel.pointsContainer );
-		gameObject.name = "Point_" + n;
-	}
-
-	public void HandleScaling( Vector2 screenFraction )
-	{
-		image.transform.localScale = new Vector2( size * screenFraction.x, size * screenFraction.y );
-	}
 }
+

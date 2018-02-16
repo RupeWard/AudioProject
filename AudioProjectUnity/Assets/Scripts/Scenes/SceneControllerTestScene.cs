@@ -6,6 +6,9 @@ using RJWS.UI.Scrollable;
 using RJWS.Core.DebugDescribable;
 using RJWS.Core.Extensions;
 
+using RJWS.Graph;
+using RJWS.Graph.Display;
+
 public class SceneControllerTestScene : SceneController_Base
 {
 	public GraphDisplaySettings graphDisplaySettings = new GraphDisplaySettings( );

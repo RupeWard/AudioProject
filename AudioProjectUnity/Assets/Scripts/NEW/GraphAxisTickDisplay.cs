@@ -2,15 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GraphAxisTickDisplay : MonoBehaviour {
+namespace RJWS.Graph.Display
+{
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	public class GraphAxisTickDisplay : MonoBehaviour
+	{
+
+		// Use this for initialization
+		void Start( )
+		{
+
+		}
+
+		// Update is called once per frame
+		void Update( )
+		{
+
+		}
 	}
 }
