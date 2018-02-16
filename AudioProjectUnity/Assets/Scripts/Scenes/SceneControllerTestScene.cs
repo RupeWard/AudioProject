@@ -23,6 +23,10 @@ public class SceneControllerTestScene : SceneController_Base
 
 	public AudioClip[] testAudioClips = new AudioClip[2];
 
+	private RJWS.UI.FileSystemFileChooser _fileChooser;
+
+	public Canvas mainCanvas;
+
 	override public SceneManager.EScene Scene( )
 	{
 		return SceneManager.EScene.TestScene;
@@ -74,9 +78,36 @@ public class SceneControllerTestScene : SceneController_Base
 
 	}
 
-	protected override void PostAwake( )
+	private string _wavInputFolderPath;
+	const string INPUTFILEPATH_KEY = "WAVINPUTPATH";
+	private static readonly bool DEBUG_LOCAL = true;
+	public GameObject fileChooserPrefab;
+
+    protected override void PostAwake( )
 	{
 		newPeriodicWaveFormOverlay.onOkButton += NewWaveformCreated;
+
+		_wavInputFolderPath = PlayerPrefs.GetString( INPUTFILEPATH_KEY );
+		if (_wavInputFolderPath.Length > 0)
+		{
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "Loaded input folder path (static) from player prefs = '" + _wavInputFolderPath + "'" );
+			}
+		}
+		else
+		{
+#if UNITY_ANDROID || UNITY_IPHONE
+			_wavInputFolderPath = Application.persistentDataPath;
+#endif
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "No input folder path (static) in player prefs, defaulting to: '" + _wavInputFolderPath + "'" );
+			}
+		}
+
+		_fileChooser = (GameObject.Instantiate( fileChooserPrefab )).GetComponent<RJWS.UI.FileSystemFileChooser>( );
+		_fileChooser.gameObject.SetActive( false );
 	}
 
 	public void QuitScene()
@@ -96,6 +127,27 @@ public class SceneControllerTestScene : SceneController_Base
 
 		newPeriodicWaveFormOverlay.Init( "WF" );
 
+	}
+	
+	public void HandleLoadWavButton()
+	{
+		mainCanvas.gameObject.SetActive( false );
+		_fileChooser.rect = new Rect( 50, 50, Screen.width - 100, Screen.height - 100 );
+		_fileChooser.Open("Select wav file", _wavInputFolderPath, "wav", HandleWavFileChosen);
+	}
+
+	public void HandleWavFileChosen(string filepath, string filename)
+	{
+		mainCanvas.gameObject.SetActive( true );
+
+		if (!string.IsNullOrEmpty(filepath))
+		{
+			Debug.Log( "Wav chosen: '" + filepath + "'" );
+		}
+		else
+		{
+			Debug.Log( "No file chosen" );
+		}
 	}
 
 	public void HandleLoadWaveformButton(int n)
