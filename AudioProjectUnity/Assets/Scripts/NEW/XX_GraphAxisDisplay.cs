@@ -123,7 +123,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		get { return axisDefn.axisName; }
 	}
 
-	private List<GraphAxisTick> _ticks = new List<GraphAxisTick>( );
+//	private List<GraphAxisTick> _ticks = new List<GraphAxisTick>( );
 
 	protected XX_GraphViewPanel _graphViewPanel;
 	public XX_GraphViewPanel graphViewPanel
@@ -299,11 +299,13 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 
 	public void ClearTicks( )
 	{
+		/*
 		foreach (GraphAxisTick tick in _ticks)
 		{
 			GameObject.Destroy( tick.gameObject );
 		}
 		_ticks.Clear( );
+		*/
 	}
 
 	public void adjustPosition( )
