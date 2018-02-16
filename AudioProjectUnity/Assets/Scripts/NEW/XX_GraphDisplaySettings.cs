@@ -15,6 +15,13 @@ public class XX_GraphDisplaySettings
 	public Color fractionalPointColour = Color.green;
 	public Color samplePointColour = Color.red;
 
+	public Color pureConnectorColour = Color.green;
+	public Color sampleHidingConnectorColor = Color.red;
+
+	public float lineWidth = 2f;
+	public float pointSizeSampled = 5f;
+	public float pointSizeFractional = 3.5f;
+
 	/*
 	public int numFractionalPoints = 32;
 	public int numSampledPoints = 16;

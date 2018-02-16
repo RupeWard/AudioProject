@@ -7,7 +7,7 @@ namespace RJWS.Audio
 {
 	public class WaveFormGenerator_Sampled: AbstractWaveFormGenerator
 	{
-		static readonly private bool DEBUG_LOCAL = true;
+		static readonly private bool DEBUG_LOCAL = false;
 
 		private float[] _samples;
 		private double _sampleRate;
@@ -119,6 +119,7 @@ namespace RJWS.Audio
 			}
 			if (DEBUG_LOCAL)
 			{
+				_debugSB.Append( " N = " ).Append( numInInterval );
 				Debug.Log( _debugSB.ToString( ) );
 			}
 

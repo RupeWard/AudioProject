@@ -54,7 +54,7 @@ public class XX_GraphConnectorDisplay : MonoBehaviour
 			Vector2 pos1 = nextPt.cachedRT.anchoredPosition;
 
 			float length = (pos0 - pos1).magnitude;
-			float width = GraphDisplayManager.Instance.lineWidth;
+			float width = _graphViewPanel.graphDisplaySettings.lineWidth;
 
 			cachedRT.anchoredPosition = 0.5f * (pos0 + pos1);
 //			cachedTransform.localScale = Vector3.one;

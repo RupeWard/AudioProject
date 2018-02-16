@@ -132,7 +132,7 @@ public class GraphLineDisplay: MonoBehaviour, IDebugDescribable
 		Vector2 pos1 = _graphPointDisplay1.cachedRT.anchoredPosition;
 
 		float length = (pos0 - pos1).magnitude;
-		float width = GraphDisplayManager.Instance.lineWidth;
+		float width = 0;// GraphDisplayManager.Instance.lineWidth;
 
 		cachedRT.anchoredPosition = 0.5f * (pos0 + pos1);
 		cachedTransform.localScale = Vector3.one;

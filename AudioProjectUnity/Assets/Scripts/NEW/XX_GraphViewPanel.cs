@@ -23,7 +23,11 @@ public class XX_GraphViewPanel : MonoBehaviour
 		}
 	}
 
-	public XX_GraphDisplaySettings graphDisplaySettings = new XX_GraphDisplaySettings( );
+	public XX_GraphDisplaySettings graphDisplaySettings
+	{
+		get;
+		private set;
+	}
 
 	public GameObject graphPointPrefab;
 	public GameObject graphConnectorPrefab;
@@ -377,7 +381,11 @@ public class XX_GraphViewPanel : MonoBehaviour
 				double samplex = firstXD;
 				int samplePtDisplayIndex = 0;
 
-				
+				if (DEBUG_LOCAL)
+				{
+					debugsb.Append( "\nStepping through samples, firstXD = " ).Append( firstXD).Append( " last = " ).Append( lastXD);
+				}
+
 				while (samplePtDisplayIndex < _sampleGraphPtDisplays.Count && samplePtIndex < nSamplePts && samplex <= lastXD)
 				{
 					samplex = _debugSamples[samplePtIndex];
@@ -388,6 +396,13 @@ public class XX_GraphViewPanel : MonoBehaviour
 						_sampleGraphPtDisplays[samplePtDisplayIndex].Value = new Vector2( (float)samplex, sampleY );
 						samplePtIndex += step;
 						samplePtDisplayIndex += 1;
+					}
+					else
+					{
+						if (DEBUG_LOCAL)
+						{
+							debugsb.Append( "\nERROR - samplex = " ).Append( samplex ).Append( " for index " ).Append( samplePtIndex );
+						}
 					}
 				}
 				numSamplePtsDisplayed = samplePtDisplayIndex;
@@ -481,12 +496,30 @@ public class XX_GraphViewPanel : MonoBehaviour
 				{
 					if (!_graphConnectorDisplays[pointIndex].gameObject.activeSelf)
 					{
-						_graphConnectorDisplays[pointIndex].gameObject.SetActive( true);
+						_graphConnectorDisplays[pointIndex].gameObject.SetActive( true );
 					}
 					_graphConnectorDisplays[pointIndex].Init( this, pointIndex );
 					_graphConnectorDisplays[pointIndex].previousPt = _allGraphPtDisplays[pointIndex];
 					_graphConnectorDisplays[pointIndex].nextPt = _allGraphPtDisplays[pointIndex + 1];
 					_graphConnectorDisplays[pointIndex].UpdateDisplay( );
+
+					if (sampledWFG != null)
+					{
+						double prevXD = (double)_allGraphPtDisplays[pointIndex].Value.x;
+						double nextXD = (double)_allGraphPtDisplays[pointIndex + 1].Value.x;
+                        int nSamplePts = sampledWFG.GetSampleXsInInterval( prevXD, nextXD-prevXD, _debugSamples );
+						if (_allGraphPtDisplays[pointIndex].PtType == XX_GraphPointDisplay.EPtType.Sampled)
+						{
+							nSamplePts--;
+						}
+						if (_allGraphPtDisplays[pointIndex + 1].PtType == XX_GraphPointDisplay.EPtType.Sampled)
+						{
+							nSamplePts--;
+						}
+						Color col = (nSamplePts > 0) ? (graphDisplaySettings.sampleHidingConnectorColor) : (graphDisplaySettings.pureConnectorColour);
+						_graphConnectorDisplays[pointIndex].SetColour(col);
+	//					Debug.Log( "N=" + nSamplePts+" col="+col );
+					}
 				}
 			}
 			int connectorIndex = pointIndex;
@@ -498,6 +531,7 @@ public class XX_GraphViewPanel : MonoBehaviour
                 }
 			}
 			
+			// Axes
 
 			ResetDirectionFlags( false );
 			for (int i = 0; i < _graphAxisDisplays.Count; i++)
@@ -689,8 +723,10 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	public RJWS.UI.Scrollable.ScrollablePanel _scrollablePanel;
 
-	public void Init( RJWS.UI.Scrollable.ScrollablePanel scrollablePanel )
+	public void Init( RJWS.UI.Scrollable.ScrollablePanel scrollablePanel, XX_GraphDisplaySettings gDisplaySettings )
 	{
+		graphDisplaySettings = gDisplaySettings;
+
 		_scrollablePanel = scrollablePanel;
 
 		OverlaysPanel = scrollablePanel.overlaysPanel;

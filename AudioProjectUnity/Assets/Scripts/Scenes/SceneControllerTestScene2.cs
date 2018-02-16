@@ -8,6 +8,8 @@ using RJWS.Core.Extensions;
 
 public class SceneControllerTestScene2 : SceneController_Base
 {
+	public XX_GraphDisplaySettings graphDisplaySettings = new XX_GraphDisplaySettings( );
+
 	public RectTransform canvasRT;
 	public RectTransform permanentButtonsRT;
 
@@ -118,7 +120,7 @@ public class SceneControllerTestScene2 : SceneController_Base
 			if (_graphViewPanel == null)
 			{
 				_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent<XX_GraphViewPanel>( );
-				_graphViewPanel.Init( _scrollablePanel );
+				_graphViewPanel.Init( _scrollablePanel, graphDisplaySettings );
 			}
 
 			Vector2 xRange = new Vector2( 0f, testAudioClip.length );
@@ -177,7 +179,7 @@ public class SceneControllerTestScene2 : SceneController_Base
 		if (_graphViewPanel == null)
 		{
 			_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent< XX_GraphViewPanel>();
-			_graphViewPanel.Init( _scrollablePanel);
+			_graphViewPanel.Init( _scrollablePanel, graphDisplaySettings);
 		}
 
 		Vector2 xRange = new Vector2( 0f, (float)(wfg.waveLengthSecs * numPeriods) );
