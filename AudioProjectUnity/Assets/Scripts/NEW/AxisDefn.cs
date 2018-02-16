@@ -4,7 +4,7 @@ using UnityEngine;
 using RJWS.Enums;
 
 [System.Serializable]
-public class XX_AxisDefn : RJWS.Core.DebugDescribable.IDebugDescribable
+public class AxisDefn : RJWS.Core.DebugDescribable.IDebugDescribable
 {
 	public enum EAxisType
 	{
@@ -26,9 +26,9 @@ public class XX_AxisDefn : RJWS.Core.DebugDescribable.IDebugDescribable
 	public float axisLineWidthScaling = 1f; // default from settings
 	public float axisLabelSizeScaling = 1f; // default from settings
 
-	public XX_AxisDefn clone()
+	public AxisDefn clone()
 	{
-		XX_AxisDefn defn = new XX_AxisDefn( );
+		AxisDefn defn = new AxisDefn( );
 
 		defn.axisType = this.axisType; ;
 
@@ -72,9 +72,9 @@ public class XX_AxisDefn : RJWS.Core.DebugDescribable.IDebugDescribable
 
 	}
 
-public static XX_AxisDefn CreateFixed(RJWS.EOrthoDirection dirn, float v)
+public static AxisDefn CreateFixed(RJWS.EOrthoDirection dirn, float v)
 	{
-		XX_AxisDefn defn = new XX_AxisDefn( );
+		AxisDefn defn = new AxisDefn( );
 		defn.axisName = dirn.ToChar( ) + "_F_" + v.ToString( );
 		defn.axisType = EAxisType.FixedValue;
 		defn.eDirection = dirn;
@@ -83,9 +83,9 @@ public static XX_AxisDefn CreateFixed(RJWS.EOrthoDirection dirn, float v)
 		return defn;
 	}
 
-	public static XX_AxisDefn CreateFractional( RJWS.EOrthoDirection dirn, float v )
+	public static AxisDefn CreateFractional( RJWS.EOrthoDirection dirn, float v )
 	{
-		XX_AxisDefn defn = new XX_AxisDefn( );
+		AxisDefn defn = new AxisDefn( );
 		defn.axisName = dirn.ToChar( ) + "_S_" + v.ToString( );
 		defn.axisType = EAxisType.ScreenFractionValue;
 		defn.eDirection = dirn;

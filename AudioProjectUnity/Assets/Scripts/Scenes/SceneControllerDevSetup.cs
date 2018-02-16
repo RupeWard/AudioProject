@@ -14,7 +14,7 @@ public class SceneControllerDevSetup: SceneController_Base
 
 	public void HandleTestButtonPressed( )
 	{
-		SceneManager.Instance.SwitchScene( SceneManager.EScene.TestScene2);
+		SceneManager.Instance.SwitchScene( SceneManager.EScene.TestScene);
 	}
 
 	public void HandleQuitButtonPressed( )

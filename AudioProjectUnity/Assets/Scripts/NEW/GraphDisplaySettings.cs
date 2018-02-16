@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class XX_GraphDisplaySettings 
+public class GraphDisplaySettings 
 {
 	public Color fixedHorizontalAxisColour;
 	public Color fixedVerticalAxisColour;
@@ -32,18 +32,18 @@ public class XX_GraphDisplaySettings
 	}
 	*/
 
-	public Color GetColor( XX_AxisDefn axisDefn)
+	public Color GetColor( AxisDefn axisDefn)
 	{
 		return GetColor( axisDefn.eDirection, axisDefn.axisType );
 	}
 
-	public Color GetColor( RJWS.EOrthoDirection dirn, XX_AxisDefn.EAxisType axisType)
+	public Color GetColor( RJWS.EOrthoDirection dirn, AxisDefn.EAxisType axisType)
 	{
 		switch (dirn)
 		{
 			case RJWS.EOrthoDirection.Horizontal:
 				{
-					if (axisType == XX_AxisDefn.EAxisType.FixedValue)
+					if (axisType == AxisDefn.EAxisType.FixedValue)
 					{
 						return fixedHorizontalAxisColour;
 					}
@@ -54,7 +54,7 @@ public class XX_GraphDisplaySettings
 				}
 			case RJWS.EOrthoDirection.Vertical:
 				{
-					if (axisType == XX_AxisDefn.EAxisType.FixedValue)
+					if (axisType == AxisDefn.EAxisType.FixedValue)
 					{
 						return fixedVerticalAxisColour;
 					}

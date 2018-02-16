@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using RJWS.Core.Extensions;
 using RJWS.Core.DebugDescribable;
 
-public class XX_GraphAxisDisplay : MonoBehaviour
+public class GraphAxisDisplay : MonoBehaviour
 {
 	public static readonly bool DEBUG_AXES = false;
 
@@ -21,7 +21,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		private set;
 	}
 
-	public XX_AxisDefn axisDefn
+	public AxisDefn axisDefn
 	{
 		get;
 		private set;
@@ -76,11 +76,11 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		{
 			switch (axisDefn.axisType)
 			{
-				case XX_AxisDefn.EAxisType.FixedValue:
+				case AxisDefn.EAxisType.FixedValue:
 					{
 						return axisDefn.value;
 					}
-				case XX_AxisDefn.EAxisType.ScreenFractionValue:
+				case AxisDefn.EAxisType.ScreenFractionValue:
 					{
 						Vector2 viewValueRange;
 						float value;
@@ -125,8 +125,8 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 
 //	private List<GraphAxisTick> _ticks = new List<GraphAxisTick>( );
 
-	protected XX_GraphViewPanel _graphViewPanel;
-	public XX_GraphViewPanel graphViewPanel
+	protected GraphViewPanel _graphViewPanel;
+	public GraphViewPanel graphViewPanel
 	{
 		get { return _graphViewPanel; }
 	}
@@ -207,7 +207,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		return visible;
 	}
 
-	public void Init( XX_GraphViewPanel p, XX_AxisDefn d )
+	public void Init( GraphViewPanel p, AxisDefn d )
 	{
 		axisDefn = d.clone();
 		

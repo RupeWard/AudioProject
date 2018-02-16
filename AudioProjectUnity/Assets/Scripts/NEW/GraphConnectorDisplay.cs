@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class XX_GraphConnectorDisplay : MonoBehaviour
+public class GraphConnectorDisplay : MonoBehaviour
 {
 	public UnityEngine.UI.Image image;
 
 	private RectTransform _imageRT;
 	private Transform _imageTransform;
 
-	private XX_GraphViewPanel _graphViewPanel;
+	private GraphViewPanel _graphViewPanel;
 
 	public RectTransform cachedRT
 	{
@@ -23,8 +23,8 @@ public class XX_GraphConnectorDisplay : MonoBehaviour
 		private set;
 	}
 
-	public XX_GraphPointDisplay previousPt = null;
-	public XX_GraphPointDisplay nextPt = null;
+	public GraphPointDisplay previousPt = null;
+	public GraphPointDisplay nextPt = null;
 
 	private void Awake( )
 	{
@@ -34,7 +34,7 @@ public class XX_GraphConnectorDisplay : MonoBehaviour
 		_imageTransform = image.transform;
 	}
 
-	public void Init( XX_GraphViewPanel gvp, int num )
+	public void Init( GraphViewPanel gvp, int num )
 	{
 		_graphViewPanel = gvp;
 		cachedTransform.SetParent( _graphViewPanel.linesContainer);

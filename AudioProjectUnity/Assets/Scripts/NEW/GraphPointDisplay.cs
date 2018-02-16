@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class XX_GraphPointDisplay : MonoBehaviour
+public class GraphPointDisplay : MonoBehaviour
 {
 	private static readonly bool DEBUG_LOCAL = false;
 
-	private XX_GraphViewPanel _graphViewPanel;
+	private GraphViewPanel _graphViewPanel;
 
 	public UnityEngine.UI.Image image;
 	public float size = 1;
@@ -23,9 +23,9 @@ public class XX_GraphPointDisplay : MonoBehaviour
 		private set;
 	}
 
-	public class PtXComparer : IComparer< XX_GraphPointDisplay>
+	public class PtXComparer : IComparer< GraphPointDisplay>
 	{
-		public int Compare( XX_GraphPointDisplay pt0, XX_GraphPointDisplay pt1)
+		public int Compare( GraphPointDisplay pt0, GraphPointDisplay pt1)
 		{
 			float x0 = pt0.Value.x;
 			float x1 = pt1.Value.x;
@@ -64,10 +64,10 @@ public class XX_GraphPointDisplay : MonoBehaviour
 		private set;
 	}
 
-	public XX_GraphPointDisplay previousPt =  null;
-	public XX_GraphPointDisplay nextPt = null;
-	public XX_GraphConnectorDisplay previousConnector = null;
-	public XX_GraphConnectorDisplay nextConnector = null;
+	public GraphPointDisplay previousPt =  null;
+	public GraphPointDisplay nextPt = null;
+	public GraphConnectorDisplay previousConnector = null;
+	public GraphConnectorDisplay nextConnector = null;
 
 	private float _xValue = float.NaN;
 	public float xValue
@@ -90,7 +90,7 @@ public class XX_GraphPointDisplay : MonoBehaviour
 		image.color = c;
 	}
 
-	public void Init(XX_GraphViewPanel gvp, string n, EPtType t)
+	public void Init(GraphViewPanel gvp, string n, EPtType t)
 	{
 		_graphViewPanel = gvp;
 		PtType = t;

@@ -5,7 +5,7 @@ using UnityEngine;
 using RJWS.Core.Extensions;
 using RJWS.Core.DebugDescribable;
 
-public class XX_GraphViewPanel : MonoBehaviour
+public class GraphViewPanel : MonoBehaviour
 {
 	private static readonly bool DEBUG_LOCAL = true;
 
@@ -23,7 +23,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 		}
 	}
 
-	public XX_GraphDisplaySettings graphDisplaySettings
+	public GraphDisplaySettings graphDisplaySettings
 	{
 		get;
 		private set;
@@ -33,17 +33,17 @@ public class XX_GraphViewPanel : MonoBehaviour
 	public GameObject graphConnectorPrefab;
 	public GameObject graphAxisPrefab;
 
-	private List<XX_GraphPointDisplay> _fractionalGraphPtDisplays = new List<XX_GraphPointDisplay>( );
-	private List<XX_GraphPointDisplay> _sampleGraphPtDisplays = new List<XX_GraphPointDisplay>( );
-	private List<XX_GraphConnectorDisplay> _graphConnectorDisplays = new List<XX_GraphConnectorDisplay>( );
+	private List<GraphPointDisplay> _fractionalGraphPtDisplays = new List<GraphPointDisplay>( );
+	private List<GraphPointDisplay> _sampleGraphPtDisplays = new List<GraphPointDisplay>( );
+	private List<GraphConnectorDisplay> _graphConnectorDisplays = new List<GraphConnectorDisplay>( );
 
-	private List<XX_GraphPointDisplay> _allGraphPtDisplays = new List<XX_GraphPointDisplay>( );
+	private List<GraphPointDisplay> _allGraphPtDisplays = new List<GraphPointDisplay>( );
 
-	private List<XX_GraphAxisDisplay> _graphAxisDisplays = new List<XX_GraphAxisDisplay>( );
+	private List<GraphAxisDisplay> _graphAxisDisplays = new List<GraphAxisDisplay>( );
 
-	private Dictionary<RJWS.EOrthoDirection, List<XX_GraphAxisDisplay> > _autoAxes = 
-		new Dictionary<RJWS.EOrthoDirection, List<XX_GraphAxisDisplay> >( );
-	private List<XX_GraphAxisDisplay> _allAutoAxes = new List<XX_GraphAxisDisplay>( );
+	private Dictionary<RJWS.EOrthoDirection, List<GraphAxisDisplay> > _autoAxes = 
+		new Dictionary<RJWS.EOrthoDirection, List<GraphAxisDisplay> >( );
+	private List<GraphAxisDisplay> _allAutoAxes = new List<GraphAxisDisplay>( );
 
 	public bool autoAxisDisplays = true;
 
@@ -94,9 +94,9 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	private void ClearAutoAxes( )
 	{
-		foreach ( List<XX_GraphAxisDisplay> axes in _autoAxes.Values)
+		foreach ( List<GraphAxisDisplay> axes in _autoAxes.Values)
 		{
-			foreach(XX_GraphAxisDisplay axis in axes)
+			foreach(GraphAxisDisplay axis in axes)
 			{
 				GameObject.Destroy( axis.gameObject );
 			}
@@ -111,9 +111,9 @@ public class XX_GraphViewPanel : MonoBehaviour
 	{
 		ClearAutoAxes( );
 
-		XX_AxisDefn axisDefn = new XX_AxisDefn( );
+		AxisDefn axisDefn = new AxisDefn( );
 
-		axisDefn.axisType = XX_AxisDefn.EAxisType.ScreenFractionValue;
+		axisDefn.axisType = AxisDefn.EAxisType.ScreenFractionValue;
 
 		axisDefn.eDirection = RJWS.EOrthoDirection.Horizontal;
 
@@ -171,34 +171,34 @@ public class XX_GraphViewPanel : MonoBehaviour
 		SetDirty( );
 	}
 
-	private XX_GraphAxisDisplay CreateAxis( XX_AxisDefn axisDefn )
+	private GraphAxisDisplay CreateAxis( AxisDefn axisDefn )
 	{
-		XX_GraphAxisDisplay newAxisDisplay = Instantiate( graphAxisPrefab ).GetComponent<XX_GraphAxisDisplay>( );
+		GraphAxisDisplay newAxisDisplay = Instantiate( graphAxisPrefab ).GetComponent<GraphAxisDisplay>( );
 		newAxisDisplay.Init( this, axisDefn );
 		SetDirty( );
 		return newAxisDisplay;
 	}
 
-	public void AddAxis(XX_AxisDefn axisDefn)
+	public void AddAxis(AxisDefn axisDefn)
 	{
-		XX_GraphAxisDisplay newAxisDisplay = CreateAxis( axisDefn);
+		GraphAxisDisplay newAxisDisplay = CreateAxis( axisDefn);
 		_graphAxisDisplays.Add( newAxisDisplay );
 	}
 
-	public void AddAutoAxis( XX_AxisDefn axisDefn )
+	public void AddAutoAxis( AxisDefn axisDefn )
 	{
-		XX_GraphAxisDisplay newAxisDisplay = CreateAxis( axisDefn );
+		GraphAxisDisplay newAxisDisplay = CreateAxis( axisDefn );
 		if (false == _autoAxes.ContainsKey(axisDefn.eDirection))
 		{
-			_autoAxes.Add( axisDefn.eDirection, new List<XX_GraphAxisDisplay>( ) );
+			_autoAxes.Add( axisDefn.eDirection, new List<GraphAxisDisplay>( ) );
 		}
 		_autoAxes[axisDefn.eDirection].Add(newAxisDisplay );
 		_allAutoAxes.Add( newAxisDisplay );
 	}
 
-	public void AddAxes( IEnumerable<XX_AxisDefn> defns)
+	public void AddAxes( IEnumerable<AxisDefn> defns)
 	{
-		foreach (XX_AxisDefn defn in defns)
+		foreach (AxisDefn defn in defns)
 		{
 			AddAxis( defn );
 		}
@@ -208,9 +208,9 @@ public class XX_GraphViewPanel : MonoBehaviour
 	{
 		while (_fractionalGraphPtDisplays.Count < numFractionalPoints)
 		{
-			XX_GraphPointDisplay newPoint = Instantiate( graphPointPrefab ).GetComponent<XX_GraphPointDisplay>( );
+			GraphPointDisplay newPoint = Instantiate( graphPointPrefab ).GetComponent<GraphPointDisplay>( );
 			_fractionalGraphPtDisplays.Add( newPoint );
-			newPoint.Init( this, "FR_"+(_fractionalGraphPtDisplays.Count - 1).ToString(), XX_GraphPointDisplay.EPtType.Fractional );
+			newPoint.Init( this, "FR_"+(_fractionalGraphPtDisplays.Count - 1).ToString(), GraphPointDisplay.EPtType.Fractional );
 			newPoint.SetColour( graphDisplaySettings.fractionalPointColour);
 			SetDirty( );
 		}
@@ -223,9 +223,9 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 		while (_sampleGraphPtDisplays.Count < numSampledPoints)
 		{
-			XX_GraphPointDisplay newPoint = Instantiate( graphPointPrefab ).GetComponent<XX_GraphPointDisplay>( );
+			GraphPointDisplay newPoint = Instantiate( graphPointPrefab ).GetComponent<GraphPointDisplay>( );
 			_sampleGraphPtDisplays.Add( newPoint );
-			newPoint.Init( this, "SA_" + (_sampleGraphPtDisplays.Count - 1).ToString( ), XX_GraphPointDisplay.EPtType.Sampled );
+			newPoint.Init( this, "SA_" + (_sampleGraphPtDisplays.Count - 1).ToString( ), GraphPointDisplay.EPtType.Sampled );
 			newPoint.SetColour( graphDisplaySettings.samplePointColour );
 			newPoint.gameObject.SetActive( false );
 			SetDirty( );
@@ -239,7 +239,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 		while (_graphConnectorDisplays.Count <  totalNumPoints-1)
 		{
-			XX_GraphConnectorDisplay newConnector = Instantiate( graphConnectorPrefab ).GetComponent<XX_GraphConnectorDisplay>( );
+			GraphConnectorDisplay newConnector = Instantiate( graphConnectorPrefab ).GetComponent<GraphConnectorDisplay>( );
 			_graphConnectorDisplays.Add( newConnector );
 			newConnector.gameObject.SetActive( false );
 			SetDirty( );
@@ -463,7 +463,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 				}
 			}
 
-			_allGraphPtDisplays.Sort( new XX_GraphPointDisplay.PtXComparer( ) );
+			_allGraphPtDisplays.Sort( new GraphPointDisplay.PtXComparer( ) );
 			if (DEBUG_LOCAL)
 			{
 				debugsb.Append( "\nMerged " ).Append( numFractionalPoints ).Append( " fractional and " ).Append( numSamplePtsDisplayed ).Append( " sampled making " ).Append(_allGraphPtDisplays.Count);
@@ -508,11 +508,11 @@ public class XX_GraphViewPanel : MonoBehaviour
 						double prevXD = (double)_allGraphPtDisplays[pointIndex].Value.x;
 						double nextXD = (double)_allGraphPtDisplays[pointIndex + 1].Value.x;
                         int nSamplePts = sampledWFG.GetSampleXsInInterval( prevXD, nextXD-prevXD, _debugSamples );
-						if (_allGraphPtDisplays[pointIndex].PtType == XX_GraphPointDisplay.EPtType.Sampled)
+						if (_allGraphPtDisplays[pointIndex].PtType == GraphPointDisplay.EPtType.Sampled)
 						{
 							nSamplePts--;
 						}
-						if (_allGraphPtDisplays[pointIndex + 1].PtType == XX_GraphPointDisplay.EPtType.Sampled)
+						if (_allGraphPtDisplays[pointIndex + 1].PtType == GraphPointDisplay.EPtType.Sampled)
 						{
 							nSamplePts--;
 						}
@@ -536,7 +536,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 			ResetDirectionFlags( false );
 			for (int i = 0; i < _graphAxisDisplays.Count; i++)
 			{
-				if (_graphAxisDisplays[i].axisDefn.axisType != XX_AxisDefn.EAxisType.FixedValue)
+				if (_graphAxisDisplays[i].axisDefn.axisType != AxisDefn.EAxisType.FixedValue)
 				{
 					_graphAxisDisplays[i].adjustPosition( );
 				}
@@ -546,15 +546,15 @@ public class XX_GraphViewPanel : MonoBehaviour
 				}
 			}
 
-			foreach (KeyValuePair<RJWS.EOrthoDirection, List< XX_GraphAxisDisplay>> kvp in _autoAxes )
+			foreach (KeyValuePair<RJWS.EOrthoDirection, List< GraphAxisDisplay>> kvp in _autoAxes )
 			{
 				bool showing = (false == _directionFlags[kvp.Key]);
-				if (XX_GraphAxisDisplay.DEBUG_AUTO)
+				if (GraphAxisDisplay.DEBUG_AUTO)
 				{
 					Debug.Log( kvp.Key.ToString( ) + " needs auto : " + showing );
 				}
 
-				foreach ( XX_GraphAxisDisplay axis in kvp.Value)
+				foreach ( GraphAxisDisplay axis in kvp.Value)
 				{
 					axis.gameObject.SetActive( showing);
 					if (showing)
@@ -723,7 +723,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	public RJWS.UI.Scrollable.ScrollablePanel _scrollablePanel;
 
-	public void Init( RJWS.UI.Scrollable.ScrollablePanel scrollablePanel, XX_GraphDisplaySettings gDisplaySettings )
+	public void Init( RJWS.UI.Scrollable.ScrollablePanel scrollablePanel, GraphDisplaySettings gDisplaySettings )
 	{
 		graphDisplaySettings = gDisplaySettings;
 

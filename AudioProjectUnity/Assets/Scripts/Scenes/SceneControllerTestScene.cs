@@ -6,23 +6,23 @@ using RJWS.UI.Scrollable;
 using RJWS.Core.DebugDescribable;
 using RJWS.Core.Extensions;
 
-public class SceneControllerTestScene2 : SceneController_Base
+public class SceneControllerTestScene : SceneController_Base
 {
-	public XX_GraphDisplaySettings graphDisplaySettings = new XX_GraphDisplaySettings( );
+	public GraphDisplaySettings graphDisplaySettings = new GraphDisplaySettings( );
 
 	public RectTransform canvasRT;
 	public RectTransform permanentButtonsRT;
 
 	public NewPeriodicWaveFormOverlay newPeriodicWaveFormOverlay;
 
-	private XX_GraphViewPanel _graphViewPanel;
+	private GraphViewPanel _graphViewPanel;
 	public GameObject graphViewPanelPrefab;
 
 	public AudioClip[] testAudioClips = new AudioClip[2];
 
 	override public SceneManager.EScene Scene( )
 	{
-		return SceneManager.EScene.TestScene2;
+		return SceneManager.EScene.TestScene;
 	}
 
 	//	static private readonly bool DEBUG_LOCAL = false;
@@ -119,22 +119,22 @@ public class SceneControllerTestScene2 : SceneController_Base
 			RJWS.Audio.WaveFormGenerator_Sampled wfg = new RJWS.Audio.WaveFormGenerator_Sampled( "WAV", buffer, (double)1 / testAudioClip.frequency );
 			if (_graphViewPanel == null)
 			{
-				_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent<XX_GraphViewPanel>( );
+				_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent<GraphViewPanel>( );
 				_graphViewPanel.Init( _scrollablePanel, graphDisplaySettings );
 			}
 
 			Vector2 xRange = new Vector2( 0f, testAudioClip.length );
 			_graphViewPanel.ChangeGraph( wfg, nFractionalPerWavelength, nSampledPerWavelength, xRange );
 			_graphViewPanel.AddAxes(
-				new List<XX_AxisDefn>( )
+				new List<AxisDefn>( )
 				{
 					// Fixed only (with auto)
 
-					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.x ),
-					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.y ),
-					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
-					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0f ),
-					XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0.9f * wfg.GetValueRange().y ),
+					AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.x ),
+					AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.y ),
+					AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
+					AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0f ),
+					AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0.9f * wfg.GetValueRange().y ),
 
 					/* 
 					// fractional only (no auto)
@@ -178,7 +178,7 @@ public class SceneControllerTestScene2 : SceneController_Base
 		}
 		if (_graphViewPanel == null)
 		{
-			_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent< XX_GraphViewPanel>();
+			_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent< GraphViewPanel>();
 			_graphViewPanel.Init( _scrollablePanel, graphDisplaySettings);
 		}
 
@@ -187,13 +187,13 @@ public class SceneControllerTestScene2 : SceneController_Base
 		_graphViewPanel.ChangeGraph( wfg, nFractionalPerWavelength, nSampledPerWavelength, xRange);
 
 		_graphViewPanel.AddAxes(
-			new List< XX_AxisDefn>()
+			new List< AxisDefn>()
 			{
-				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.x ),
-				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.y ),
-				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
+				AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.x ),
+				AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.y ),
+				AxisDefn.CreateFixed( RJWS.EOrthoDirection.Vertical, xRange.MidPoint() ),
 //				XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Vertical, 0.5f ),
-				XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0f ),
+				AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0f ),
 //                XX_AxisDefn.CreateFixed( RJWS.EOrthoDirection.Horizontal, 0.75f ),
 //                XX_AxisDefn.CreateFractional( RJWS.EOrthoDirection.Horizontal, 0.2f )
 			}

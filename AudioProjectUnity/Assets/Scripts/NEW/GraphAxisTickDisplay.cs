@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class XX_GraphAxisTickDisplay : MonoBehaviour {
+public class GraphAxisTickDisplay : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
