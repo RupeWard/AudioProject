@@ -32,6 +32,8 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		get { return axisDefn.eDirection; }
 	}
 
+	private Vector2 _fullLabelSize;
+
 	/* What does snapping mean, really?
 
 	float SnapInRangeF( float v, Vector2 range, float snap)
@@ -231,6 +233,7 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 			valueLabelRT.anchorMax = new Vector2( 0f, 0f );
 			valueLabelRT.pivot = new Vector2( 0.5f, 0f );
 		}
+		valueLabelRT.localScale = Vector3.one;
 		valueLabelRT.anchoredPosition = Vector2.zero;
 
 		SetSpriteSize(  );
@@ -351,7 +354,6 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 		*/
 	}
 
-	Vector2 _fullLabelSize;
 
 	public void SetSpriteSize( )
 	{
@@ -385,11 +387,13 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 			case RJWS.EOrthoDirection.Horizontal:
 				{
 					axisImage.transform.localScale = new Vector2( 1f, screenFraction.y );
+					valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x /* * screenFraction.x*/, _fullLabelSize.y * screenFraction.y );
 					break;
 				}
 			case RJWS.EOrthoDirection.Vertical:
 				{
 					axisImage.transform.localScale = new Vector2( screenFraction.x, 1f );
+					valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x * screenFraction.x, _fullLabelSize.y/* * screenFraction.y*/ );
 					break;
 				}
 			default:
@@ -398,7 +402,17 @@ public class XX_GraphAxisDisplay : MonoBehaviour
 					break;
 				}
 		}
-		valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x * screenFraction.x, _fullLabelSize.y * screenFraction.y );
+		/*
+		if (Direction == RJWS.EOrthoDirection.Horizontal)
+		{
+			valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x * screenFraction.y, _fullLabelSize.y * screenFraction.x  );
+		}
+		else
+		{
+			valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x * screenFraction.x, _fullLabelSize.y * screenFraction.y );
+		}
+		*/
+//		valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x /** screenFraction.x*/, _fullLabelSize.y /** screenFraction.y*/ );
 	}
 
 	public void AdjustWidth(float scale)

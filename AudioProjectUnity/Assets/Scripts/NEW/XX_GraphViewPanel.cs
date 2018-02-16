@@ -132,6 +132,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 
 	public void ChangeGraph( RJWS.Audio.AbstractWaveFormGenerator graphGenerator, int nFractionalPoints, int nSampledPoints, Vector2 pxRange, bool clearAxes = true )
 	{
+		// TODO scaling of axis labels. vertical axes labels too big after verrtical reduction (but then static), & vv.
 		if (graphGenerator == null)
 		{
 			Debug.LogError( "NULL graphGenerator in GVP.ChangeGraph" );
@@ -331,23 +332,23 @@ public class XX_GraphViewPanel : MonoBehaviour
 		{
 			if (DEBUG_LOCAL)
 			{
-				debugsb.Append( "\n- scale dirty = " + displayScaleReadonly );
+				debugsb.Append( "\n- scale dirty = " + displayScaleFractionReadonly );
 			}
 			for (int i = 0; i < numFractionalPoints; i++)
 			{
-				_fractionalGraphPtDisplays[i].HandleScaling( displayScaleReadonly );
+				_fractionalGraphPtDisplays[i].HandleScaling( displayScaleFractionReadonly );
 			}
 			for (int i = 0; i < numSampledPoints -1; i++)
 			{
-				_sampleGraphPtDisplays[i].HandleScaling( displayScaleReadonly );
+				_sampleGraphPtDisplays[i].HandleScaling( displayScaleFractionReadonly );
 			}
 			for (int i=0; i < _graphAxisDisplays.Count; i++)
 			{
-				_graphAxisDisplays[i].HandleScaling( displayScaleReadonly );
+				_graphAxisDisplays[i].HandleScaling( displayScaleFractionReadonly );
 			}
 			for (int i = 0; i < _allAutoAxes.Count; i++)
 			{
-				_allAutoAxes[i].HandleScaling( displayScaleReadonly );
+				_allAutoAxes[i].HandleScaling( displayScaleFractionReadonly );
 			}
 			_displayScaleDirty = false;
 		}
@@ -630,7 +631,7 @@ public class XX_GraphViewPanel : MonoBehaviour
 		SetDirty( );
 	}
 
-	public Vector2 displayScaleReadonly // TODO refactor
+	public Vector2 displayScaleFractionReadonly // TODO refactor
 	{
 		get
 		{
