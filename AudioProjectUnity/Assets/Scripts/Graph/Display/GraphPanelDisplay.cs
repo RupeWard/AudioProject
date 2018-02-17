@@ -9,7 +9,7 @@ namespace RJWS.Graph.Display
 {
 	public class GraphPanelDisplay : MonoBehaviour
 	{
-		private static readonly bool DEBUG_LOCAL = true;
+		private static readonly bool DEBUG_LOCAL = false;
 
 		public void SetDirty( )
 		{

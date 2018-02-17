@@ -15,7 +15,7 @@ namespace RJWS.Core.UI
         File,
         Directory
     }
-
+	
     public class FileBrowser
     {
 
@@ -209,8 +209,13 @@ namespace RJWS.Core.UI
                     permissibleFolder = permissibleFolder.Substring(Application.persistentDataPath.Length);
  //                   Debug.Log("In persistent data!");
                 }
-                m_currentDirectoryParts = permissibleFolder.Split(Path.DirectorySeparatorChar);
-                if (SelectionPattern != null)
+                m_currentDirectoryParts = permissibleFolder.Split('/');
+				if (m_currentDirectoryParts.Length == 1)
+				{
+					m_currentDirectoryParts = permissibleFolder.Split( Path.DirectorySeparatorChar );
+//					Debug.Log( "Split permissible " + permissibleFolder + " into " + m_currentDirectoryParts.Length );
+				}
+				if (SelectionPattern != null)
                 {
                     string[] generation = Directory.GetDirectories(
                         Path.GetDirectoryName(m_currentDirectory),
@@ -326,26 +331,44 @@ namespace RJWS.Core.UI
                 m_name,
                 GUI.skin.window
             );
-            GUILayout.BeginHorizontal();
-            for (int parentIndex = 0; parentIndex < m_currentDirectoryParts.Length; ++parentIndex)
-            {
-                if (parentIndex == m_currentDirectoryParts.Length - 1)
-                {
-                    GUILayout.Label(m_currentDirectoryParts[parentIndex], CentredText);
-                }
-                else if (GUILayout.Button(m_currentDirectoryParts[parentIndex]))
-                {
-                    string parentDirectoryName = m_currentDirectory;
-                    for (int i = m_currentDirectoryParts.Length - 1; i > parentIndex; --i)
-                    {
-                        parentDirectoryName = Path.GetDirectoryName(parentDirectoryName);
-                    }
-                    SetNewDirectory(parentDirectoryName);
-                }
-            }
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-            m_scrollPosition = GUILayout.BeginScrollView(
+
+			if (m_currentDirectoryParts.Length == 0)
+			{
+				Debug.LogError( "No dir parts" );
+			}
+			else
+			{
+				GUILayout.BeginHorizontal( );
+				for (int parentIndex = 0; parentIndex < m_currentDirectoryParts.Length; ++parentIndex)
+				{
+					if (parentIndex == m_currentDirectoryParts.Length - 1)
+					{
+						GUILayout.Label( m_currentDirectoryParts[parentIndex], CentredText );
+					}
+					else
+					{
+						string str = m_currentDirectoryParts[parentIndex];
+						if (str.Length == 0)
+						{
+							str = "(root)";
+						}
+						if (GUILayout.Button( str ))
+						{
+							string parentDirectoryName = m_currentDirectory;
+							for (int i = m_currentDirectoryParts.Length - 1; i > parentIndex; --i)
+							{
+								parentDirectoryName = Path.GetDirectoryName( parentDirectoryName );
+							}
+							SetNewDirectory( parentDirectoryName );
+						}
+					}
+
+				}
+				GUILayout.FlexibleSpace( );
+				GUILayout.EndHorizontal( );
+
+			}
+			m_scrollPosition = GUILayout.BeginScrollView(
                 m_scrollPosition,
                 false,
                 true,

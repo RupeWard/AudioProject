@@ -156,7 +156,7 @@ public class SceneControllerTestScene : SceneController_Base
 
 			string fp = filepath.Replace( '\\', '/' );
 			_wavInputFolderPath = fp.Substring( 0, fp.LastIndexOf( "/" ) );
-			PlayerPrefs.SetString( WAVINPUTFILEPATH_KEY, "" );// _wavInputFolderPath );
+			PlayerPrefs.SetString( WAVINPUTFILEPATH_KEY, _wavInputFolderPath );
 			PlayerPrefs.Save( );
 			if (DEBUG_IO)
 			{
@@ -178,45 +178,6 @@ public class SceneControllerTestScene : SceneController_Base
 		{
 			Debug.LogError( "Created clip is null" );
 		}
-		/*
-		string fp = filepath.Replace( '\\', '/' );
-		WWW www = new WWW("file://"+ fp );
-		yield return www;
-
-		fileInfo = new System.IO.FileInfo( fp);
-		Debug.Log( "Tweaked File " + fp + " exists = " + fileInfo.Exists );
-
-		if (string.IsNullOrEmpty(www.error))
-		{
-			_wavInputFolderPath = filepath.Substring( 0, filepath.LastIndexOf( "/" ) );
-			PlayerPrefs.SetString( WAVINPUTFILEPATH_KEY, _wavInputFolderPath );
-			PlayerPrefs.Save( );
-
-			Debug.Log( "Saved path: " + _wavInputFolderPath );
-
-			try
-			{
-				AudioClip clip = www.GetAudioClip( false);
-				if (clip == null)
-				{
-					Debug.LogError( "Null audio in '" + filepath + "': " + www.error );
-				}
-				else
-				{
-					LoadAudioClip( clip );
-				}
-			}
-			catch (System.Exception ex)
-			{
-				Debug.LogError( "Exception thrown trying to load audio from file " + filepath +"\n"+ex.ToString());
-			}
-		}
-		
-		else
-		{
-			Debug.LogError( "Error loading '" + fp + "': " + www.error );
-		}
-		*/
 	}
 
 	public void HandleWavFileChosen(string filepath, string filename)
@@ -267,13 +228,6 @@ public class SceneControllerTestScene : SceneController_Base
 				Debug.LogError( "WFG has 0 samples!" );
 				return;
 			}
-			/*
-			if (_scrollablePanel != null)
-			{
-				GameObject.Destroy( _scrollablePanel.gameObject );
-				_scrollablePanel = null;
-				_graphViewPanel = null;
-			}*/
 
 			RefreshScrollablePanel( );
 
@@ -309,17 +263,6 @@ public class SceneControllerTestScene : SceneController_Base
 					*/
 				}
 			);
-
-
-			/*
-
-
-			//_graphViewPanel.DrawDefaultAxes( );
-
-			Debug.Log( "Got " + nSamples + " samples with xrange = " + _graphViewPanel.xRange + ", yrange = " + yRange );
-
-//			RJWS.Grph.Graph newGraph = new RJWS.Grph.Graph( buffer, _graphPanel.xRange);
-			*/
 		}
 		else
 		{
