@@ -33,8 +33,8 @@ namespace RJWS.Graph.Display
 			private set;
 		}
 
-		public GameObject graphPointPrefab;
-		public GameObject graphConnectorPrefab;
+		private GameObject _graphPointPrefab;
+		private GameObject _graphConnectorPrefab;
 
 		private List<GraphPointDisplay> _fractionalGraphPtDisplays = new List<GraphPointDisplay>( );
 		private List<GraphPointDisplay> _sampleGraphPtDisplays = new List<GraphPointDisplay>( );
@@ -80,8 +80,36 @@ namespace RJWS.Graph.Display
 
 		private RJWS.Grph.AbstractGraphGenerator _graphGenerator;
 
-		public void ChangeGraph( RJWS.Audio.AbstractWaveFormGenerator graphGenerator, int nFractionalPoints, int nSampledPoints )
+		const string defaultGraphPointPrefabPath = "Prefabs/Graph/GraphPointDisplay";
+		const string defaultGraphConnectorPrefabPath = "Prefabs/Graph/GraphConnectorDisplay";
+
+
+		public void ChangeGraph( RJWS.Grph.AbstractGraphGenerator graphGenerator, GraphDisplaySettings gDisplaySettings)
 		{
+			graphDisplaySettings = gDisplaySettings;
+
+			string ptPrefabPath = defaultGraphPointPrefabPath;
+			if (graphDisplaySettings.pointPrefabPath.Length > 0)
+			{
+				ptPrefabPath = graphDisplaySettings.pointPrefabPath;
+            }
+			_graphPointPrefab = Resources.Load( ptPrefabPath ) as GameObject;
+			if (_graphPointPrefab == null)
+			{
+				throw new System.Exception( "No prewfab at '" + ptPrefabPath+ "'" );
+			}
+
+			string connPrefabPath = defaultGraphConnectorPrefabPath;
+			if (graphDisplaySettings.connectorPrefabPath.Length > 0)
+			{
+				connPrefabPath = graphDisplaySettings.connectorPrefabPath;
+			}
+			_graphConnectorPrefab = Resources.Load( connPrefabPath ) as GameObject;
+			if (_graphConnectorPrefab == null)
+			{
+				throw new System.Exception( "No prewfab at '" + connPrefabPath + "'" );
+			}
+
 			// TODO scaling of axis labels. vertical axes labels too big after verrtical reduction (but then static), & vv.
 			if (graphGenerator == null)
 			{
@@ -92,23 +120,41 @@ namespace RJWS.Graph.Display
 			{
 				Debug.Log( "GD.ChangeGraph to " + graphGenerator.DebugDescribe( ) );
 			}
-			for (int i = 0; i < _sampleGraphPtDisplays.Count; i++)
-			{
-				_sampleGraphPtDisplays[i].gameObject.SetActive( false );
-			}
-
-			numFractionalPoints = nFractionalPoints;
-			numSampledPoints = nSampledPoints;
+		
+			SetNumPoints( );
 
 			_graphGenerator = graphGenerator;
 		}
 
-		/*
+		private void SetNumPoints()
+		{
+			SetNumPoints( graphDisplaySettings.numFractional, graphDisplaySettings.numSampled );
+		}
+
+		private void SetNumPoints(int f, int s)
+		{
+			bool changed = false;
+			if (numFractionalPoints != f)
+			{
+				numFractionalPoints = f;
+				changed = true;
+			}
+			if (numSampledPoints != s)
+			{
+				numSampledPoints = s;
+				changed = true;
+			}
+			if (changed)
+			{
+				HandleNumPointsChanged( );
+			}
+		}
+		
 		private void HandleNumPointsChanged( )
 		{
 			while (_fractionalGraphPtDisplays.Count < numFractionalPoints)
 			{
-				GraphPointDisplay newPoint = GameObject.Instantiate( _graphPanel.graphPointPrefab ).GetComponent<GraphPointDisplay>( );
+				GraphPointDisplay newPoint = GameObject.Instantiate( _graphPointPrefab ).GetComponent<GraphPointDisplay>( );
 				_fractionalGraphPtDisplays.Add( newPoint );
 				newPoint.Init( this, "FR_" + (_fractionalGraphPtDisplays.Count - 1).ToString( ), GraphPointDisplay.EPtType.Fractional );
 				newPoint.SetColour( graphDisplaySettings.fractionalPointColour );
@@ -121,7 +167,7 @@ namespace RJWS.Graph.Display
 
 			while (_sampleGraphPtDisplays.Count < numSampledPoints)
 			{
-				GraphPointDisplay newPoint = GameObject.Instantiate( graphPointPrefab ).GetComponent<GraphPointDisplay>( );
+				GraphPointDisplay newPoint = GameObject.Instantiate( _graphPointPrefab ).GetComponent<GraphPointDisplay>( );
 				_sampleGraphPtDisplays.Add( newPoint );
 				newPoint.Init( this, "SA_" + (_sampleGraphPtDisplays.Count - 1).ToString( ), GraphPointDisplay.EPtType.Sampled );
 				newPoint.SetColour( graphDisplaySettings.samplePointColour );
@@ -135,8 +181,9 @@ namespace RJWS.Graph.Display
 
 			while (_graphConnectorDisplays.Count < totalNumPoints - 1)
 			{
-				GraphConnectorDisplay newConnector = GameObject.Instantiate( graphConnectorPrefab ).GetComponent<GraphConnectorDisplay>( );
+				GraphConnectorDisplay newConnector = GameObject.Instantiate( _graphConnectorPrefab ).GetComponent<GraphConnectorDisplay>( );
 				_graphConnectorDisplays.Add( newConnector );
+				newConnector.Init( this, (_graphConnectorDisplays.Count - 1) );
 				newConnector.gameObject.SetActive( false );
 			}
 			while (_graphConnectorDisplays.Count > totalNumPoints - 1)
@@ -146,7 +193,7 @@ namespace RJWS.Graph.Display
 			}
 
 		}
-		*/
+		
 		System.Text.StringBuilder debugsb = new System.Text.StringBuilder( );
 
 		private Dictionary<RJWS.EOrthoDirection, bool> _directionFlags = null;
@@ -169,6 +216,27 @@ namespace RJWS.Graph.Display
 			}
 		}
 
+		public void Destroy()
+		{
+			for (int i = 0; i < _fractionalGraphPtDisplays.Count; i++)
+			{
+				GameObject.Destroy( _fractionalGraphPtDisplays[i].gameObject );
+			}
+			_fractionalGraphPtDisplays.Clear( );
+
+			for (int i = 0; i < _sampleGraphPtDisplays.Count; i++)
+			{
+				GameObject.Destroy( _sampleGraphPtDisplays[i].gameObject );
+			}
+			_sampleGraphPtDisplays.Clear( );
+
+			for (int i = 0; i < _graphConnectorDisplays.Count; i++)
+			{
+				GameObject.Destroy( _graphConnectorDisplays[i].gameObject );
+			}
+			_graphConnectorDisplays.Clear( );
+		}
+
 		public void UpdateDisplay( )
 		{
 			if (_graphGenerator == null)
@@ -179,17 +247,18 @@ namespace RJWS.Graph.Display
 			if (DEBUG_LOCAL)
 			{
 				debugsb.Length = 0;
+				debugsb.Append( "GraphDisplay.UpdateDisplay " );
 			}
 
 			//if (_displayScaleDirty)
 			{
 				for (int i = 0; i < numFractionalPoints; i++)
 				{
-					_fractionalGraphPtDisplays[i].HandleScaling( _graphPanel.displayScaleFractionReadonly );
+					_fractionalGraphPtDisplays[i].HandleScaling( graphPanel.displayScaleFractionReadonly );
 				}
 				for (int i = 0; i < numSampledPoints - 1; i++)
 				{
-					_sampleGraphPtDisplays[i].HandleScaling( _graphPanel.displayScaleFractionReadonly );
+					_sampleGraphPtDisplays[i].HandleScaling( graphPanel.displayScaleFractionReadonly );
 				}
 				//_displayScaleDirty = false;
 			}
@@ -197,7 +266,7 @@ namespace RJWS.Graph.Display
 			{
 				if (DEBUG_LOCAL)
 				{
-					debugsb.Append( "\n- pos dirty = " + _graphPanel.displayPosOfFirstEdgeFractionReadonly + ", first/last = " + firstX + " / " + lastX );
+					debugsb.Append( "\n- pos dirty = " + graphPanel.displayPosOfFirstEdgeFractionReadonly + ", first/last = " + firstX + " / " + lastX );
 				}
 
 				int numSamplePtsDisplayed = 0;
@@ -381,13 +450,17 @@ namespace RJWS.Graph.Display
 
 		private List<double> _debugSamples = new List<double>( );
 
-		private GraphPanelDisplay _graphPanel;
+		public GraphPanelDisplay graphPanel
+		{
+			get;
+			private set;
+		}
 
 		public float firstX
 		{
 			get
 			{
-				return _graphPanel.firstX;
+				return graphPanel.firstX;
 			}
 		}
 
@@ -395,7 +468,7 @@ namespace RJWS.Graph.Display
 		{
 			get
 			{
-				return _graphPanel.firstXD;
+				return graphPanel.firstXD;
 			}
 		}
 
@@ -404,7 +477,7 @@ namespace RJWS.Graph.Display
 		{
 			get
 			{
-				return _graphPanel.lastX;
+				return graphPanel.lastX;
 			}
 		}
 
@@ -412,7 +485,7 @@ namespace RJWS.Graph.Display
 		{
 			get
 			{
-				return _graphPanel.lastXD;
+				return graphPanel.lastXD;
 			}
 		}
 
@@ -420,7 +493,7 @@ namespace RJWS.Graph.Display
 		{
 			get
 			{
-				return _graphPanel.firstY;
+				return graphPanel.firstY;
 			}
 		}
 
@@ -428,7 +501,7 @@ namespace RJWS.Graph.Display
 		{
 			get
 			{
-				return _graphPanel.firstYD;
+				return graphPanel.firstYD;
 			}
 		}
 
@@ -436,7 +509,7 @@ namespace RJWS.Graph.Display
 		{
 			get
 			{
-				return _graphPanel.lastY;
+				return graphPanel.lastY;
 			}
 		}
 
@@ -444,15 +517,20 @@ namespace RJWS.Graph.Display
 		{
 			get
 			{
-				return _graphPanel.lastYD;
+				return graphPanel.lastYD;
 			}
 		}
 
-		public GraphDisplaySettings _graphDisplaySettings;
+		public GraphDisplay( GraphPanelDisplay gpd, RJWS.Grph.AbstractGraphGenerator graphGenerator, GraphDisplaySettings graphDisplaySettings )
+		{
+			Init( gpd, graphDisplaySettings );
+			ChangeGraph( graphGenerator, graphDisplaySettings );
+		}
+
 		public void Init( GraphPanelDisplay gpd, GraphDisplaySettings gSettings )
 		{
-			_graphDisplaySettings = gSettings;
-			_graphPanel = gpd;
+			graphDisplaySettings = gSettings;
+			graphPanel = gpd;
 		}
 
 		static readonly bool DEBUG_SCALE = false;

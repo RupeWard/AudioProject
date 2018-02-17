@@ -8,7 +8,7 @@ namespace RJWS.Graph.Display
 	{
 		private static readonly bool DEBUG_LOCAL = false;
 
-		private GraphPanelDisplay _graphViewPanel;
+		private GraphDisplay graphView;
 
 		public UnityEngine.UI.Image image;
 		public float size = 1;
@@ -46,7 +46,7 @@ namespace RJWS.Graph.Display
 			set
 			{
 				_value = value;
-				cachedRT.anchoredPosition = _graphViewPanel.GetLocation( _value );
+				cachedRT.anchoredPosition = graphView.graphPanel.GetLocation( _value );
 				if (DEBUG_LOCAL)
 				{
 					Debug.Log( gameObject.name + ": val = (" + _value.x + "," + _value.y + "), pos = " + cachedRT.anchoredPosition );
@@ -92,20 +92,20 @@ namespace RJWS.Graph.Display
 			image.color = c;
 		}
 
-		public void Init( GraphPanelDisplay gvp, string n, EPtType t )
+		public void Init( GraphDisplay gvp, string n, EPtType t )
 		{
-			_graphViewPanel = gvp;
+			graphView = gvp;
 			PtType = t;
-			cachedTransform.SetParent( _graphViewPanel.pointsContainer );
+			cachedTransform.SetParent( graphView.graphPanel.pointsContainer );
 			gameObject.name = "Point_" + n;
 
 			if (PtType == EPtType.Fractional)
 			{
-				image.transform.localScale = _graphViewPanel.graphDisplaySettings.pointSizeFractional * Vector3.one;
+				image.transform.localScale = graphView.graphDisplaySettings.pointSizeFractional * Vector3.one;
 			}
 			else
 			{
-				image.transform.localScale = _graphViewPanel.graphDisplaySettings.pointSizeSampled * Vector3.one;
+				image.transform.localScale = graphView.graphDisplaySettings.pointSizeSampled * Vector3.one;
 			}
 		}
 
@@ -114,11 +114,11 @@ namespace RJWS.Graph.Display
 			float ptSize = 0f;
 			if (PtType == EPtType.Fractional)
 			{
-				ptSize = _graphViewPanel.graphDisplaySettings.pointSizeFractional;
+				ptSize = graphView.graphDisplaySettings.pointSizeFractional;
 			}
 			else
 			{
-				ptSize = _graphViewPanel.graphDisplaySettings.pointSizeSampled;
+				ptSize = graphView.graphDisplaySettings.pointSizeSampled;
 			}
 			image.transform.localScale = new Vector2( ptSize * size * screenFraction.x, ptSize * size * screenFraction.y );
 		}

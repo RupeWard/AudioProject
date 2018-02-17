@@ -241,7 +241,7 @@ namespace RJWS.Graph.Display
 			SetSpriteSize( );
 			CreateTicks( );
 
-			axisImage.color = _graphViewPanel.graphDisplaySettings.GetColor( axisDefn );
+			axisImage.color = _graphViewPanel.graphPanelDisplaySettings.GetAxisColor( axisDefn );
 			adjustPosition( );
 			SetValueText( );
 
@@ -368,7 +368,7 @@ namespace RJWS.Graph.Display
 						cachedRT.sizeDelta
 							= new Vector2(
 										   graphViewPanel.cachedRT.sizeDelta.x,
-										   graphViewPanel.graphDisplaySettings.defaultAxisWidth * axisDefn.axisLineWidthScaling );
+										   graphViewPanel.graphPanelDisplaySettings.defaultAxisWidth * axisDefn.axisLineWidthScaling );
 
 						break;
 					}
@@ -376,7 +376,7 @@ namespace RJWS.Graph.Display
 					{
 						cachedRT.sizeDelta
 							= new Vector2(
-										   graphViewPanel.graphDisplaySettings.defaultAxisWidth * axisDefn.axisLineWidthScaling,
+										   graphViewPanel.graphPanelDisplaySettings.defaultAxisWidth * axisDefn.axisLineWidthScaling,
 										   graphViewPanel.cachedRT.sizeDelta.y );
 						break;
 					}

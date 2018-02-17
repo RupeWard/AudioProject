@@ -1,4 +1,3 @@
-File browser
 
 Separate graphpanel from graphgraph
 
@@ -24,10 +23,7 @@ Settings
 Follow points
 - loop/no loop
 
-Wav loader
 Wav saver
-
-Different types of points
 
 Point edit
 - Add grabber to point

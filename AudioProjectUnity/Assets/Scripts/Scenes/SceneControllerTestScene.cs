@@ -12,6 +12,7 @@ using RJWS.Graph.Display;
 public class SceneControllerTestScene : SceneController_Base
 {
 	public GraphDisplaySettings graphDisplaySettings = new GraphDisplaySettings( );
+	public GraphPanelDisplaySettings graphPanelDisplaySettings = new GraphPanelDisplaySettings( );
 
 	public RectTransform canvasRT;
 	public RectTransform permanentButtonsRT;
@@ -123,8 +124,6 @@ public class SceneControllerTestScene : SceneController_Base
 
 	public void HandleNewWaveFormButton()
 	{
-//		Debug.Log( "Press" );
-
 		newPeriodicWaveFormOverlay.Init( "WF" );
 
 	}
@@ -270,11 +269,12 @@ public class SceneControllerTestScene : SceneController_Base
 			if (_graphViewPanel == null)
 			{
 				_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent<GraphPanelDisplay>( );
-				_graphViewPanel.Init( _scrollablePanel, graphDisplaySettings );
+				_graphViewPanel.Init( _scrollablePanel, graphPanelDisplaySettings );
 			}
 
 			Vector2 xRange = new Vector2( 0f, clip.length );
-			_graphViewPanel.ChangeGraph( wfg, nFractionalPerWavelength, nSampledPerWavelength, xRange );
+			_graphViewPanel.SetRanges( xRange, wfg.GetValueRange( ) );
+			_graphViewPanel.AddGraph( wfg, graphDisplaySettings);
 			_graphViewPanel.AddAxes(
 				new List<AxisDefn>( )
 				{
@@ -329,12 +329,13 @@ public class SceneControllerTestScene : SceneController_Base
 		if (_graphViewPanel == null)
 		{
 			_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent< GraphPanelDisplay>();
-			_graphViewPanel.Init( _scrollablePanel, graphDisplaySettings);
+			_graphViewPanel.Init( _scrollablePanel, graphPanelDisplaySettings);
 		}
 
 		Vector2 xRange = new Vector2( 0f, (float)(wfg.waveLengthSecs * numPeriods) );
 
-		_graphViewPanel.ChangeGraph( wfg, nFractionalPerWavelength, nSampledPerWavelength, xRange);
+		_graphViewPanel.SetRanges( xRange, wfg.GetValueRange( ) );
+		_graphViewPanel.AddGraph( wfg, graphDisplaySettings);
 
 		_graphViewPanel.AddAxes(
 			new List< AxisDefn>()

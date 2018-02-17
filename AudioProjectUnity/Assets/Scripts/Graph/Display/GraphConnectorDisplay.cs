@@ -11,7 +11,7 @@ namespace RJWS.Graph.Display
 		private RectTransform _imageRT;
 		private Transform _imageTransform;
 
-		private GraphPanelDisplay _graphViewPanel;
+		private GraphDisplay _graphView;
 
 		public RectTransform cachedRT
 		{
@@ -36,10 +36,10 @@ namespace RJWS.Graph.Display
 			_imageTransform = image.transform;
 		}
 
-		public void Init( GraphPanelDisplay gvp, int num )
+		public void Init( GraphDisplay gvp, int num )
 		{
-			_graphViewPanel = gvp;
-			cachedTransform.SetParent( _graphViewPanel.linesContainer );
+			_graphView = gvp;
+			cachedTransform.SetParent( _graphView.graphPanel.linesContainer );
 			gameObject.name = "Connector_" + num.ToString( );
 		}
 
@@ -56,10 +56,9 @@ namespace RJWS.Graph.Display
 				Vector2 pos1 = nextPt.cachedRT.anchoredPosition;
 
 				float length = (pos0 - pos1).magnitude;
-				float width = _graphViewPanel.graphDisplaySettings.lineWidth;
+				float width = _graphView.graphDisplaySettings.lineWidth; // TODO scaling
 
 				cachedRT.anchoredPosition = 0.5f * (pos0 + pos1);
-				//			cachedTransform.localScale = Vector3.one;
 				_imageRT.sizeDelta = new Vector2( length, width );
 				_imageTransform.localEulerAngles = new Vector3( 0f, 0f, Mathf.Rad2Deg * Mathf.Atan2( pos1.y - pos0.y, pos1.x - pos0.x ) );
 			}

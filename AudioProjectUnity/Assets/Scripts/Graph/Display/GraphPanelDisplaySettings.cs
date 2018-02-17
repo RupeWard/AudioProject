@@ -14,16 +14,6 @@ namespace RJWS.Graph.Display
 
 		public float defaultAxisWidth = 6f;
 
-		public Color fractionalPointColour = Color.green;
-		public Color samplePointColour = Color.red;
-
-		public Color pureConnectorColour = Color.green;
-		public Color sampleHidingConnectorColor = Color.red;
-
-		public float lineWidth = 2f;
-		public float pointSizeSampled = 5f;
-		public float pointSizeFractional = 3.5f;
-
 		/*
 		public int numFractionalPoints = 32;
 		public int numSampledPoints = 16;
@@ -34,12 +24,12 @@ namespace RJWS.Graph.Display
 		}
 		*/
 
-		public Color GetColor( AxisDefn axisDefn )
+		public Color GetAxisColor( AxisDefn axisDefn )
 		{
-			return GetColor( axisDefn.eDirection, axisDefn.axisType );
+			return GetAxisColor( axisDefn.eDirection, axisDefn.axisType );
 		}
 
-		public Color GetColor( RJWS.EOrthoDirection dirn, AxisDefn.EAxisType axisType )
+		public Color GetAxisColor( RJWS.EOrthoDirection dirn, AxisDefn.EAxisType axisType )
 		{
 			switch (dirn)
 			{

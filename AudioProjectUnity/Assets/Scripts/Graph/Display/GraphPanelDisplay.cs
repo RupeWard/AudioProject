@@ -25,21 +25,21 @@ namespace RJWS.Graph.Display
 			}
 		}
 
-		public GraphDisplaySettings graphDisplaySettings
+		public GraphPanelDisplaySettings graphPanelDisplaySettings
 		{
 			get;
 			private set;
 		}
 
-		public GameObject graphPointPrefab;
-		public GameObject graphConnectorPrefab;
 		public GameObject graphAxisPrefab;
 
-		private List<GraphPointDisplay> _fractionalGraphPtDisplays = new List<GraphPointDisplay>( );
-		private List<GraphPointDisplay> _sampleGraphPtDisplays = new List<GraphPointDisplay>( );
-		private List<GraphConnectorDisplay> _graphConnectorDisplays = new List<GraphConnectorDisplay>( );
+		private GraphDisplay _graphDisplay=null;
 
-		private List<GraphPointDisplay> _allGraphPtDisplays = new List<GraphPointDisplay>( );
+//		private List<GraphPointDisplay> _fractionalGraphPtDisplays = new List<GraphPointDisplay>( );
+//		private List<GraphPointDisplay> _sampleGraphPtDisplays = new List<GraphPointDisplay>( );
+//		private List<GraphConnectorDisplay> _graphConnectorDisplays = new List<GraphConnectorDisplay>( );
+
+//		private List<GraphPointDisplay> _allGraphPtDisplays = new List<GraphPointDisplay>( );
 
 		private List<GraphAxisDisplay> _graphAxisDisplays = new List<GraphAxisDisplay>( );
 
@@ -49,6 +49,7 @@ namespace RJWS.Graph.Display
 
 		public bool autoAxisDisplays = true;
 
+		/*
 		private int _numFractionalPointsBACKING = 0;
 		public int numFractionalPoints
 		{
@@ -84,6 +85,8 @@ namespace RJWS.Graph.Display
 				return numSampledPoints + numFractionalPoints;
 			}
 		}
+
+		*/
 
 		private void ClearAxes( )
 		{
@@ -134,41 +137,23 @@ namespace RJWS.Graph.Display
 			}
 		}
 
-		private RJWS.Grph.AbstractGraphGenerator _graphGenerator;
-
-		public void ChangeGraph( RJWS.Audio.AbstractWaveFormGenerator graphGenerator, int nFractionalPoints, int nSampledPoints, Vector2 pxRange, bool clearAxes = true )
+		public void AddGraph( RJWS.Grph.AbstractGraphGenerator generator, GraphDisplaySettings settings)
 		{
-			// TODO scaling of axis labels. vertical axes labels too big after verrtical reduction (but then static), & vv.
-			if (graphGenerator == null)
+			if (_graphDisplay != null)
 			{
-				Debug.LogError( "NULL graphGenerator in GVP.ChangeGraph" );
-				return;
+				_graphDisplay.Destroy( );
 			}
-			if (DEBUG_LOCAL)
-			{
-				Debug.Log( "GVP.ChangeGraph to " + graphGenerator.DebugDescribe( ) );
-			}
-			if (clearAxes)
-			{
-				ClearAxes( );
-			}
-			for (int i = 0; i < _sampleGraphPtDisplays.Count; i++)
-			{
-				_sampleGraphPtDisplays[i].gameObject.SetActive( false );
-			}
+			_graphDisplay = new GraphDisplay( this, generator, settings );
+		}
 
-			numFractionalPoints = nFractionalPoints;
-			numSampledPoints = nSampledPoints;
-
-			_graphGenerator = graphGenerator;
-
-			Vector2 yR = _graphGenerator.GetValueRange( );
-			float yExtra = 0.1f * yR.magnitude;
-			yR.x = yR.x - yExtra;
-			yR.y = yR.y + yExtra;
-			yRange = yR;
+		public void SetRanges( Vector2 pxRange, Vector2 pyRange, float yExtraFractional = 0.1f)
+		{
+			ClearAxes( );
 
 			xRange = pxRange;
+
+			float yExtra = 0.1f * pyRange.magnitude;
+			yRange = new Vector2(pyRange.x - yExtra, pyRange.y+yExtra);
 
 			SetDirty( );
 		}
@@ -206,84 +191,6 @@ namespace RJWS.Graph.Display
 			}
 		}
 
-		private void HandleNumPointsChanged( )
-		{
-			while (_fractionalGraphPtDisplays.Count < numFractionalPoints)
-			{
-				GraphPointDisplay newPoint = Instantiate( graphPointPrefab ).GetComponent<GraphPointDisplay>( );
-				_fractionalGraphPtDisplays.Add( newPoint );
-				newPoint.Init( this, "FR_" + (_fractionalGraphPtDisplays.Count - 1).ToString( ), GraphPointDisplay.EPtType.Fractional );
-				newPoint.SetColour( graphDisplaySettings.fractionalPointColour );
-				SetDirty( );
-			}
-			while (_fractionalGraphPtDisplays.Count > numFractionalPoints)
-			{
-				GameObject.Destroy( _fractionalGraphPtDisplays[0].gameObject );
-				_fractionalGraphPtDisplays.RemoveAt( 0 );
-				SetDirty( );
-			}
-
-			while (_sampleGraphPtDisplays.Count < numSampledPoints)
-			{
-				GraphPointDisplay newPoint = Instantiate( graphPointPrefab ).GetComponent<GraphPointDisplay>( );
-				_sampleGraphPtDisplays.Add( newPoint );
-				newPoint.Init( this, "SA_" + (_sampleGraphPtDisplays.Count - 1).ToString( ), GraphPointDisplay.EPtType.Sampled );
-				newPoint.SetColour( graphDisplaySettings.samplePointColour );
-				newPoint.gameObject.SetActive( false );
-				SetDirty( );
-			}
-			while (_sampleGraphPtDisplays.Count > numSampledPoints)
-			{
-				GameObject.Destroy( _sampleGraphPtDisplays[0].gameObject );
-				_sampleGraphPtDisplays.RemoveAt( 0 );
-				SetDirty( );
-			}
-
-			while (_graphConnectorDisplays.Count < totalNumPoints - 1)
-			{
-				GraphConnectorDisplay newConnector = Instantiate( graphConnectorPrefab ).GetComponent<GraphConnectorDisplay>( );
-				_graphConnectorDisplays.Add( newConnector );
-				newConnector.gameObject.SetActive( false );
-				SetDirty( );
-			}
-			while (_graphConnectorDisplays.Count > totalNumPoints - 1)
-			{
-				GameObject.Destroy( _graphConnectorDisplays[0].gameObject );
-				_graphConnectorDisplays.RemoveAt( 0 );
-				SetDirty( );
-			}
-
-			/*
-			// To be moved
-			for (int i = 0; i < _fractionalGraphPtDisplays.Count; i++)
-			{
-				_fractionalGraphPtDisplays[i].Init( this, i );
-				if (i == 0)
-				{
-					_fractionalGraphPtDisplays[i].previousPt = null;
-				}
-				else
-				{
-					_fractionalGraphPtDisplays[i].previousPt = _fractionalGraphPtDisplays[i - 1];
-				}
-				if (i == _fractionalGraphPtDisplays.Count - 1)
-				{
-					_fractionalGraphPtDisplays[i].nextPt = null;
-				}
-				else
-				{
-					_fractionalGraphPtDisplays[i].nextPt = _fractionalGraphPtDisplays[i + 1];
-				}
-				if (i < _graphConnectorDisplays.Count)
-				{
-					_graphConnectorDisplays[i].Init( this, i );
-					_graphConnectorDisplays[i].previousPt = _fractionalGraphPtDisplays[i];
-					_graphConnectorDisplays[i].nextPt = _fractionalGraphPtDisplays[i + 1];
-				}
-			}
-			*/
-		}
-
 		System.Text.StringBuilder debugsb = new System.Text.StringBuilder( );
 
 		private Dictionary<RJWS.EOrthoDirection, bool> _directionFlags = null;
@@ -311,15 +218,10 @@ namespace RJWS.Graph.Display
 			if (!IsDirty)
 				return;
 
-			if (_graphGenerator == null)
-			{
-				Debug.LogError( "NULL graphGenerator" );
-				return;
-			}
 			if (DEBUG_LOCAL)
 			{
 				debugsb.Length = 0;
-				debugsb.Append( "Updated GraphPoints: VVR=" + viewValuesRect.ToString( ) + ", VR=" ).Append( _scrollablePanel.scrollablePanelView.ViewRect.ToString( ) );
+				debugsb.Append( "Updated GraphPanel: VVR=" + viewValuesRect.ToString( ) + ", VR=" ).Append( _scrollablePanel.scrollablePanelView.ViewRect.ToString( ) );
 
 				if (_displayPosDirty)
 				{
@@ -329,24 +231,21 @@ namespace RJWS.Graph.Display
 				{
 					debugsb.Append( " Scl" );
 				}
-				debugsb.Append( ", xRange = (" + xRange.x + ", " + xRange.y + "), yRange = " + yRange + ", N = " + numFractionalPoints + "/" + numSampledPoints );
+				debugsb.Append( ", xRange = (" + xRange.x + ", " + xRange.y + "), yRange = " + yRange );
 			}
 
 			RecalculatePos( );
+
+			if ((_displayPosDirty || _displayScaleDirty) && _graphDisplay != null)
+			{
+				_graphDisplay.UpdateDisplay( );
+			}
 
 			if (_displayScaleDirty)
 			{
 				if (DEBUG_LOCAL)
 				{
 					debugsb.Append( "\n- scale dirty = " + displayScaleFractionReadonly );
-				}
-				for (int i = 0; i < numFractionalPoints; i++)
-				{
-					_fractionalGraphPtDisplays[i].HandleScaling( displayScaleFractionReadonly );
-				}
-				for (int i = 0; i < numSampledPoints - 1; i++)
-				{
-					_sampleGraphPtDisplays[i].HandleScaling( displayScaleFractionReadonly );
 				}
 				for (int i = 0; i < _graphAxisDisplays.Count; i++)
 				{
@@ -363,174 +262,6 @@ namespace RJWS.Graph.Display
 				if (DEBUG_LOCAL)
 				{
 					debugsb.Append( "\n- pos dirty = " + displayPosOfFirstEdgeFractionReadonly + ", first/last = " + firstX + " / " + lastX );
-				}
-
-				int numSamplePtsDisplayed = 0;
-
-				// TODO do this with plymorphism
-				RJWS.Audio.WaveFormGenerator_Sampled sampledWFG = _graphGenerator as RJWS.Audio.WaveFormGenerator_Sampled;
-				if (sampledWFG != null)
-				{
-					int nSamplePts = sampledWFG.GetSampleXsInInterval( firstXD, lastXD - firstXD, _debugSamples );
-
-					int step = 1;
-					if (nSamplePts > numSampledPoints)
-					{
-						step = Mathf.CeilToInt( (float)nSamplePts / numSampledPoints );
-					}
-
-					int samplePtIndex = 0;
-					double samplex = firstXD;
-					int samplePtDisplayIndex = 0;
-
-					if (DEBUG_LOCAL)
-					{
-						debugsb.Append( "\nStepping through samples, firstXD = " ).Append( firstXD ).Append( " last = " ).Append( lastXD );
-					}
-
-					while (samplePtDisplayIndex < _sampleGraphPtDisplays.Count && samplePtIndex < nSamplePts && samplex <= lastXD)
-					{
-						samplex = _debugSamples[samplePtIndex];
-						if (samplex < lastXD)
-						{
-							float sampleY = _graphGenerator.GetYForX( samplex );
-							_sampleGraphPtDisplays[samplePtDisplayIndex].gameObject.SetActive( true );
-							_sampleGraphPtDisplays[samplePtDisplayIndex].Value = new Vector2( (float)samplex, sampleY );
-							samplePtIndex += step;
-							samplePtDisplayIndex += 1;
-						}
-						else
-						{
-							if (DEBUG_LOCAL)
-							{
-								debugsb.Append( "\nERROR - samplex = " ).Append( samplex ).Append( " for index " ).Append( samplePtIndex );
-							}
-						}
-					}
-					numSamplePtsDisplayed = samplePtDisplayIndex;
-					while (samplePtDisplayIndex < _sampleGraphPtDisplays.Count)
-					{
-						_sampleGraphPtDisplays[samplePtDisplayIndex].gameObject.SetActive( false );
-						samplePtDisplayIndex++;
-					}
-
-					if (DEBUG_LOCAL)
-					{
-						Debug.Log( "N=" + nSamplePts + ", step " + step + " gives " + numSamplePtsDisplayed + " displayed" );
-						debugsb.Append( "\nN=" + nSamplePts + ", step " + step + " gives " + numSamplePtsDisplayed + " displayed" );
-						for (int i = 0; i < numSamplePtsDisplayed; i++)
-						{
-							debugsb.Append( _debugSamples[i] ).Append( ", " );
-						}
-						Debug.Log( debugsb.ToString( ) );
-					}
-				}
-				else
-				{
-					if (DEBUG_LOCAL)
-					{
-						Debug.Log( "No sampled points" );
-					}
-				}
-				double xstepD = (lastXD - firstXD) / (numFractionalPoints - 1);
-				if (DEBUG_LOCAL)
-				{
-					debugsb.Append( "\n- xstep = " + xstepD );
-				}
-				for (int i = 0; i < numFractionalPoints; i++)
-				{
-					double x = firstXD + xstepD * i;
-					float y = _graphGenerator.GetYForX( x );
-					_fractionalGraphPtDisplays[i].Value = new Vector2( (float)x, y );
-					/*
-					if (i > 0)
-					{
-						_graphConnectorDisplays[i-1].UpdateDisplay( );
-					}
-					*/
-				}
-
-				// Now put them all together
-				_allGraphPtDisplays.Clear( );
-
-				for (int i = 0; i < _fractionalGraphPtDisplays.Count; i++)
-				{
-					_allGraphPtDisplays.Add( _fractionalGraphPtDisplays[i] );
-				}
-				if (numSamplePtsDisplayed > 0)
-				{
-					for (int i = 0; i < numSamplePtsDisplayed; i++)
-					{
-						_allGraphPtDisplays.Add( _sampleGraphPtDisplays[i] );
-					}
-				}
-
-				_allGraphPtDisplays.Sort( new GraphPointDisplay.PtXComparer( ) );
-				if (DEBUG_LOCAL)
-				{
-					debugsb.Append( "\nMerged " ).Append( numFractionalPoints ).Append( " fractional and " ).Append( numSamplePtsDisplayed ).Append( " sampled making " ).Append( _allGraphPtDisplays.Count );
-					for (int i = 0; i < _allGraphPtDisplays.Count; i++)
-					{
-						debugsb.Append( "\n " ).Append( i ).Append( _allGraphPtDisplays[i].Value.x.ToString( "G4" ) );
-					}
-				}
-
-				int pointIndex = 0;
-				for (pointIndex = 0; pointIndex < _allGraphPtDisplays.Count; pointIndex++)
-				{
-					if (pointIndex == 0)
-					{
-						_allGraphPtDisplays[pointIndex].previousPt = null;
-					}
-					else
-					{
-						_allGraphPtDisplays[pointIndex].previousPt = _allGraphPtDisplays[pointIndex - 1];
-					}
-					if (pointIndex == _allGraphPtDisplays.Count - 1)
-					{
-						_allGraphPtDisplays[pointIndex].nextPt = null;
-					}
-					else
-					{
-						_allGraphPtDisplays[pointIndex].nextPt = _allGraphPtDisplays[pointIndex + 1];
-					}
-					if (pointIndex < _allGraphPtDisplays.Count - 1)
-					{
-						if (!_graphConnectorDisplays[pointIndex].gameObject.activeSelf)
-						{
-							_graphConnectorDisplays[pointIndex].gameObject.SetActive( true );
-						}
-						_graphConnectorDisplays[pointIndex].Init( this, pointIndex );
-						_graphConnectorDisplays[pointIndex].previousPt = _allGraphPtDisplays[pointIndex];
-						_graphConnectorDisplays[pointIndex].nextPt = _allGraphPtDisplays[pointIndex + 1];
-						_graphConnectorDisplays[pointIndex].UpdateDisplay( );
-
-						if (sampledWFG != null)
-						{
-							double prevXD = (double)_allGraphPtDisplays[pointIndex].Value.x;
-							double nextXD = (double)_allGraphPtDisplays[pointIndex + 1].Value.x;
-							int nSamplePts = sampledWFG.GetSampleXsInInterval( prevXD, nextXD - prevXD, _debugSamples );
-							if (_allGraphPtDisplays[pointIndex].PtType == GraphPointDisplay.EPtType.Sampled)
-							{
-								nSamplePts--;
-							}
-							if (_allGraphPtDisplays[pointIndex + 1].PtType == GraphPointDisplay.EPtType.Sampled)
-							{
-								nSamplePts--;
-							}
-							Color col = (nSamplePts > 0) ? (graphDisplaySettings.sampleHidingConnectorColor) : (graphDisplaySettings.pureConnectorColour);
-							_graphConnectorDisplays[pointIndex].SetColour( col );
-							//					Debug.Log( "N=" + nSamplePts+" col="+col );
-						}
-					}
-				}
-				int connectorIndex = pointIndex;
-				for (; connectorIndex < _graphConnectorDisplays.Count; connectorIndex++)
-				{
-					if (_graphConnectorDisplays[connectorIndex].gameObject.activeSelf)
-					{
-						_graphConnectorDisplays[connectorIndex].gameObject.SetActive( false );
-					}
 				}
 
 				// Axes
@@ -581,8 +312,6 @@ namespace RJWS.Graph.Display
 			}
 
 		}
-
-		private List<double> _debugSamples = new List<double>( );
 
 		public float firstX
 		{
@@ -725,9 +454,9 @@ namespace RJWS.Graph.Display
 
 		public RJWS.UI.Scrollable.ScrollablePanel _scrollablePanel;
 
-		public void Init( RJWS.UI.Scrollable.ScrollablePanel scrollablePanel, GraphDisplaySettings gDisplaySettings )
+		public void Init( RJWS.UI.Scrollable.ScrollablePanel scrollablePanel, GraphPanelDisplaySettings gDisplaySettings )
 		{
-			graphDisplaySettings = gDisplaySettings;
+			graphPanelDisplaySettings = gDisplaySettings;
 
 			_scrollablePanel = scrollablePanel;
 
