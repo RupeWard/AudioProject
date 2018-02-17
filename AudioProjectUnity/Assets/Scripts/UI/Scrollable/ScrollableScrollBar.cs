@@ -8,7 +8,7 @@ namespace RJWS.UI.Scrollable
 {
 	public class ScrollableScrollBar : MonoBehaviour
 	{
-		public static readonly bool DEBUG_SCROLLBAR = true;
+		public static readonly bool DEBUG_SCROLLBAR = false;
 		public static readonly bool DEBUG_MOVE = false;
 
 		private Dictionary<ELowHigh, ScrollableScrollBarEnd> _ends = new Dictionary<ELowHigh, ScrollableScrollBarEnd>( );
@@ -39,6 +39,8 @@ namespace RJWS.UI.Scrollable
 		{
 			scrollBarPanel = sbp;
 			GameObject endPrefab = Resources.Load<GameObject>( "Prefabs/UI/ScrollBarEnd" );
+
+			limitState = ELimitState.None;
 
 			Vector2 size = scrollBarPanel.cachedRT.sizeDelta;
 			size.y -= 10f;
@@ -80,13 +82,15 @@ namespace RJWS.UI.Scrollable
 
 			if (newSize >= _sizeRange.x && newSize <= _sizeRange.y)
 			{
+				limitState = ELimitState.None;
 				float highOffset = (0.5f * _sizeRange.y + cachedRT.anchoredPosition.x + 0.5f * newSize) - _sizeRange.y;
 				float lowOffset = 0.5f * newSize - (0.5f * _sizeRange.y + cachedRT.anchoredPosition.x);
                 if (highOffset <= 0 &&  lowOffset <= 0f)
 				{
+					didChange = (newSize != cachedRT.sizeDelta.x);
 					cachedRT.sizeDelta = new Vector2( newSize, cachedRT.sizeDelta.y );
 					DoScrollBarChangedAction( );
-					didChange = true;
+//					didChange = true;
 				}
 				else if (scrollBarPanel.settings.allowPositionChangeOnExternalZoom)
 				{
@@ -98,13 +102,41 @@ namespace RJWS.UI.Scrollable
 					{
 						cachedRT.anchoredPosition = new Vector2( cachedRT.anchoredPosition.x + lowOffset, cachedRT.anchoredPosition.y );
 					}
+					didChange = (newSize != cachedRT.sizeDelta.y);	
 					cachedRT.sizeDelta = new Vector2( newSize, cachedRT.sizeDelta.y );
 					DoScrollBarChangedAction( );
-					didChange = true;
+//					didChange = true;
 				}
 			}
-
+			else
+			{
+				if (newSize < _sizeRange.x)
+				{
+					limitState = ELimitState.Lower;
+				}
+				if (newSize > _sizeRange.y)
+				{
+					limitState = ELimitState.Upper;
+				}
+			}
+			if (DEBUG_SCROLLBAR)
+			{
+				Debug.Log( "Scrollbar SetSizeFraction(" + fraction + ") limit = " + limitState );
+			}
 			return didChange;
+		}
+
+		public enum ELimitState
+		{
+			None,
+			Lower,
+			Upper
+		}
+
+		public ELimitState limitState
+		{
+			get;
+			private set;
 		}
 
 		public void HandleMiddleMoved( float delta )
@@ -137,96 +169,176 @@ namespace RJWS.UI.Scrollable
 			return SpaceAtEnd( ELowHigh.Low) > 0.5f;
 		}
 
+		System.Text.StringBuilder _debugSB = new System.Text.StringBuilder( );
+
 		public void HandleEndMoved( ELowHigh lowHigh, float delta, bool doubleEnded)
 		{
 			if (DEBUG_MOVE)
 			{
-				Debug.Log( Time.time + " SB End moved: " + lowHigh + " " + delta );
-			}
-
-			Vector2 size = cachedRT.sizeDelta;
-			Vector2 anchoredPos = cachedRT.anchoredPosition;
-
-			if (doubleEnded)
-			{
-				switch (lowHigh)
-				{
-					case ELowHigh.Low:
-						{
-							size.x -= 2f * delta;
-							break;
-						}
-					case ELowHigh.High:
-						{
-							size.x += 2f * delta;
-							break;
-						}
-					default:
-						{
-							Debug.LogError( "Bad ELowHigh: " + lowHigh );
-							break;
-						}
-				}
-			}
-			else
-			{
-				switch (lowHigh)
-				{
-					case ELowHigh.Low:
-						{
-							size.x -= delta;
-							anchoredPos.x += 0.5f * delta;
-							break;
-						}
-					case ELowHigh.High:
-						{
-							size.x += delta;
-							anchoredPos.x += 0.5f * delta;
-							break;
-						}
-					default:
-						{
-							Debug.LogError( "Bad ELowHigh: " + lowHigh );
-							break;
-						}
-				}
-
+				_debugSB.Length = 0;
+				_debugSB.Append(Time.time + " SB End moved: " + lowHigh + " " + delta );
 			}
 
 			bool canChange = false;
 
-			if (size.x >= _sizeRange.x && size.x <= _sizeRange.y)
+			if (delta != 0f)
 			{
-				float highOffset = (0.5f * _sizeRange.y + anchoredPos.x + 0.5f * size.x) - _sizeRange.y;
-				float lowOffset = 0.5f * size.x - (0.5f * _sizeRange.y + anchoredPos.x);
-				if (highOffset <= 0 && lowOffset <= 0f)
+				Vector2 size = cachedRT.sizeDelta;
+				Vector2 anchoredPos = cachedRT.anchoredPosition;
+
+				if (doubleEnded)
 				{
-					canChange = true;
-				}
-				else if (scrollBarPanel.settings.allowPositionChangeOnInternalZoom)
-				{
-					if (lowOffset > 0f)
+					switch (lowHigh)
 					{
-						anchoredPos.x = anchoredPos.x + lowOffset;
+						case ELowHigh.Low:
+							{
+								size.x -= 2f * delta;
+								break;
+							}
+						case ELowHigh.High:
+							{
+								size.x += 2f * delta;
+								break;
+							}
+						default:
+							{
+								Debug.LogError( "Bad ELowHigh: " + lowHigh );
+								break;
+							}
+					}
+				}
+				else
+				{
+					switch (lowHigh)
+					{
+						case ELowHigh.Low:
+							{
+								size.x -= delta;
+								anchoredPos.x += 0.5f * delta;
+								break;
+							}
+						case ELowHigh.High:
+							{
+								size.x += delta;
+								anchoredPos.x += 0.5f * delta;
+								break;
+							}
+						default:
+							{
+								Debug.LogError( "Bad ELowHigh: " + lowHigh );
+								break;
+							}
+					}
+
+				}
+
+				if (size.x >= _sizeRange.x && size.x <= _sizeRange.y)
+				{
+					float highOffset = (0.5f * _sizeRange.y + anchoredPos.x + 0.5f * size.x) - _sizeRange.y;
+					float lowOffset = 0.5f * size.x - (0.5f * _sizeRange.y + anchoredPos.x);
+					if (highOffset <= 0 && lowOffset <= 0f)
+					{
+						canChange = true;
+						limitState = ELimitState.None;
 					}
 					else
 					{
-						anchoredPos.x = anchoredPos.x - highOffset;
+						if (scrollBarPanel.settings.allowPositionChangeOnInternalZoom)
+						{
+							if (lowOffset > 0f)
+							{
+								anchoredPos.x = anchoredPos.x + lowOffset;
+							}
+							else
+							{
+								anchoredPos.x = anchoredPos.x - highOffset;
+							}
+							canChange = true;
+							limitState = ELimitState.None;
+						}
+						else
+						{
+							if (highOffset > 0)
+							{
+								limitState = ELimitState.Upper;
+							}
+							else
+							{
+								limitState = ELimitState.Lower;
+							}
+						}
 					}
-					canChange = true;
+
+				}
+				else
+				{
+					if (size.x <= _sizeRange.x)
+					{
+						limitState = ELimitState.Lower;
+					}
+					if (size.x >= _sizeRange.y)
+					{
+						limitState = ELimitState.Upper;
+					}
+				}
+
+				if (canChange && scrollBarPanel.scrollablePanel.settings.scrollSettings.linkedScaling)
+				{
+					canChange = scrollBarPanel.scrollablePanel.GetScrollBar( scrollBarPanel.eDirection.OrthogonalDirection( ) ).scrollBar.SetSizeFraction( size.x / _sizeRange.y );
+				}
+
+				if (canChange)
+				{
+					cachedRT.sizeDelta = size;
+					cachedRT.anchoredPosition = anchoredPos;
+					DoScrollBarChangedAction( );
+					limitState = ELimitState.None;
+				}
+				else
+				{
+					if (size.x < _sizeRange.MidPoint( ))
+					{
+						limitState = ELimitState.Lower;
+					}
+					else
+					{
+						limitState = ELimitState.Upper;
+					}
+				}
+
+			}
+			else
+			{
+				Vector2 size = cachedRT.sizeDelta;
+				canChange = true;
+				if (size.x <= _sizeRange.x)
+				{
+					canChange = false;
+					limitState = ELimitState.Lower;
+				}
+				else if (size.x >= _sizeRange.y)
+				{
+					canChange = false;
+					limitState = ELimitState.Upper;
+				}
+
+				if (DEBUG_MOVE)
+				{
+					_debugSB.Append( " delta is zero! " );
+
 				}
 			}
-
-			if (canChange && scrollBarPanel.scrollablePanel.settings.scrollSettings.linkedScaling)
+			if (DEBUG_MOVE)
 			{
-				canChange = scrollBarPanel.scrollablePanel.GetScrollBar( scrollBarPanel.eDirection.OrthogonalDirection( ) ).scrollBar.SetSizeFraction( size.x/_sizeRange.y );
-			}
-
-			if (canChange)
-			{
-				cachedRT.sizeDelta = size;
-				cachedRT.anchoredPosition = anchoredPos;
-				DoScrollBarChangedAction( );
+				_debugSB.Append("\nScrollbar HandleEndMoved(" + lowHigh + ") limit = " + limitState+" canChange = "+canChange);
+				if (limitState == ELimitState.None)
+				{
+					Debug.Log( _debugSB.ToString());
+				}
+				else
+				{
+					Debug.LogWarning( _debugSB.ToString( ) );
+				}
 			}
 
 		}
