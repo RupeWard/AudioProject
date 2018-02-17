@@ -101,6 +101,11 @@ namespace RJWS.UI.Scrollable
 			}
 		}
 
+		public void Reset()
+		{
+
+		}
+
 		public void HandleViewChange( EOrthoDirection direction, float sizeFrac, float posFract)
 		{
 			SetSizePosFractions( direction, sizeFrac, posFract );

@@ -77,6 +77,7 @@ public class SceneControllerTestScene : SceneController_Base
 		}
 		_scrollablePanel.Init( );
 
+		_graphViewPanel = null;
 	}
 
 	private string _wavInputFolderPath;
@@ -171,7 +172,7 @@ public class SceneControllerTestScene : SceneController_Base
 				Debug.LogError( "Zero samples in testaudioclip loaded from " + filepath );
 				yield break;
 			}
-			LoadAudioClip( audioClip );
+			LoadAudioClipToNewPanel( audioClip );
 		}
 		else
 		{
@@ -247,10 +248,10 @@ public class SceneControllerTestScene : SceneController_Base
 			Debug.LogError( "Null testaudioclip " + n + " of " + testAudioClips.Length );
 			return;
 		}
-		LoadAudioClip( testAudioClip );
+		LoadAudioClipToNewPanel( testAudioClip );
 	}
 
-	public void LoadAudioClip(AudioClip clip )
+	public void LoadAudioClipToNewPanel(AudioClip clip )
 	{
 		float lengthSecs = clip.length;
 		Debug.Log( "Clip frequency = " + clip.frequency+", L="+lengthSecs );
@@ -266,6 +267,16 @@ public class SceneControllerTestScene : SceneController_Base
 				Debug.LogError( "WFG has 0 samples!" );
 				return;
 			}
+			/*
+			if (_scrollablePanel != null)
+			{
+				GameObject.Destroy( _scrollablePanel.gameObject );
+				_scrollablePanel = null;
+				_graphViewPanel = null;
+			}*/
+
+			RefreshScrollablePanel( );
+
 			if (_graphViewPanel == null)
 			{
 				_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent<GraphPanelDisplay>( );
@@ -326,6 +337,9 @@ public class SceneControllerTestScene : SceneController_Base
 		{
 			Debug.Log( wfg.DebugDescribe( ) );
 		}
+
+		RefreshScrollablePanel( );
+
 		if (_graphViewPanel == null)
 		{
 			_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent< GraphPanelDisplay>();

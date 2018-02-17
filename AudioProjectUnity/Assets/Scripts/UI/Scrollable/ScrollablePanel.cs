@@ -223,6 +223,11 @@ namespace RJWS.UI.Scrollable
 			SetUpCancelGrabButton( );
         }
 
+		public void Reset()
+		{
+			scrollablePanelView.Reset( );
+		}
+
 		public void SetUpCancelGrabButton( )
 		{
 			if (ObjectGrabManager.Instance.showCancelGrabButton)

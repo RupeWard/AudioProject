@@ -1,6 +1,4 @@
 
-Scaling on load 
-- dezoom & reset scrollbars
 
 Skip some fracional ones if too close
 
