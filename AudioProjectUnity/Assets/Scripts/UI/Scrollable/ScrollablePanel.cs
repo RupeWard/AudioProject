@@ -15,6 +15,7 @@ namespace RJWS.UI.Scrollable
 		public Transform scrollBarContainer;
 		public ScrollablePanelView scrollablePanelView;
 		public UnityEngine.UI.Button cancelGrabButton;
+		public RectTransform cancelGrabButtonHiderRT;
 
 		public ObjectGrabber grabber;
 		public GameObject grabberLeft;
@@ -250,6 +251,7 @@ namespace RJWS.UI.Scrollable
 						new Vector2(
 							_scrollBars[EOrthoDirection.Vertical].cachedRT.rect.height,
 							_scrollBars[EOrthoDirection.Horizontal].cachedRT.rect.height );
+					cancelGrabButtonHiderRT.sizeDelta = cancelGrabButtonRT.sizeDelta;
 
 					Vector2 anchorMin = Vector2.zero;
 					Vector2 anchorMax = Vector2.zero;
@@ -292,6 +294,12 @@ namespace RJWS.UI.Scrollable
 					cancelGrabButtonRT.anchorMax = anchorMax;
 					cancelGrabButtonRT.pivot = pivot;
 					cancelGrabButtonRT.anchoredPosition = Vector2.zero;
+
+					cancelGrabButtonHiderRT.anchorMin = anchorMin;
+					cancelGrabButtonHiderRT.anchorMax = anchorMax;
+					cancelGrabButtonHiderRT.pivot = pivot;
+					cancelGrabButtonHiderRT.anchoredPosition = Vector2.zero;
+
 					if (sb != null)
 					{
 						sb.Append( "\n sizeDelta = " + cancelGrabButtonRT.sizeDelta );

@@ -9,6 +9,7 @@ namespace RJWS.UI.Scrollable
 	{
 		public RectTransform bgRT;
 		public ObjectGrabber objectGrabber;
+		public UnityEngine.UI.Text text;
 
 		public RectTransform cachedRT
 		{
@@ -25,6 +26,14 @@ namespace RJWS.UI.Scrollable
 
 		public void Init( ScrollableScrollBar gsb)
 		{
+			if (gsb.zoomLevel == 0)
+			{
+				text.text = string.Empty;
+			}
+			else
+			{
+				text.text = gsb.zoomLevel.ToString( );
+			}
 			_graphScrollBar = gsb;
 
 			gameObject.name = "ScrollMiddle";
@@ -58,11 +67,21 @@ namespace RJWS.UI.Scrollable
 
 		public void HandleClick()
 		{
-
-//			Debug.Log( Time.time + " Click on " + transform.GetPathInHierarchy( ) );
-			if (!objectGrabber.isActivated)
+			//			Debug.Log( Time.time + " Click on " + transform.GetPathInHierarchy( ) );
+			if (_graphScrollBar.zoomLevel > 0 && _graphScrollBar.limitState == ScrollableScrollBar.ELimitState.Upper)
 			{
-				ObjectGrabManager.Instance.HandleGrabRequest( objectGrabber );
+				_graphScrollBar.parentScrollBar.DestroyZoomed( );
+			}
+			else
+			{
+				if (ScrollableScrollBar.DEBUG_SCROLLBAR)
+				{
+					Debug.Log( "zoomLevel = " + _graphScrollBar.zoomLevel + ", state= " + _graphScrollBar.limitState );
+				}
+				if (!objectGrabber.isActivated)
+				{
+					ObjectGrabManager.Instance.HandleGrabRequest( objectGrabber );
+				}
 			}
 		}
 

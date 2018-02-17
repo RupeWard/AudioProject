@@ -42,6 +42,7 @@ namespace RJWS.UI.Scrollable
 
 			cachedRT.SetParent( _scrollBar.cachedRT );
 			cachedRT.localScale = new Vector3( 1f, 1f, 1f );
+			cachedRT.localRotation = Quaternion.identity;
 			SetInitialPos( );
 
 			if (_scrollBar.scrollBarPanel.eDirection == EOrthoDirection.Horizontal)

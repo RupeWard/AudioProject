@@ -100,7 +100,10 @@ namespace RJWS.UI
 			}
 			else
 			{
-				Debug.LogWarning( "Null CurrentGrab" );
+				if (DEBUG_OBJECTGRABMANAGER)
+				{
+					Debug.LogWarning( "Null CurrentGrab" );
+				}
 			}
 		}
 

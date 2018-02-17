@@ -3,18 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using RJWS.Core.Extensions;
 using RJWS.Enums;
+using RJWS.Core.DebugDescribable;
 
 namespace RJWS.UI.Scrollable
 {
-	public class ScrollableScrollBar : MonoBehaviour
+	public class ScrollableScrollBar : MonoBehaviour, IDebugDescribable
 	{
 		public static readonly bool DEBUG_SCROLLBAR = false;
 		public static readonly bool DEBUG_MOVE = false;
+		public static readonly bool DEBUG_ZOOM = false;
+
 
 		private Dictionary<ELowHigh, ScrollableScrollBarEnd> _ends = new Dictionary<ELowHigh, ScrollableScrollBarEnd>( );
 		private ScrollableScrollBarMiddle _middle;
 
 		public System.Action<EOrthoDirection, float, float> onScrollBarChanged; // size, pos as fractions
+
+		public ScrollableScrollBar parentScrollBar = null;
+		public ScrollableScrollBar zoomedScrollBar = null;
+
+		public int zoomLevel
+		{
+			get;
+			private set;
+		}
 
 		public RectTransform cachedRT
 		{
@@ -35,12 +47,44 @@ namespace RJWS.UI.Scrollable
 
 		private Vector2 _sizeRange;
 
-		public void Init( ScrollableScrollBarPanel sbp)
+		public void InitZoomed( ScrollableScrollBar p )
 		{
+			parentScrollBar = p;
+			zoomLevel = parentScrollBar.zoomLevel + 1;
+			gameObject.name = parentScrollBar.gameObject.name + "_Z"+zoomLevel;
+			cachedRT.SetParent( parentScrollBar.cachedRT.parent );
+			cachedRT.anchoredPosition = Vector2.zero;
+			cachedRT.localRotation = Quaternion.identity;
+			onScrollBarChanged += parentScrollBar.HandleZoomedScrollBarChanged;
+			
+			ScrollableScrollBarEnd[] ends = transform.GetComponentsInChildren<ScrollableScrollBarEnd>( );
+			if (ends != null && ends.Length > 0)
+			{
+				for (int i = 0; i < ends.Length; i++)
+				{
+					GameObject.Destroy( ends[i].gameObject );
+				}
+			}
+			ScrollableScrollBarMiddle[] middles = transform.GetComponentsInChildren<ScrollableScrollBarMiddle>( );
+			if (middles != null && middles.Length > 0)
+			{
+				for (int i = 0; i < middles.Length; i++)
+				{
+					GameObject.Destroy( middles[i].gameObject );
+				}
+			}
+			Init( parentScrollBar.scrollBarPanel, zoomLevel );
+		}
+
+		public UnityEngine.UI.Image fillImage;
+
+		public void Init( ScrollableScrollBarPanel sbp, int zoom = 0)
+		{
+			zoomLevel = zoom;
 			scrollBarPanel = sbp;
 			GameObject endPrefab = Resources.Load<GameObject>( "Prefabs/UI/ScrollBarEnd" );
 
-			limitState = ELimitState.None;
+			limitState = ELimitState.Upper;
 
 			Vector2 size = scrollBarPanel.cachedRT.sizeDelta;
 			size.y -= 10f;
@@ -67,6 +111,7 @@ namespace RJWS.UI.Scrollable
 			_middle = mgo.GetComponent<ScrollableScrollBarMiddle>( );
 			_middle.Init( this );
 			_sizeRange.x += _middle.cachedRT.sizeDelta.x;
+
         }
 
 
@@ -90,7 +135,6 @@ namespace RJWS.UI.Scrollable
 					didChange = (newSize != cachedRT.sizeDelta.x);
 					cachedRT.sizeDelta = new Vector2( newSize, cachedRT.sizeDelta.y );
 					DoScrollBarChangedAction( );
-//					didChange = true;
 				}
 				else if (scrollBarPanel.settings.allowPositionChangeOnExternalZoom)
 				{
@@ -105,7 +149,6 @@ namespace RJWS.UI.Scrollable
 					didChange = (newSize != cachedRT.sizeDelta.y);	
 					cachedRT.sizeDelta = new Vector2( newSize, cachedRT.sizeDelta.y );
 					DoScrollBarChangedAction( );
-//					didChange = true;
 				}
 			}
 			else
@@ -121,7 +164,7 @@ namespace RJWS.UI.Scrollable
 			}
 			if (DEBUG_SCROLLBAR)
 			{
-				Debug.Log( "Scrollbar SetSizeFraction(" + fraction + ") limit = " + limitState );
+				Debug.Log( "Scrollbar "+gameObject.name+" SetSizeFraction(" + fraction + ") limit = " + limitState );
 			}
 			return didChange;
 		}
@@ -143,7 +186,7 @@ namespace RJWS.UI.Scrollable
 		{
 			if (DEBUG_MOVE)
 			{
-				Debug.Log( "SB Middle moved: " + delta );
+				Debug.Log( "SB "+gameObject.name + " Middle moved: " + delta );
 			}
 
 			Vector2 size = cachedRT.sizeDelta;
@@ -173,10 +216,12 @@ namespace RJWS.UI.Scrollable
 
 		public void HandleEndMoved( ELowHigh lowHigh, float delta, bool doubleEnded)
 		{
+			// XXXX TODO if zoomed, call on zoomed
+
 			if (DEBUG_MOVE)
 			{
 				_debugSB.Length = 0;
-				_debugSB.Append(Time.time + " SB End moved: " + lowHigh + " " + delta );
+				_debugSB.Append( gameObject.name + " " +Time.time + " SB End moved: " + lowHigh + " " + delta );
 			}
 
 			bool canChange = false;
@@ -299,6 +344,7 @@ namespace RJWS.UI.Scrollable
 					if (size.x < _sizeRange.MidPoint( ))
 					{
 						limitState = ELimitState.Lower;
+						CreateZoomed( );
 					}
 					else
 					{
@@ -307,21 +353,8 @@ namespace RJWS.UI.Scrollable
 				}
 
 			}
-			else
+			else //if (delta != 0f)
 			{
-				Vector2 size = cachedRT.sizeDelta;
-				canChange = true;
-				if (size.x <= _sizeRange.x)
-				{
-					canChange = false;
-					limitState = ELimitState.Lower;
-				}
-				else if (size.x >= _sizeRange.y)
-				{
-					canChange = false;
-					limitState = ELimitState.Upper;
-				}
-
 				if (DEBUG_MOVE)
 				{
 					_debugSB.Append( " delta is zero! " );
@@ -330,7 +363,7 @@ namespace RJWS.UI.Scrollable
 			}
 			if (DEBUG_MOVE)
 			{
-				_debugSB.Append("\nScrollbar HandleEndMoved(" + lowHigh + ") limit = " + limitState+" canChange = "+canChange);
+				_debugSB.Append("\nScrollbar HandleEndMoved(" + lowHigh + ", "+delta+" ) limit = " + limitState+" canChange = "+canChange);
 				if (limitState == ELimitState.None)
 				{
 					Debug.Log( _debugSB.ToString());
@@ -377,6 +410,35 @@ namespace RJWS.UI.Scrollable
 			}
 		}
 
+		private void DoZoomedScrollbarChangedAction(float zoomedSizeFraction, float zoomedPosFraction)
+		{
+			if (onScrollBarChanged != null)
+			{
+				float mySizeFraction = cachedRT.sizeDelta.x / _sizeRange.y;
+				float sizeFraction = zoomedSizeFraction * mySizeFraction;
+				float myPosFraction = (cachedRT.anchoredPosition.x + 0.5f * _sizeRange.y) / _sizeRange.y;
+
+				float posFraction = Mathf.Lerp( myPosFraction - mySizeFraction * 0.5f, myPosFraction + mySizeFraction * 0.5f, zoomedPosFraction );
+
+				if (sizeFraction > 1f || sizeFraction < 0f)
+				{
+					Debug.LogError( "Bad sizeFraction: " + sizeFraction );
+					sizeFraction = Mathf.Clamp01( sizeFraction );
+				}
+				if (posFraction > 1f || posFraction < 0f)
+				{
+					Debug.LogError( "Bad posFraction: " + posFraction );
+					posFraction = Mathf.Clamp01( posFraction );
+				}
+				onScrollBarChanged( scrollBarPanel.eDirection, sizeFraction, posFraction );
+			}
+			else
+			{
+				Debug.LogError( "No onScrollBarChanged!" );
+			}
+
+		}
+
 		private void DoScrollBarChangedAction()
 		{
 			if (onScrollBarChanged != null)
@@ -401,6 +463,57 @@ namespace RJWS.UI.Scrollable
 				Debug.LogError( "No onScrollBarChanged!" );
 			}
 		}
+
+		private void CreateZoomed()
+		{
+			if (zoomedScrollBar != null)
+			{
+				Debug.LogError( "Request to create second zoom" );
+				return;
+			}
+			if (DEBUG_ZOOM)
+			{
+				Debug.Log( "CreateZoomed " + this.DebugDescribe( ) );
+			}
+			zoomedScrollBar = GameObject.Instantiate( this.gameObject ).GetComponent<ScrollableScrollBar>( );
+			zoomedScrollBar.InitZoomed( this );
+			ObjectGrabManager.Instance.CancelCurrentGrab( );
+			gameObject.SetActive( false );
+		}
+
+		public void DestroyZoomed()
+		{
+			if (zoomedScrollBar == null)
+			{
+				Debug.LogError( "Can;t destroy numm zoomed" );
+				return;
+			}
+			if (DEBUG_ZOOM)
+			{
+				Debug.Log( gameObject.name + " DestroyZoomed " + this.DebugDescribe( )+" \nzoomed = "+zoomedScrollBar.DebugDescribe() );
+			}
+			GameObject.Destroy( zoomedScrollBar.gameObject );
+			zoomedScrollBar = null;
+			ObjectGrabManager.Instance.CancelCurrentGrab( );
+			gameObject.SetActive( true );
+		}
+
+		private void HandleZoomedScrollBarChanged(EOrthoDirection dirn, float sizeFraction, float posFraction)
+		{
+			if (DEBUG_ZOOM)
+			{
+				Debug.Log( gameObject.name + " Handle Zoomed changed " + dirn + " SF=" + sizeFraction + " PF=" + posFraction + " zoomLevel (receiver) = " + zoomLevel );
+			}
+			DoZoomedScrollbarChangedAction( sizeFraction, posFraction );
+		}
+
+		public void DebugDescribe(System.Text.StringBuilder sb)
+		{
+			sb.Append( "[SBar: " ).Append(gameObject.name).Append(" D=").Append( scrollBarPanel.eDirection );
+			sb.Append( " Z=" ).Append( zoomLevel );
+			sb.Append( "]" );
+		}
+
 	}
 
 }
