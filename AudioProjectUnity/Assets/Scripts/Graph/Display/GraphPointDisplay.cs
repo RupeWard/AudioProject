@@ -98,11 +98,29 @@ namespace RJWS.Graph.Display
 			PtType = t;
 			cachedTransform.SetParent( _graphViewPanel.pointsContainer );
 			gameObject.name = "Point_" + n;
+
+			if (PtType == EPtType.Fractional)
+			{
+				image.transform.localScale = _graphViewPanel.graphDisplaySettings.pointSizeFractional * Vector3.one;
+			}
+			else
+			{
+				image.transform.localScale = _graphViewPanel.graphDisplaySettings.pointSizeSampled * Vector3.one;
+			}
 		}
 
 		public void HandleScaling( Vector2 screenFraction )
 		{
-			image.transform.localScale = new Vector2( size * screenFraction.x, size * screenFraction.y );
+			float ptSize = 0f;
+			if (PtType == EPtType.Fractional)
+			{
+				ptSize = _graphViewPanel.graphDisplaySettings.pointSizeFractional;
+			}
+			else
+			{
+				ptSize = _graphViewPanel.graphDisplaySettings.pointSizeSampled;
+			}
+			image.transform.localScale = new Vector2( ptSize * size * screenFraction.x, ptSize * size * screenFraction.y );
 		}
 	}
 }
