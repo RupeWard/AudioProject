@@ -7,7 +7,7 @@ using RJWS.Core.DebugDescribable;
 
 namespace RJWS.Graph.Display
 {
-	public class GraphViewPanel : MonoBehaviour
+	public class GraphPanelDisplay : MonoBehaviour
 	{
 		private static readonly bool DEBUG_LOCAL = true;
 

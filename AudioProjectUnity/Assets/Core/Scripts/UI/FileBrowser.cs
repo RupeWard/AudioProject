@@ -207,7 +207,7 @@ namespace RJWS.Core.UI
                 if (permissibleFolder.StartsWith(Application.persistentDataPath))
                 {
                     permissibleFolder = permissibleFolder.Substring(Application.persistentDataPath.Length);
-                    Debug.Log("In persistent data!");
+ //                   Debug.Log("In persistent data!");
                 }
                 m_currentDirectoryParts = permissibleFolder.Split(Path.DirectorySeparatorChar);
                 if (SelectionPattern != null)

@@ -8,7 +8,7 @@ namespace RJWS.Graph.Display
 	{
 		private static readonly bool DEBUG_LOCAL = false;
 
-		private GraphViewPanel _graphViewPanel;
+		private GraphPanelDisplay _graphViewPanel;
 
 		public UnityEngine.UI.Image image;
 		public float size = 1;
@@ -92,7 +92,7 @@ namespace RJWS.Graph.Display
 			image.color = c;
 		}
 
-		public void Init( GraphViewPanel gvp, string n, EPtType t )
+		public void Init( GraphPanelDisplay gvp, string n, EPtType t )
 		{
 			_graphViewPanel = gvp;
 			PtType = t;

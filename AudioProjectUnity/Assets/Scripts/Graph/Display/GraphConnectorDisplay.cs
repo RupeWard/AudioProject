@@ -11,7 +11,7 @@ namespace RJWS.Graph.Display
 		private RectTransform _imageRT;
 		private Transform _imageTransform;
 
-		private GraphViewPanel _graphViewPanel;
+		private GraphPanelDisplay _graphViewPanel;
 
 		public RectTransform cachedRT
 		{
@@ -36,7 +36,7 @@ namespace RJWS.Graph.Display
 			_imageTransform = image.transform;
 		}
 
-		public void Init( GraphViewPanel gvp, int num )
+		public void Init( GraphPanelDisplay gvp, int num )
 		{
 			_graphViewPanel = gvp;
 			cachedTransform.SetParent( _graphViewPanel.linesContainer );

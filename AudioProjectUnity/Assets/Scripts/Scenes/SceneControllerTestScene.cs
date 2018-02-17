@@ -18,7 +18,7 @@ public class SceneControllerTestScene : SceneController_Base
 
 	public NewPeriodicWaveFormOverlay newPeriodicWaveFormOverlay;
 
-	private GraphViewPanel _graphViewPanel;
+	private GraphPanelDisplay _graphViewPanel;
 	public GameObject graphViewPanelPrefab;
 
 	public AudioClip[] testAudioClips = new AudioClip[2];
@@ -79,7 +79,7 @@ public class SceneControllerTestScene : SceneController_Base
 	}
 
 	private string _wavInputFolderPath;
-	const string INPUTFILEPATH_KEY = "WAVINPUTPATH";
+	const string WAVINPUTFILEPATH_KEY = "WAVINPUTPATH";
 	private static readonly bool DEBUG_LOCAL = true;
 	public GameObject fileChooserPrefab;
 
@@ -87,7 +87,7 @@ public class SceneControllerTestScene : SceneController_Base
 	{
 		newPeriodicWaveFormOverlay.onOkButton += NewWaveformCreated;
 
-		_wavInputFolderPath = PlayerPrefs.GetString( INPUTFILEPATH_KEY );
+		_wavInputFolderPath = PlayerPrefs.GetString( WAVINPUTFILEPATH_KEY );
 		if (_wavInputFolderPath.Length > 0)
 		{
 			if (DEBUG_LOCAL)
@@ -136,6 +136,89 @@ public class SceneControllerTestScene : SceneController_Base
 		_fileChooser.Open("Select wav file", _wavInputFolderPath, "wav", HandleWavFileChosen);
 	}
 
+	private static readonly bool DEBUG_IO = true;
+
+	private IEnumerator LoadWavToGraphPanel(string filepath)
+	{
+		System.IO.FileInfo fileInfo = new System.IO.FileInfo( filepath );
+		if (DEBUG_IO)
+		{
+			Debug.Log( "File " + filepath + " exists = " + fileInfo.Exists );
+		}
+
+		RJWS.Core.Audio.AudioLoader audioLoader = new RJWS.Core.Audio.AudioLoader( filepath );
+		Debug.Log( audioLoader );
+		AudioClip audioClip = AudioClip.Create( "testSound", audioLoader.SampleCount, 1, audioLoader.Frequency, false );
+		if (audioClip != null)
+		{
+			audioClip.SetData( audioLoader.LeftChannel, 0 );
+			yield return null;
+
+			string fp = filepath.Replace( '\\', '/' );
+			_wavInputFolderPath = fp.Substring( 0, fp.LastIndexOf( "/" ) );
+			PlayerPrefs.SetString( WAVINPUTFILEPATH_KEY, "" );// _wavInputFolderPath );
+			PlayerPrefs.Save( );
+			if (DEBUG_IO)
+			{
+				Debug.Log( "Saved path: " + fp );
+			}
+			if (audioClip.length == 0f)
+			{
+				Debug.LogError( "Zero length testaudioclip loaded from " + filepath);
+				yield break;
+			}
+			if (audioClip.samples== 0)
+			{
+				Debug.LogError( "Zero samples in testaudioclip loaded from " + filepath );
+				yield break;
+			}
+			LoadAudioClip( audioClip );
+		}
+		else
+		{
+			Debug.LogError( "Created clip is null" );
+		}
+		/*
+		string fp = filepath.Replace( '\\', '/' );
+		WWW www = new WWW("file://"+ fp );
+		yield return www;
+
+		fileInfo = new System.IO.FileInfo( fp);
+		Debug.Log( "Tweaked File " + fp + " exists = " + fileInfo.Exists );
+
+		if (string.IsNullOrEmpty(www.error))
+		{
+			_wavInputFolderPath = filepath.Substring( 0, filepath.LastIndexOf( "/" ) );
+			PlayerPrefs.SetString( WAVINPUTFILEPATH_KEY, _wavInputFolderPath );
+			PlayerPrefs.Save( );
+
+			Debug.Log( "Saved path: " + _wavInputFolderPath );
+
+			try
+			{
+				AudioClip clip = www.GetAudioClip( false);
+				if (clip == null)
+				{
+					Debug.LogError( "Null audio in '" + filepath + "': " + www.error );
+				}
+				else
+				{
+					LoadAudioClip( clip );
+				}
+			}
+			catch (System.Exception ex)
+			{
+				Debug.LogError( "Exception thrown trying to load audio from file " + filepath +"\n"+ex.ToString());
+			}
+		}
+		
+		else
+		{
+			Debug.LogError( "Error loading '" + fp + "': " + www.error );
+		}
+		*/
+	}
+
 	public void HandleWavFileChosen(string filepath, string filename)
 	{
 		mainCanvas.gameObject.SetActive( true );
@@ -143,6 +226,8 @@ public class SceneControllerTestScene : SceneController_Base
 		if (!string.IsNullOrEmpty(filepath))
 		{
 			Debug.Log( "Wav chosen: '" + filepath + "'" );
+
+			StartCoroutine( LoadWavToGraphPanel( filepath ) );
 		}
 		else
 		{
@@ -150,35 +235,45 @@ public class SceneControllerTestScene : SceneController_Base
 		}
 	}
 
-	public void HandleLoadWaveformButton(int n)
+	public void HandleLoadWaveformButton( int n )
 	{
 		if (n >= testAudioClips.Length)
 		{
-			Debug.LogError( "Only " + testAudioClips.Length + " testAudioClips, not "+n );
+			Debug.LogError( "Only " + testAudioClips.Length + " testAudioClips, not " + n );
 			return;
 		}
 		AudioClip testAudioClip = testAudioClips[n];
 		if (testAudioClip == null)
 		{
-			Debug.LogError( "Null testaudioclip " +n+" of "+ testAudioClips.Length );
+			Debug.LogError( "Null testaudioclip " + n + " of " + testAudioClips.Length );
 			return;
 		}
-		float lengthSecs = testAudioClip.length;
-		Debug.Log( "Clip frequency = " + testAudioClip.frequency+", L="+lengthSecs );
-		int nSamples = Mathf.FloorToInt( testAudioClip.frequency * lengthSecs);
+		LoadAudioClip( testAudioClip );
+	}
+
+	public void LoadAudioClip(AudioClip clip )
+	{
+		float lengthSecs = clip.length;
+		Debug.Log( "Clip frequency = " + clip.frequency+", L="+lengthSecs );
+		int nSamples = Mathf.FloorToInt( clip.frequency * lengthSecs);
 
 		float[] buffer = new float[nSamples];
 
-		if (testAudioClip.GetData( buffer, 0 ))
+		if (clip.GetData( buffer, 0 ))
 		{
-			RJWS.Audio.WaveFormGenerator_Sampled wfg = new RJWS.Audio.WaveFormGenerator_Sampled( "WAV", buffer, (double)1 / testAudioClip.frequency );
+			RJWS.Audio.WaveFormGenerator_Sampled wfg = new RJWS.Audio.WaveFormGenerator_Sampled( "WAV", buffer, (double)1 / clip.frequency );
+			if (wfg.numSamples == 0)
+			{
+				Debug.LogError( "WFG has 0 samples!" );
+				return;
+			}
 			if (_graphViewPanel == null)
 			{
-				_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent<GraphViewPanel>( );
+				_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent<GraphPanelDisplay>( );
 				_graphViewPanel.Init( _scrollablePanel, graphDisplaySettings );
 			}
 
-			Vector2 xRange = new Vector2( 0f, testAudioClip.length );
+			Vector2 xRange = new Vector2( 0f, clip.length );
 			_graphViewPanel.ChangeGraph( wfg, nFractionalPerWavelength, nSampledPerWavelength, xRange );
 			_graphViewPanel.AddAxes(
 				new List<AxisDefn>( )
@@ -233,7 +328,7 @@ public class SceneControllerTestScene : SceneController_Base
 		}
 		if (_graphViewPanel == null)
 		{
-			_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent< GraphViewPanel>();
+			_graphViewPanel = GameObject.Instantiate( graphViewPanelPrefab ).GetComponent< GraphPanelDisplay>();
 			_graphViewPanel.Init( _scrollablePanel, graphDisplaySettings);
 		}
 

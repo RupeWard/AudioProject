@@ -25,6 +25,18 @@ namespace RJWS.Audio
 			return _valueRange;
 		}
 
+		public int numSamples
+		{
+			get
+			{
+				if (_samples == null)
+				{
+					return 0;
+				}
+				return _samples.Length;
+			}
+		}
+
 		public double LengthSecs
 		{
 			get { return _sampleRate * (_samples.Length - 1);  }

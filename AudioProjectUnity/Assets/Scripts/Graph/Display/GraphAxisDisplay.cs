@@ -127,8 +127,8 @@ namespace RJWS.Graph.Display
 
 		//	private List<GraphAxisTick> _ticks = new List<GraphAxisTick>( );
 
-		protected GraphViewPanel _graphViewPanel;
-		public GraphViewPanel graphViewPanel
+		protected GraphPanelDisplay _graphViewPanel;
+		public GraphPanelDisplay graphViewPanel
 		{
 			get { return _graphViewPanel; }
 		}
@@ -209,7 +209,7 @@ namespace RJWS.Graph.Display
 			return visible;
 		}
 
-		public void Init( GraphViewPanel p, AxisDefn d )
+		public void Init( GraphPanelDisplay p, AxisDefn d )
 		{
 			axisDefn = d.clone( );
 
