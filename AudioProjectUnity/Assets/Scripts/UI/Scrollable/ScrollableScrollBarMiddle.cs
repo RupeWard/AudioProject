@@ -10,6 +10,10 @@ namespace RJWS.UI.Scrollable
 		public RectTransform bgRT;
 		public ObjectGrabber objectGrabber;
 		public UnityEngine.UI.Text text;
+		public UnityEngine.UI.Image buttonImage;
+
+		private Color _normButtonColour;
+		public Color activaButtonColour =  Color.red;
 
 		public RectTransform cachedRT
 		{
@@ -22,6 +26,7 @@ namespace RJWS.UI.Scrollable
 		private void Awake( )
 		{
 			cachedRT = GetComponent<RectTransform>( );
+			_normButtonColour = buttonImage.color;
 		}
 
 		public void Init( ScrollableScrollBar gsb)
@@ -63,6 +68,22 @@ namespace RJWS.UI.Scrollable
 			cachedRT.anchoredPosition = Vector2.zero;
 			cachedRT.sizeDelta = new Vector2( height, height );
 			objectGrabber.HandleObjectSizeSet( cachedRT.sizeDelta );
+		}
+
+
+		public void LateUpdate()
+		{
+			if (_graphScrollBar != null)
+			{
+				if (_graphScrollBar.zoomLevel > 0 && _graphScrollBar.limitState == ScrollableScrollBar.ELimitState.Upper)
+				{
+					buttonImage.color = activaButtonColour;
+				}
+				else
+				{
+					buttonImage.color = _normButtonColour;
+				}
+			}
 		}
 
 		public void HandleClick()
