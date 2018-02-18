@@ -7,7 +7,7 @@ namespace RJWS.Graph.Display
 	public class GraphConnectorDisplay : MonoBehaviour
 	{
 		public UnityEngine.UI.Image image;
-
+		
 		private RectTransform _imageRT;
 		private Transform _imageTransform;
 
@@ -34,6 +34,7 @@ namespace RJWS.Graph.Display
 			cachedRT = GetComponent<RectTransform>( );
 			_imageRT = image.GetComponent<RectTransform>( );
 			_imageTransform = image.transform;
+			_imageRT.sizeDelta = Vector2.one;
 		}
 
 		public void Init( GraphDisplay gvp, int num )
@@ -55,12 +56,35 @@ namespace RJWS.Graph.Display
 				Vector2 pos0 = previousPt.cachedRT.anchoredPosition;
 				Vector2 pos1 = nextPt.cachedRT.anchoredPosition;
 
-				float length = (pos0 - pos1).magnitude;
-				float width = _graphView.graphDisplaySettings.lineWidth; // TODO scaling
+				Vector2 scalingFraction = _graphView.graphPanel.displayScaleFractionReadonly;
 
 				cachedRT.anchoredPosition = 0.5f * (pos0 + pos1);
-				_imageRT.sizeDelta = new Vector2( length, width );
-				_imageTransform.localEulerAngles = new Vector3( 0f, 0f, Mathf.Rad2Deg * Mathf.Atan2( pos1.y - pos0.y, pos1.x - pos0.x ) );
+				cachedRT.localScale = new Vector3( scalingFraction.x, scalingFraction.y, 1f );
+
+				_imageRT.localScale = Vector3.one;// new Vector2( 1f / scalingFraction.x, 1f/scalingFraction.y);
+
+				Vector2 lineVector = new Vector2( (pos1.x - pos0.x) * scalingFraction.y, ( pos1.y - pos0.y) * scalingFraction.x  );
+				float angleDegrees = Mathf.Rad2Deg * Mathf.Atan2( lineVector.y, lineVector.x);
+                _imageTransform.localEulerAngles = new Vector3( 0f, 0f, angleDegrees);
+
+				Vector2 lineVectorNorm = new Vector2( Mathf.Abs(pos1.y - pos0.y) /* * scalingFraction.x*/, Mathf.Abs(pos1.x - pos0.x)/* *scalingFraction.y*/ );
+				lineVectorNorm.Normalize();
+
+				Vector2 invScaling = scalingFraction;// new Vector2( 1f / scalingFraction.x, 1f / scalingFraction.y );
+				float xcomponentOfScaling =  Vector2.Dot( invScaling, lineVectorNorm );
+
+				Vector2 norm = new Vector2( lineVectorNorm.y, lineVectorNorm.x );
+				float ycomponentOfScaling = Vector2.Dot( invScaling, norm );
+				//float diffAngleDegrees = Vector2.Angle( lineVector, scalingFraction );
+
+				float length = (pos0 - pos1).magnitude / xcomponentOfScaling;// / Mathf.Abs( Mathf.Cos( diffAngleDegrees ));// scalingFraction.x;
+				float width = _graphView.graphDisplaySettings.lineWidth / ycomponentOfScaling;// / Mathf.Abs( Mathf.Sin( diffAngleDegrees ));// scalingFraction.y; // TODO scaling
+				_imageRT.sizeDelta = new Vector2( Mathf.Abs( length), Mathf.Abs(width) );
+
+			}
+			else
+			{
+				Debug.LogError( "Invalid GraphConnectorDisplay.UpdateDisdplay" );
 			}
 		}
 	}

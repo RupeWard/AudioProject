@@ -22,6 +22,8 @@ namespace RJWS.Graph.Display
 
 		public string pointPrefabPath = string.Empty;
 		public string connectorPrefabPath = string.Empty;
+
+		public float closestToShowFractional = 0.2f;
 	}
 }
 

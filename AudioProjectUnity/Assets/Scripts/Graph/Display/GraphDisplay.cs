@@ -7,25 +7,9 @@ using RJWS.Core.DebugDescribable;
 
 namespace RJWS.Graph.Display
 {
-	public class GraphDisplay//: MonoBehaviour
+	public class GraphDisplay
 	{
 		private static readonly bool DEBUG_LOCAL = false;
-
-		/*
-		public void SetDirty( )
-		{
-			_displayPosDirty = true;
-			_displayScaleDirty = true;
-		}
-
-		public bool IsDirty
-		{
-			get
-			{
-				return _displayScaleDirty || _displayPosDirty;
-			}
-		}
-		*/
 
 		public GraphDisplaySettings graphDisplaySettings
 		{
@@ -256,7 +240,7 @@ namespace RJWS.Graph.Display
 				{
 					_fractionalGraphPtDisplays[i].HandleScaling( graphPanel.displayScaleFractionReadonly );
 				}
-				for (int i = 0; i < numSampledPoints - 1; i++)
+				for (int i = 0; i < numSampledPoints; i++)
 				{
 					_sampleGraphPtDisplays[i].HandleScaling( graphPanel.displayScaleFractionReadonly );
 				}
@@ -370,8 +354,52 @@ namespace RJWS.Graph.Display
 				}
 
 				_allGraphPtDisplays.Sort( new GraphPointDisplay.PtXComparer( ) );
+
+				int numSkipped = 0;
+				float closest = (float)xstepD * graphDisplaySettings.closestToShowFractional; 
+				for (int i = 0; i < _allGraphPtDisplays.Count;)
+				{
+					if (_allGraphPtDisplays[i].PtType == GraphPointDisplay.EPtType.Fractional)
+					{
+						bool showThisOne = true;
+						if (i > 0 
+							&& _allGraphPtDisplays[i - 1].PtType == GraphPointDisplay.EPtType.Sampled 
+							&& Mathf.Abs( _allGraphPtDisplays[i].Value.x - _allGraphPtDisplays[i-1].Value.x) < closest)
+						{
+							showThisOne = false;
+						}
+						else
+						if (i < _allGraphPtDisplays.Count -1  
+							&& _allGraphPtDisplays[i + 1].PtType == GraphPointDisplay.EPtType.Sampled
+							&& Mathf.Abs( _allGraphPtDisplays[i].Value.x - _allGraphPtDisplays[i + 1].Value.x ) < closest)
+						{
+							showThisOne = false;
+						}
+						if (!showThisOne)
+						{
+							_allGraphPtDisplays[i].gameObject.SetActive( false );
+                            numSkipped++;
+							_allGraphPtDisplays.RemoveAt( i );
+						}
+						else
+						{
+							_allGraphPtDisplays[i].gameObject.SetActive( true );
+							i++;
+						}
+					}
+					else
+					{
+						i++;
+					}
+				}
+				
+				if (numSkipped > 0)
+				{
+//					Debug.LogWarning( "\nSkipped " +numSkipped );
+				}
 				if (DEBUG_LOCAL)
 				{
+					debugsb.Append( "\nSkipped " ).Append( numSkipped );
 					debugsb.Append( "\nMerged " ).Append( numFractionalPoints ).Append( " fractional and " ).Append( numSamplePtsDisplayed ).Append( " sampled making " ).Append( _allGraphPtDisplays.Count );
 					for (int i = 0; i < _allGraphPtDisplays.Count; i++)
 					{
@@ -404,7 +432,7 @@ namespace RJWS.Graph.Display
 						{
 							_graphConnectorDisplays[pointIndex].gameObject.SetActive( true );
 						}
-			//			_graphConnectorDisplays[pointIndex].Init( this, pointIndex );
+//						_graphConnectorDisplays[pointIndex].Init( this, pointIndex );
 						_graphConnectorDisplays[pointIndex].previousPt = _allGraphPtDisplays[pointIndex];
 						_graphConnectorDisplays[pointIndex].nextPt = _allGraphPtDisplays[pointIndex + 1];
 						_graphConnectorDisplays[pointIndex].UpdateDisplay( );
