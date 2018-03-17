@@ -16,6 +16,7 @@ namespace RJWS.Graph.Display
 
 		public UnityEngine.UI.Text valueText;
 		public RectTransform valueLabelRT;
+		private RectTransform _valueTextRT;
 
 		public RectTransform cachedRT
 		{
@@ -145,6 +146,7 @@ namespace RJWS.Graph.Display
 			{
 				axisImage = GetComponent<UnityEngine.UI.Image>( );
 			}
+			_valueTextRT = valueText.GetComponent<RectTransform>( );
 		}
 
 		private void OnDestroy( )
@@ -391,13 +393,17 @@ namespace RJWS.Graph.Display
 				case RJWS.EOrthoDirection.Horizontal:
 					{
 						axisImage.transform.localScale = new Vector2( 1f, screenFraction.y );
-						valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x /* * screenFraction.x*/, _fullLabelSize.y * screenFraction.y );
+						valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x, _fullLabelSize.y * screenFraction.y );
+						_valueTextRT.sizeDelta = new Vector2( valueLabelRT.sizeDelta.x / screenFraction.x, valueLabelRT.sizeDelta.y / screenFraction.y );
+						_valueTextRT.localScale = new Vector3( 1f, screenFraction.y, 1f );
 						break;
 					}
 				case RJWS.EOrthoDirection.Vertical:
 					{
 						axisImage.transform.localScale = new Vector2( screenFraction.x, 1f );
-						valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x * screenFraction.x, _fullLabelSize.y/* * screenFraction.y*/ );
+						valueLabelRT.sizeDelta = new Vector2( _fullLabelSize.x * screenFraction.x, _fullLabelSize.y);
+						_valueTextRT.sizeDelta = new Vector2( valueLabelRT.sizeDelta.x / screenFraction.x, valueLabelRT.sizeDelta.y / screenFraction.y );
+						_valueTextRT.localScale = new Vector3( screenFraction.x, 1f, 1f );
 						break;
 					}
 				default:
