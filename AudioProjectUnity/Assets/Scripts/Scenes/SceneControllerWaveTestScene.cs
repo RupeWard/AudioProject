@@ -6,18 +6,10 @@ public class SceneControllerWaveTestScene: SceneController_Base
 {
 	#region inspector hooks
 
-	public UnityEngine.UI.Text versionText;
 
 	#endregion inspector hooks
 
 	#region event handlers
-
-	/*
-	public void HandleTestButtonPressed( )
-	{
-		SceneManager.Instance.SwitchScene( SceneManager.EScene.GraphTestScene);
-	}
-	*/
 
 	public void HandleQuitButtonPressed( )
 	{
@@ -35,7 +27,6 @@ public class SceneControllerWaveTestScene: SceneController_Base
 
 	override protected void PostStart()
 	{
-		versionText.text = RJWS.Core.Version.Version.versionNumber.DebugDescribe( );
 	}
 
 	override protected void PostAwake()
