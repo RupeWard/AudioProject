@@ -9,7 +9,7 @@ using RJWS.Core.Extensions;
 using RJWS.Graph;
 using RJWS.Graph.Display;
 
-public class SceneControllerTestScene : SceneController_Base
+public class SceneControllerGraphTestScene : SceneController_Base
 {
 	public GraphDisplaySettings graphDisplaySettings = new GraphDisplaySettings( );
 	public GraphPanelDisplaySettings graphPanelDisplaySettings = new GraphPanelDisplaySettings( );

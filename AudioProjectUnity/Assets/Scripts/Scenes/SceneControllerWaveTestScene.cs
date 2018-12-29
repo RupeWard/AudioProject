@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using RJWS.Core.DebugDescribable;
 
-public class SceneControllerDevSetup: SceneController_Base 
+public class SceneControllerWaveTestScene: SceneController_Base 
 {
 	#region inspector hooks
 
@@ -12,19 +12,16 @@ public class SceneControllerDevSetup: SceneController_Base
 
 	#region event handlers
 
-	public void HandleGraphTestButtonPressed( )
+	/*
+	public void HandleTestButtonPressed( )
 	{
 		SceneManager.Instance.SwitchScene( SceneManager.EScene.GraphTestScene);
 	}
-
-	public void HandleWaveTestButtonPressed( )
-	{
-		SceneManager.Instance.SwitchScene( SceneManager.EScene.WaveTestScene);
-	}
+	*/
 
 	public void HandleQuitButtonPressed( )
 	{
-		Application.Quit();
+		SceneManager.Instance.SwitchScene( SceneManager.EScene.DevSetup);
 	}
 
 	#endregion event handlers
@@ -33,7 +30,7 @@ public class SceneControllerDevSetup: SceneController_Base
 
 	override public SceneManager.EScene Scene ()
 	{
-		return SceneManager.EScene.DevSetup;
+		return SceneManager.EScene.WaveTestScene;
 	}
 
 	override protected void PostStart()
