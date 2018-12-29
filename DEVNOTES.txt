@@ -1,6 +1,4 @@
-
-
-Skip some fracional ones if too close
+Revisit connector sizes!
 
 LoadGraph panel
 - ? refresh panel
