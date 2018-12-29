@@ -30,7 +30,7 @@ public class SceneControllerTestScene : SceneController_Base
 
 	override public SceneManager.EScene Scene( )
 	{
-		return SceneManager.EScene.TestScene;
+		return SceneManager.EScene.GraphTestScene;
 	}
 
 	//	static private readonly bool DEBUG_LOCAL = false;
