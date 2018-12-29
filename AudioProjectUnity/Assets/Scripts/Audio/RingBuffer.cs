@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RJWS.Core.Data
+namespace RJWS.Core.Audio
 {
-	public class RingBuffer
+	public class RingBuffer<T>
 	{
 		private int _capacity;
 		public int Capacity
@@ -12,22 +12,34 @@ namespace RJWS.Core.Data
 			get { return _capacity; }
 		}
 
-		private double[] _buffer;
+		private T[] _buffer;
 
 		private CyclicIndex _first;
 		private CyclicIndex _last;
 
+		private int _size;
+		public int Size
+		{
+			get { return _size; }
+		}
+
 		public RingBuffer(int c)
 		{
 			_capacity = c;
-			_buffer = new double[_capacity];
+			_buffer = new T[_capacity];
+			_size = 0;
 			_first = new CyclicIndex( _capacity );
 			_last = new CyclicIndex( _capacity );
 		}
 
-		public int Size
-		{ 
-			get { return _first.DistanceAfter(_last);  } 
+		public RingBuffer(T[] b)
+		{
+			_capacity = b.Length;
+			_buffer = new T[_capacity];
+			_size = 0;
+			System.Array.Copy( b, _buffer, _capacity );
+			_first = new CyclicIndex( _capacity, 0 );
+			_last = new CyclicIndex( _capacity, 0 );
 		}
 
 		public bool IsEmpty
@@ -40,7 +52,7 @@ namespace RJWS.Core.Data
 			get { return Size >= _capacity; } 
 		}
 
-		public void Enqueue(double d)
+		public void Enqueue(T d)
 		{
 			if (IsFull)
 			{
@@ -48,22 +60,39 @@ namespace RJWS.Core.Data
 			}
 			_buffer[_last.Value] = d;
 			_last.Increment( );
+			_size++;
 		}
 
-		public double Dequeue()
+		virtual public T Dequeue()
 		{
-			double result = Peek( );
+			T result = Peek( );
 			_first.Increment( );
+			_size--;
 			return result;
 		}
 
-		public double Peek()
+		public T Peek()
 		{
 			if (IsEmpty)
 			{
 				throw new System.Exception( "Can't Peek at empty buffer" );
 			}
 			return _buffer[_last.Value];
+		}
+
+		public void Fill(T d)
+		{
+			while (!IsFull)
+			{
+				Enqueue( d );
+			}
+		}
+
+		public void Clear()
+		{
+			_first = new CyclicIndex( _capacity );
+			_last = new CyclicIndex( _capacity );
+			_size = 0;
 		}
 	}
 

@@ -47,7 +47,7 @@ namespace RJWS.Core.TransformExtensions
 			Transform parent = t.parent;
 			if (parent == null)
 			{
-				return string.Empty;
+				return t.name;
 			}
 			return parent.GetPathInHierarchy( ) + "/" + t.name;
 		}

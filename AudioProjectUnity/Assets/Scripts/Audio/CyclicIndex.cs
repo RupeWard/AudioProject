@@ -1,7 +1,7 @@
 ﻿using RJWS.Core.DebugDescribable;
 using UnityEngine;
 
-namespace RJWS.Core.Data
+namespace RJWS.Core.Audio
 {
 	public class CyclicIndex : RJWS.Core.DebugDescribable.IDebugDescribable
 	{

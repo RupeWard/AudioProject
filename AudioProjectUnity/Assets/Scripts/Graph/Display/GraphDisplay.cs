@@ -561,12 +561,12 @@ namespace RJWS.Graph.Display
 			graphPanel = gpd;
 		}
 
-		static readonly bool DEBUG_SCALE = false;
-
-		private static readonly bool DEBUG_POS = false;
 
 
 		/*
+		static readonly bool DEBUG_SCALE = false;
+		private static readonly bool DEBUG_POS = false;
+
 		public void HandleDisplayScaleChanged(RJWS.EOrthoDirection dirn, float scale)
 		{
 			scale = 1f / scale;
