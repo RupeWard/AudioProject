@@ -43,7 +43,7 @@ namespace RJWS.Core.UI
                     callback(i);
                     Event.current.Use();
                 }
-                else if (Event.current.type == EventType.repaint)
+                else if (Event.current.type == EventType.Repaint)
                 {
                     elementStyle.Draw(elementRect, list[i], hover, false, i == selected, false);
                 }
@@ -82,7 +82,7 @@ namespace RJWS.Core.UI
                     callback(i);
                     Event.current.Use();
                 }
-                else if (Event.current.type == EventType.repaint)
+                else if (Event.current.type == EventType.Repaint)
                 {
                     elementStyle.Draw(elementRect, list[i], hover, false, i == selected, false);
                 }
