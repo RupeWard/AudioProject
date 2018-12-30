@@ -21,7 +21,7 @@ namespace RJWS.Audio
 
 		public System.Action<AudioStringBehaviour> onChangedAction;
 
-		public float openFrequency = (float)Core.Audio.AudioConsts.CONCERT_A;
+		public float openFrequency = Core.Audio.AudioConsts.CONCERT_A;
 
 		public float Frequency
 		{
@@ -123,7 +123,7 @@ namespace RJWS.Audio
 
 			_string = new AudioString( Frequency, Attenuation );
 			
-			_string.Pluck( );
+			_string.Pluck(0);
 			_generator.Init( _string.ringbuffer );
 		}
 

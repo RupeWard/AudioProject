@@ -22,7 +22,7 @@ namespace RJWS.Audio
 			}
 		}
 
-		private double _frequency;
+		private float _openFrequency;
 		private int _sampleRate;
 		public Core.Audio.KSRingBufferF ringbuffer
 		{
@@ -30,30 +30,30 @@ namespace RJWS.Audio
 			private set;
 		}
 
-		public int TickCount
-		{
-			get;
-			private set;
-		}
+		private int _maxFret = 12;
 
-		public AudioString(double f, float atten, int sr = -1)
+		public AudioString(float f, float atten, int mf = -1, int sr = -1)
 		{
 			if (sr < 0)
 			{
 				sr = DEFAULT_SAMPLE_RATE;
 			}
+			if (mf > 0)
+			{
+				_maxFret = mf;
+			}
 			if (atten < 0f)
 			{
 				atten = Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
 			}
-			_frequency = f;
+			_openFrequency = f;
 			_sampleRate = sr;
-			int c = Mathf.CeilToInt( (float)_sampleRate / (float)f );
+			
+			int c = Mathf.CeilToInt( (float)_sampleRate / f );
 			ringbuffer = new Core.Audio.KSRingBufferF( c, atten );
-			ringbuffer.Fill( 0f );
-			TickCount = 0;
 		}
 
+		/*
 		public AudioString( float[] b, float atten, int sr = -1)
 		{
 			if (sr < 0)
@@ -70,15 +70,34 @@ namespace RJWS.Audio
 			_frequency = (float)(_sampleRate) / ringbuffer.Capacity;
 			TickCount = 0;
 		}
+		*/
 
-		public void Pluck(float amplitude = 1f)
+		public void Pluck(int fret, float amplitude = 1f)
 		{
+			if (fret < 0)
+			{
+				Debug.LogErrorFormat( "fret OOR = {0}", fret);
+				fret = 0;
+			}
+			else if (fret > _maxFret)
+			{
+				Debug.LogErrorFormat( "fret OOR = {0}", fret );
+				fret = _maxFret;
+			}
 			if (amplitude <= 0)
 			{
 				Debug.LogErrorFormat( "amplitude = {0}", amplitude );
 				amplitude = 1f;
 			}
 			ringbuffer.Clear( );
+
+			float freq = _openFrequency;
+			for (int i = 0; i < fret; i++)
+			{
+				freq *= Core.Audio.AudioConsts.FRET_FACTOR;
+			}
+			int c = Mathf.CeilToInt( (float)_sampleRate / freq );
+			ringbuffer.Capacity = c;
 
 			float min = -0.5f * amplitude;
 			float max = -1f * min;
@@ -87,8 +106,6 @@ namespace RJWS.Audio
 			{
 				ringbuffer.Enqueue( Random.Range( min, max ) );
 			}
-
-			TickCount = 0;
 		}
 
 		/*

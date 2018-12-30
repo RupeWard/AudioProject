@@ -6,8 +6,9 @@ namespace RJWS.Core.Audio
 {
 	static public class AudioConsts 
 	{
-		public const double CONCERT_A = 440.0;
-		public static readonly double CONCERT_C = CONCERT_A * System.Math.Pow( 1.05956, 3.0 );
+		public const float CONCERT_A = 440.0f;
+		public const float FRET_FACTOR = 1.05956f;
+        public static readonly float CONCERT_C = CONCERT_A * Mathf.Pow( FRET_FACTOR, 3.0f );
 
 		static public readonly List<float> s_standardGuitarTuning = new List<float>( )
 		{

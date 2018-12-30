@@ -1,3 +1,4 @@
+Add length to ring buffer class
 Guitar class
 Guitar Tuning class
 Guitar note to frequency etc

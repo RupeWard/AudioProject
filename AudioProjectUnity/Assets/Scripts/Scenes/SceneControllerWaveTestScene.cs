@@ -8,7 +8,7 @@ public class SceneControllerWaveTestScene: SceneController_Base
 	public bool debugMe = true;
 
 	public UnityEngine.UI.InputField freqInputField;
-	public float startingFrequency = (float)RJWS.Core.Audio.AudioConsts.CONCERT_A;
+	public float startingFrequency = RJWS.Core.Audio.AudioConsts.CONCERT_A;
 	private float _frequency;
 
 	public UnityEngine.UI.InputField attenInputField;
