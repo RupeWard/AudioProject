@@ -104,11 +104,11 @@ namespace RJWS.Audio
 			}
 		}
 
-		public void Pluck(float f = -1, float atten = -1)
+		public void Pluck( int fret = 0, float f = -1, float atten = -1)
 		{
 			if (debugMe)
 			{
-				Debug.LogFormat( this, "Pluck( {0} ) ", f );
+				Debug.LogFormat( this, "{0}: Pluck( {1} ) ", gameObject.name, fret );
 			}
 			if (f != -1)
 			{
@@ -123,7 +123,7 @@ namespace RJWS.Audio
 
 			_string = new AudioString( Frequency, Attenuation );
 			
-			_string.Pluck(0);
+			_string.Pluck(fret);
 			_generator.Init( _string.ringbuffer );
 		}
 

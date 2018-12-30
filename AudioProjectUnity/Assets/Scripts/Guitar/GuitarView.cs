@@ -6,6 +6,13 @@ namespace RJWS.Audio
 {
 	public class GuitarView : MonoBehaviour
 	{
+		private static readonly bool DEBUG_LOCAL = true;
+		public bool debugMe = true;
+		public bool DebugMe
+		{
+			get { return debugMe || DEBUG_LOCAL; }
+		}
+
 		public GuitarStringView stringViewPrefab;
 		public GuitarFretView fretViewPrefab;
 
@@ -34,6 +41,33 @@ namespace RJWS.Audio
 			}
 			result = stringLength - result;
 			result = BridgeX + result;
+			return result;
+		}
+
+		public int GetFretForWorldX( float x, ref float fraction)
+		{
+			if (DebugMe)
+			{
+//				Debug.LogWarningFormat( "GetFretForWorldX : {0} - {1} = {2}", x, cachedTransform.position.x, x - cachedTransform.position.x );
+			}
+			x -= cachedTransform.position.x;
+
+			int result = 0;
+
+			while (result < _fretViews.Count && result < _fretViews.Count && _fretViews[result].cachedTransform.position.x < x)
+			{
+				result++;
+			}
+			if (result >= _fretViews.Count)
+			{
+				Debug.LogErrorFormat( "Failed to get fret" );
+				result = 0;
+				fraction = 0f;
+			}
+			if (result > 0)
+			{
+				fraction = (x - _fretViews[result-1].cachedTransform.position.x) / (_fretViews[result].cachedTransform.position.x - _fretViews[result - 1].cachedTransform.position.x);
+			}
 			return result;
 		}
 

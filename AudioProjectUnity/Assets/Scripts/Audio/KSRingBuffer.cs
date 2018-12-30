@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace RJWS.Core.Audio
 {
+	// Karplus-String
+	// https://introcs.cs.princeton.edu/java/assignments/guitar.html
+
 	public class KSRingBufferF : RingBuffer<float>
 	{
 		public const float DEFAULT_GUITAR_ATTENUATION = 0.994f;
