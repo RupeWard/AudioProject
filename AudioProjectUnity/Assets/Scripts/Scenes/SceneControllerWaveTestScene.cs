@@ -15,7 +15,15 @@ public class SceneControllerWaveTestScene: SceneController_Base
 	public float startingAttenuation = (float)RJWS.Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
 	private float _attenuation;
 
+	public UnityEngine.UI.InputField lowPassCutOffFreqInputField;
+	public float startingLowPassCutOffFreq = (float)RJWS.Audio.AudioStringBehaviour.DEFAULT_LOWPASSFREQ;
+	private float _lowPassCutOffreq;
+
+	private bool _useReverb = false;
+	public UnityEngine.UI.Toggle reverbToggle;
+
 	private const float MIN_FREQ = 100f;
+	private const float MIN_LOWPASSFREQ = 100f;
 
 	public RJWS.Audio.AudioStringBehaviour audioStringBehaviour;
 
@@ -41,12 +49,20 @@ public class SceneControllerWaveTestScene: SceneController_Base
 	{
 		SetFreqInputText( );
 		SetAttenInputText( );
+		SetLowPassFreqCutOffInputText( );
+		if (reverbToggle.isOn != _useReverb)
+		{
+			_useReverb = !_useReverb;
+			reverbToggle.isOn = !reverbToggle.isOn;
+		}
+		audioStringBehaviour.UserReverb( _useReverb );
 	}
 
 	override protected void PostAwake()
 	{
 		_frequency = startingFrequency;
 		_attenuation = startingAttenuation;
+		_lowPassCutOffreq = startingLowPassCutOffFreq;
 	}
 
 	#endregion SceneController_Base
@@ -114,6 +130,39 @@ public class SceneControllerWaveTestScene: SceneController_Base
 		SetAttenInputText( );
 	}
 
+	private void SetLowPassFreqCutOffInputText( )
+	{
+		lowPassCutOffFreqInputField.text = _lowPassCutOffreq.ToString( );
+	}
+
+	public void HandleLowPassFreqEndEdit( )
+	{
+		string s = lowPassCutOffFreqInputField.text;
+		float f;
+		if (float.TryParse( s, out f ))
+		{
+			if (f <= MIN_LOWPASSFREQ)
+			{
+				Debug.LogErrorFormat( this, "LowPass Frequency out of range: {0} < {1}", f, MIN_LOWPASSFREQ);
+			}
+			else
+			{
+				_lowPassCutOffreq = f;
+				audioStringBehaviour.SetLowPassFrequency( _lowPassCutOffreq );
+				if (debugMe)
+				{
+					Debug.LogFormat( "LowPass Frequency changed to {0}", _frequency );
+				}
+			}
+		}
+		else
+		{
+			Debug.LogErrorFormat( this, "Couldn't get LowPass Frequency from: {0} ", s );
+		}
+		SetLowPassFreqCutOffInputText( );
+	}
+
+
 	public void HandlePluckButton()
 	{
 		audioStringBehaviour.Pluck( _frequency, _attenuation );
@@ -123,5 +172,16 @@ public class SceneControllerWaveTestScene: SceneController_Base
 	{
 		_attenuation = RJWS.Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
 		SetAttenInputText( );
+
+		_lowPassCutOffreq = RJWS.Audio.AudioStringBehaviour.DEFAULT_LOWPASSFREQ;
+		SetLowPassFreqCutOffInputText( );
+
+		audioStringBehaviour.SetLowPassFrequency( _lowPassCutOffreq );
+	}
+
+	public void HandleReverbToggleChanged(bool v)
+	{
+		_useReverb = reverbToggle.isOn;
+		audioStringBehaviour.UserReverb( _useReverb );
 	}
 }

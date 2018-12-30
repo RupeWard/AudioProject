@@ -9,11 +9,15 @@ namespace RJWS.Audio
 	{
 		public bool debugMe = true;
 
+		public const float DEFAULT_LOWPASSFREQ = 5000f;
+
 		private AudioString _string = null;
 
 		public AudioSource audioSource;
 
 		private RingBufferGeneratorFilter _generator;
+		private AudioLowPassFilter _lowPassFilter;
+		private AudioReverbFilter _reverbFilter;
 		
 		private void Awake()
 		{
@@ -25,7 +29,19 @@ namespace RJWS.Audio
 			{
 				Debug.LogErrorFormat( this, "No AudioSource on {0}", transform.GetPathInHierarchy( ) );
 			}
-			_generator = audioSource.gameObject.AddComponent<RingBufferGeneratorFilter>( );
+			_generator = audioSource.GetComponent<RingBufferGeneratorFilter>( );
+			_lowPassFilter = audioSource.GetComponent<AudioLowPassFilter>( );
+			_reverbFilter = audioSource.GetComponent<AudioReverbFilter>( );
+		}
+
+		public void SetLowPassFrequency(float f)
+		{
+			_lowPassFilter.cutoffFrequency = f;
+		}
+
+		public void UserReverb(bool b)
+		{
+			_reverbFilter.enabled = b;
 		}
 
 		public void Pluck(float f, float atten = -1)
@@ -62,17 +78,6 @@ namespace RJWS.Audio
 				}
 				audioSource.Stop( );
 			}
-			/*
-			if (_generator != null)
-			{
-				if (debugMe)
-				{
-					_debugSB.Append( " Destroy" );
-				}
-				Component.Destroy( _generator );
-				_generator = null;
-			}
-			*/
 			if (debugMe)
 			{
 				_debugSB.Append( " DONE - " ).Append(transform.GetPathInHierarchy());
