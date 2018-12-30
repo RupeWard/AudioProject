@@ -5,10 +5,17 @@ using RJWS.Core.DebugDescribable;
 public class SceneControllerWaveTestScene: SceneController_Base 
 {
 	#region inspector hooks
+	public bool debugMe = true;
 
 	public UnityEngine.UI.InputField freqInputField;
 	public float startingFrequency = (float)RJWS.Core.Audio.AudioConsts.CONCERT_A;
 	private float _frequency;
+
+	public UnityEngine.UI.InputField attenInputField;
+	public float startingAttenuation = (float)RJWS.Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
+	private float _attenuation;
+
+	private const float MIN_FREQ = 100f;
 
 	public RJWS.Audio.AudioStringBehaviour audioStringBehaviour;
 
@@ -33,16 +40,17 @@ public class SceneControllerWaveTestScene: SceneController_Base
 	override protected void PostStart()
 	{
 		SetFreqInputText( );
+		SetAttenInputText( );
 	}
 
 	override protected void PostAwake()
 	{
 		_frequency = startingFrequency;
+		_attenuation = startingAttenuation;
 	}
 
 	#endregion SceneController_Base
 
-	const float MIN_FREQ = 100f;
 
 	private void SetFreqInputText()
 	{
@@ -55,13 +63,17 @@ public class SceneControllerWaveTestScene: SceneController_Base
 		float f;
 		if (float.TryParse(s, out f))
 		{
-			if (_frequency < MIN_FREQ)
+			if (f < MIN_FREQ)
 			{
 				Debug.LogErrorFormat( this, "Frequency out of range: {0} < {1}", f, MIN_FREQ );
 			}
 			else
 			{
 				_frequency = f;
+				if (debugMe)
+				{
+					Debug.LogFormat( "Frequency changed to {0}", _frequency );
+				}
 			}
 		}
 		else
@@ -71,8 +83,45 @@ public class SceneControllerWaveTestScene: SceneController_Base
 		SetFreqInputText( );
 	}
 
+	private void SetAttenInputText( )
+	{
+		attenInputField.text = _attenuation.ToString( );
+	}
+
+	public void HandleAttenEndEdit( )
+	{
+		string s = attenInputField.text;
+		float f;
+		if (float.TryParse( s, out f ))
+		{
+			if (f < RJWS.Core.Audio.KSRingBufferF.MIN_ATTENUATION || f >= 1f)
+			{
+				Debug.LogErrorFormat( this, "Attenuation out of range: {0} < {1}", f, RJWS.Core.Audio.KSRingBufferF.MIN_ATTENUATION );
+			}
+			else
+			{
+				_attenuation = f;
+				if (debugMe)
+				{
+					Debug.LogFormat( "Attenuation changed to {0}", _attenuation);
+				}
+			}
+		}
+		else
+		{
+			Debug.LogErrorFormat( this, "Couldn't get Attenuation from: {0} ", s );
+		}
+		SetAttenInputText( );
+	}
+
 	public void HandlePluckButton()
 	{
-		audioStringBehaviour.Pluck( _frequency );
+		audioStringBehaviour.Pluck( _frequency, _attenuation );
+	}
+
+	public void HandleResetButton()
+	{
+		_attenuation = RJWS.Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
+		SetAttenInputText( );
 	}
 }

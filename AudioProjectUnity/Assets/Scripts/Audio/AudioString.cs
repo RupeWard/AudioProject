@@ -21,7 +21,7 @@ namespace RJWS.Audio
 
 		private double _frequency;
 		private int _sampleRate;
-		public Core.Audio.RingBuffer<float> ringbuffer
+		public Core.Audio.KSRingBufferF ringbuffer
 		{
 			get;
 			private set;
@@ -33,28 +33,37 @@ namespace RJWS.Audio
 			private set;
 		}
 
-		public AudioString(double f, int sr = -1)
+		public AudioString(double f, float atten, int sr = -1)
 		{
-			if (sr == -1)
+			if (sr < 0)
 			{
 				sr = DEFAULT_SAMPLE_RATE;
+			}
+			if (atten < 0f)
+			{
+				atten = Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
 			}
 			_frequency = f;
 			_sampleRate = sr;
 			int c = Mathf.CeilToInt( (float)_sampleRate / (float)f );
-			ringbuffer = new Core.Audio.KSRingBufferF( c, Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION );
+			ringbuffer = new Core.Audio.KSRingBufferF( c, atten );
 			ringbuffer.Fill( 0f );
 			TickCount = 0;
 		}
 
-		public AudioString( float[] b, int sr = -1)
+		public AudioString( float[] b, float atten, int sr = -1)
 		{
-			if (sr == -1)
+			if (sr < 0)
 			{
 				sr = DEFAULT_SAMPLE_RATE;
 			}
+			if (atten < 0f)
+			{
+				atten = Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
+            }
+			
 			_sampleRate = sr;
-			ringbuffer = new Core.Audio.KSRingBufferF( b, Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION );
+			ringbuffer = new Core.Audio.KSRingBufferF( b, atten);
 			_frequency = (float)(_sampleRate) / ringbuffer.Capacity;
 			TickCount = 0;
 		}

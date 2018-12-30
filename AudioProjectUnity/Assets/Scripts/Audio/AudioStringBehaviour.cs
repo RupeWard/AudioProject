@@ -28,7 +28,7 @@ namespace RJWS.Audio
 			_generator = audioSource.gameObject.AddComponent<RingBufferGeneratorFilter>( );
 		}
 
-		public void Pluck(float f)
+		public void Pluck(float f, float atten = -1)
 		{
 			if (debugMe)
 			{
@@ -37,7 +37,7 @@ namespace RJWS.Audio
 			Kill( );
 			audioSource.Play( );
 
-			_string = new AudioString( f );
+			_string = new AudioString( f, atten );
 			
 			_string.Pluck( );
 			_generator.Init( _string.ringbuffer );

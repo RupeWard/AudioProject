@@ -7,8 +7,17 @@ namespace RJWS.Core.Audio
 	public class KSRingBufferF : RingBuffer<float>
 	{
 		public const float DEFAULT_GUITAR_ATTENUATION = 0.994f;
+		public const float MIN_ATTENUATION = 0.9f;
 
 		private float _attenuation;
+		public void SetAttenuation(float f)
+		{
+			if (f <= MIN_ATTENUATION || f >= 1f)
+			{
+				throw new System.Exception( string.Format("Attenuation out of range (" + MIN_ATTENUATION + ", 1): {0}", f ));
+			}
+			_attenuation = f;
+		}
 
 		public KSRingBufferF(int c, float att )
 			: base( c )
