@@ -12,6 +12,11 @@ public class SceneControllerDevSetup: SceneController_Base
 
 	#region event handlers
 
+	public void HandleGuitarTestButtonPressed( )
+	{
+		SceneManager.Instance.SwitchScene( SceneManager.EScene.GuitarTestScene);
+	}
+
 	public void HandleGraphTestButtonPressed( )
 	{
 		SceneManager.Instance.SwitchScene( SceneManager.EScene.GraphTestScene);
