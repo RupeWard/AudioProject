@@ -9,16 +9,6 @@ namespace RJWS.Audio
 		public const float MIN_FREQ = 1f;
 		public const float MIN_LOWPASSFREQ = 100f;
 
-		static public readonly List<float> s_standardTuning = new List<float>( )
-		{
-			329.63f,
-			246.94f,
-			196.00f,
-			146.83f,
-			110.00f,
-			82.41f
-		};
-
 		private static int s_defaultSampleRate = -1;
 		public static int DEFAULT_SAMPLE_RATE
 		{

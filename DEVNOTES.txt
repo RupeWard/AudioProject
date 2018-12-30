@@ -1,3 +1,13 @@
+Guitar class
+Guitar Tuning class
+Guitar note to frequency etc
+Guitar string
+Guitar fret
+Guitar test scene
+Slide
+Damping
+
+
 Revisit connector sizes!
 
 LoadGraph panel

@@ -60,9 +60,9 @@ public class SceneControllerWaveTestScene: SceneController_Base
 		for (int i = 0; i < _audioStringBehaviours.Length; i++)
 		{
 			_audioStringBehaviours[i].UseReverb( _useReverb );
-			if (i < RJWS.Audio.AudioString.s_standardTuning.Count)
+			if (i < RJWS.Core.Audio.AudioConsts.s_standardGuitarTuning.Count)
 			{
-				_audioStringBehaviours[i].SetFrequency( RJWS.Audio.AudioString.s_standardTuning[i] );
+				_audioStringBehaviours[i].SetFrequency( RJWS.Core.Audio.AudioConsts.s_standardGuitarTuning[i] );
 			}
 
 			GameObject go = GameObject.Instantiate( stringPanelPrefab );
