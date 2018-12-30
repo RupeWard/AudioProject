@@ -1,11 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using RJWS.Core.TransformExtensions;
 
 namespace RJWS.Audio
 {
-	public class GuitarStringView : MonoBehaviour
+	public class GuitarStringView : MonoBehaviour, UnityEngine.EventSystems.IPointerUpHandler, UnityEngine.EventSystems.IPointerDownHandler
 	{
+		public bool debugMe = true;
+		static public readonly bool DEBUG_STRINGVIEW = true;
+
+		public bool DebugMe
+		{
+			get { return debugMe || DEBUG_STRINGVIEW; }
+		}
+
 		public Transform cachedTransform
 		{
 			get;
@@ -17,7 +24,7 @@ namespace RJWS.Audio
 			cachedTransform = transform;
 		}
 
-		public Transform stringView;
+		public GameObject stringObject;
 
 		private AudioStringBehaviour _stringBehaviour;
 		private GuitarView _guitarView;
@@ -26,10 +33,28 @@ namespace RJWS.Audio
 		{
 			_guitarView = gv;
 			_stringBehaviour = model.GetString( stringNum );
-			stringView.localScale = _guitarView.StringDims;
+			stringObject.transform.localScale = _guitarView.StringDims;
 
 			gameObject.SetActive( true );
 		}
+
+		public void OnPointerUp( UnityEngine.EventSystems.PointerEventData data )
+		{
+			if (DebugMe)
+			{
+				Debug.LogFormat( this, "OnPointerUp: {0}\n{1}", transform.GetPathInHierarchy( ), data.pointerCurrentRaycast.gameObject.name );
+			}
+			_stringBehaviour.Pluck( );
+		}
+
+		public void OnPointerDown( UnityEngine.EventSystems.PointerEventData data )
+		{
+			if (DebugMe)
+			{
+				Debug.LogFormat( this, "OnPointerDown: {0}\n{1}", transform.GetPathInHierarchy( ), data.pointerCurrentRaycast.gameObject.name );
+			}
+		}
+
 	}
 }
 
