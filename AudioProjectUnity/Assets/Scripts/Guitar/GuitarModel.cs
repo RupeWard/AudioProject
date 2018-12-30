@@ -27,6 +27,10 @@ namespace RJWS.Audio
 				}
 				_strings.Clear( );
 			}
+			else
+			{
+				_strings = new List<AudioStringBehaviour>( );
+			}
 			for (int i = 0; i < freqs.Count; i++)
 			{
 				AudioStringBehaviour newString = (Instantiate( stringPrefab.gameObject ) as GameObject).GetComponent<AudioStringBehaviour>( );
@@ -36,6 +40,20 @@ namespace RJWS.Audio
 
 				_strings.Add( newString );
 			}
+		}
+
+		public int NumStrings
+		{
+			get { return _strings.Count; }
+		}
+
+		public AudioStringBehaviour GetString(int stringNum)
+		{
+			if (stringNum < 0 || stringNum >= _strings.Count)
+			{
+				throw new System.Exception( string.Format( "stringNum OOR: {0}, (0,{2})", stringNum, _strings.Count - 1 ) );
+			}
+			return _strings[stringNum];
 		}
 	}
 }

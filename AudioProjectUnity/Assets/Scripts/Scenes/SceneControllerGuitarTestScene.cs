@@ -14,6 +14,9 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 	public float tweenDuration = 1f;
 	private Vector2 buttonPanelOffPos;
 
+	public RJWS.Audio.GuitarModel guitarModel;
+	public RJWS.Audio.GuitarView guitarView;
+
 	#endregion inspector hooks
 
 	#region event handlers
@@ -51,6 +54,8 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 
 	override protected void PostStart()
 	{
+		guitarModel.Init( RJWS.Core.Audio.AudioConsts.s_standardGuitarTuning );
+		guitarView.Init( guitarModel );
 	}
 
 	override protected void PostAwake()
