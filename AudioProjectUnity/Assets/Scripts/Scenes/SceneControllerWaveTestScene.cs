@@ -22,10 +22,12 @@ public class SceneControllerWaveTestScene: SceneController_Base
 	private bool _useReverb = false;
 	public UnityEngine.UI.Toggle reverbToggle;
 
-	private const float MIN_FREQ = 100f;
-	private const float MIN_LOWPASSFREQ = 100f;
+	public RJWS.Audio.UI.AudioStringSettingsPanel stringSettingsPanel;
 
-	public RJWS.Audio.AudioStringBehaviour audioStringBehaviour;
+	public RectTransform stringPanelsHolder;
+	public GameObject stringPanelPrefab;
+	 
+	private RJWS.Audio.AudioStringBehaviour[] _audioStringBehaviours;
 
 	#endregion inspector hooks
 
@@ -55,18 +57,48 @@ public class SceneControllerWaveTestScene: SceneController_Base
 			_useReverb = !_useReverb;
 			reverbToggle.isOn = !reverbToggle.isOn;
 		}
-		audioStringBehaviour.UserReverb( _useReverb );
+		for (int i = 0; i < _audioStringBehaviours.Length; i++)
+		{
+			_audioStringBehaviours[i].UseReverb( _useReverb );
+			if (i < RJWS.Audio.AudioString.s_standardTuning.Count)
+			{
+				_audioStringBehaviours[i].SetFrequency( RJWS.Audio.AudioString.s_standardTuning[i] );
+			}
+
+			GameObject go = GameObject.Instantiate( stringPanelPrefab );
+			go.GetComponent<RectTransform>( ).SetParent( stringPanelsHolder );
+			go.transform.localScale = Vector3.one;
+			RJWS.Audio.UI.AudioStringPanel stringPanel = go.GetComponent<RJWS.Audio.UI.AudioStringPanel>( );
+			stringPanel.Init( _audioStringBehaviours[i], OpenStringSettingsPanel );
+		}
 	}
 
 	override protected void PostAwake()
 	{
+		_audioStringBehaviours = transform.GetComponentsInChildren<RJWS.Audio.AudioStringBehaviour>( );
 		_frequency = startingFrequency;
 		_attenuation = startingAttenuation;
 		_lowPassCutOffreq = startingLowPassCutOffFreq;
+
+		stringSettingsPanel.gameObject.SetActive( false );
 	}
 
 	#endregion SceneController_Base
 
+	public void OpenStringPanel(RJWS.Audio.UI.AudioStringPanel asp)
+	{
+		stringSettingsPanel.Init( asp.audioStringBehavuour, OnStringSettingsChanged );
+	}
+
+	public void OpenStringSettingsPanel(RJWS.Audio.AudioStringBehaviour asb)
+	{
+		stringSettingsPanel.Init( asb, OnStringSettingsChanged );
+	}
+
+	private void OnStringSettingsChanged(RJWS.Audio.AudioStringBehaviour asb)
+	{
+		Debug.Log( "String settings changed" );
+	}
 
 	private void SetFreqInputText()
 	{
@@ -79,9 +111,9 @@ public class SceneControllerWaveTestScene: SceneController_Base
 		float f;
 		if (float.TryParse(s, out f))
 		{
-			if (f < MIN_FREQ)
+			if (f < RJWS.Audio.AudioString.MIN_FREQ)
 			{
-				Debug.LogErrorFormat( this, "Frequency out of range: {0} < {1}", f, MIN_FREQ );
+				Debug.LogErrorFormat( this, "Frequency out of range: {0} < {1}", f, RJWS.Audio.AudioString.MIN_FREQ );
 			}
 			else
 			{
@@ -141,14 +173,14 @@ public class SceneControllerWaveTestScene: SceneController_Base
 		float f;
 		if (float.TryParse( s, out f ))
 		{
-			if (f <= MIN_LOWPASSFREQ)
+			if (f <= RJWS.Audio.AudioString.MIN_LOWPASSFREQ)
 			{
-				Debug.LogErrorFormat( this, "LowPass Frequency out of range: {0} < {1}", f, MIN_LOWPASSFREQ);
+				Debug.LogErrorFormat( this, "LowPass Frequency out of range: {0} < {1}", f, RJWS.Audio.AudioString.MIN_LOWPASSFREQ );
 			}
 			else
 			{
 				_lowPassCutOffreq = f;
-				audioStringBehaviour.SetLowPassFrequency( _lowPassCutOffreq );
+				_audioStringBehaviours[0].SetLowPassFrequency( _lowPassCutOffreq );
 				if (debugMe)
 				{
 					Debug.LogFormat( "LowPass Frequency changed to {0}", _frequency );
@@ -165,7 +197,7 @@ public class SceneControllerWaveTestScene: SceneController_Base
 
 	public void HandlePluckButton()
 	{
-		audioStringBehaviour.Pluck( _frequency, _attenuation );
+		_audioStringBehaviours[0].Pluck( _frequency, _attenuation );
 	}
 
 	public void HandleResetButton()
@@ -176,12 +208,12 @@ public class SceneControllerWaveTestScene: SceneController_Base
 		_lowPassCutOffreq = RJWS.Audio.AudioStringBehaviour.DEFAULT_LOWPASSFREQ;
 		SetLowPassFreqCutOffInputText( );
 
-		audioStringBehaviour.SetLowPassFrequency( _lowPassCutOffreq );
+		_audioStringBehaviours[0].SetLowPassFrequency( _lowPassCutOffreq );
 	}
 
 	public void HandleReverbToggleChanged(bool v)
 	{
 		_useReverb = reverbToggle.isOn;
-		audioStringBehaviour.UserReverb( _useReverb );
+		_audioStringBehaviours[0].UseReverb( _useReverb );
 	}
 }

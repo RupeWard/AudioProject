@@ -18,9 +18,28 @@ namespace RJWS.Audio
 		private RingBufferGeneratorFilter _generator;
 		private AudioLowPassFilter _lowPassFilter;
 		private AudioReverbFilter _reverbFilter;
-		
+
+		public System.Action<AudioStringBehaviour> onChangedAction;
+
+		public float openFrequency = (float)Core.Audio.AudioConsts.CONCERT_A;
+
+		public float Frequency
+		{
+			get;
+			private set;
+		}
+
+		public float Attenuation
+		{
+			get;
+			private set;
+		}
+
 		private void Awake()
 		{
+	        Frequency = openFrequency;
+			Attenuation = Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
+
 			if (audioSource == null)
 			{
 				audioSource = GetComponent<AudioSource>( );
@@ -39,25 +58,73 @@ namespace RJWS.Audio
 			_lowPassFilter.cutoffFrequency = f;
 		}
 
-		public void UserReverb(bool b)
+		public float LowPassCutOffFrequency
+		{
+			get { return _lowPassFilter.cutoffFrequency; }
+		}
+
+		public void UseReverb(bool b)
 		{
 			_reverbFilter.enabled = b;
 		}
 
-		public void Pluck(float f, float atten = -1)
+		public bool UsingReverb
+		{
+			get
+			{
+				return _reverbFilter.enabled;
+			}
+		}
+
+		public void SetFrequency( float f)
+		{
+			if (f < AudioString.MIN_FREQ)
+			{
+				Debug.LogErrorFormat("Frequency OOR: {0}", f);
+			}
+			else
+			{
+				Frequency = f;
+				if (onChangedAction != null)
+				{
+					onChangedAction( this );
+				}
+			}
+		}
+
+		public void SetAttenuation(float f)
+		{
+			if (f < Core.Audio.KSRingBufferF.MIN_ATTENUATION || f >= 1f)
+			{
+				Debug.LogErrorFormat( this, "Atten OOR at {0}", f );
+			}
+			else
+			{
+				Attenuation = f;
+			}
+		}
+
+		public void Pluck(float f = -1, float atten = -1)
 		{
 			if (debugMe)
 			{
 				Debug.LogFormat( this, "Pluck( {0} ) ", f );
 			}
+			if (f != -1)
+			{
+				Frequency = f;
+			}
+			if (atten != -1)
+			{
+				Attenuation = atten;
+			}
 			Kill( );
 			audioSource.Play( );
 
-			_string = new AudioString( f, atten );
+			_string = new AudioString( Frequency, Attenuation );
 			
 			_string.Pluck( );
 			_generator.Init( _string.ringbuffer );
-
 		}
 
 		private System.Text.StringBuilder _debugSB = new System.Text.StringBuilder( );
