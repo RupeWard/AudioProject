@@ -37,7 +37,7 @@ namespace RJWS.Audio
 				newString.transform.SetParent( this.transform );
 				newString.gameObject.name = "String_" + i;
 				newString.SetFrequency(freqs[i]);
-
+				newString.UseReverb( false );
 				_strings.Add( newString );
 			}
 		}

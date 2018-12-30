@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using RJWS.Core.DebugDescribable;
 using DG.Tweening;
+using RJWS.Core.Maths.PosRotExtensions;
 
 public class SceneControllerGuitarTestScene: SceneController_Base 
 {
@@ -16,6 +17,20 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 
 	public RJWS.Audio.GuitarModel guitarModel;
 	public RJWS.Audio.GuitarView guitarView;
+
+	public Transform cameraTransform;
+
+	public RJWS.Core.SOVariables.PosRotVariable farCameraPos;
+	public RJWS.Core.SOVariables.PosRotVariable bridgeCameraPos;
+
+	public enum ECamerPos
+	{
+		Far,
+		Bridge
+	}
+
+	private ECamerPos _cameraPos = ECamerPos.Far;
+	public ECamerPos startCameraPos = ECamerPos.Far;
 
 	#endregion inspector hooks
 
@@ -43,6 +58,32 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 		guitarSettingsPanel.Init( );
 	}
 
+	public void HandlePosButton()
+	{
+		if (_cameraPos == ECamerPos.Bridge)
+		{
+			SetCameraPos( ECamerPos.Far );
+		}
+		else if (_cameraPos == ECamerPos.Far)
+		{
+			SetCameraPos( ECamerPos.Bridge );
+		}
+	}
+
+	private void SetCameraPos(ECamerPos pos)
+	{
+		if (pos == ECamerPos.Far)
+		{
+			cameraTransform.SetWorldPose( farCameraPos.Value );
+			_cameraPos = ECamerPos.Far;
+		}
+		else if (pos == ECamerPos.Bridge)
+		{
+			cameraTransform.SetWorldPose( bridgeCameraPos.Value );
+			_cameraPos = ECamerPos.Bridge;
+		}
+	}
+
 	#endregion event handlers
 
 	#region SceneController_Base
@@ -56,6 +97,7 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 	{
 		guitarModel.Init( RJWS.Core.Audio.AudioConsts.s_standardGuitarTuning );
 		guitarView.Init( guitarModel );
+		SetCameraPos( startCameraPos );
 	}
 
 	override protected void PostAwake()
