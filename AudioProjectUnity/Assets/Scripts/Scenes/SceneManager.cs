@@ -20,7 +20,8 @@ public class SceneManager : RJWS.Core.Singleton.SingletonApplicationLifetimeLazy
 		Bootstrap,
 		DevSetup,
 		GraphTestScene,
-		WaveTestScene
+		WaveTestScene,
+		GuitarTestScene
 	};
 
 	private Dictionary< EScene, string > sceneNames_ = new Dictionary<EScene, string> ()
@@ -29,6 +30,7 @@ public class SceneManager : RJWS.Core.Singleton.SingletonApplicationLifetimeLazy
 		{ EScene.DevSetup, "DevSetupScene" },
 		{ EScene.GraphTestScene, "GraphTestScene" },
 		{ EScene.WaveTestScene, "WaveTestScene" },
+		{ EScene.GuitarTestScene, "GuitarTestScene" },
 	};
 
 #endregion scene types
