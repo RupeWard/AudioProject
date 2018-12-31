@@ -51,6 +51,7 @@ namespace RJWS.Audio
 	{
 		protected GuitarStringView _stringView;
 		protected bool _debug = false;
+		protected int _stringLayerMask = 1 << UnityEngine.LayerMask.NameToLayer( "Strings" );
 
 		public GuitarStringPlucker_Base(GuitarStringView s, bool b)
 		{

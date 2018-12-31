@@ -17,14 +17,18 @@ namespace RJWS.Audio
 		private float _downTime;
 		private Vector3 _downLocation;
 
-		
+		const string EXIT_REASON = "Exit";
+		const string ENTER_REASON = "Enter";
+		const string DOWN_REASON = "Down";
+		const string UP_REASON = "Up";
+
 		public override void OnPointerUp( UnityEngine.EventSystems.PointerEventData data )
 		{
 			if (_debug)
 			{
 				Debug.LogFormat( _stringView, "{2} OnPointerUp: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position, Time.time );
 			}
-			PointerDepartHelper( data );
+			PointerDepartHelper(UP_REASON, data );
 		}
 		
 
@@ -34,10 +38,10 @@ namespace RJWS.Audio
 			{
 				Debug.LogFormat( _stringView, "{2} OnPointerExit: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position, Time.time );
 			}
-			PointerDepartHelper( data );
+			PointerDepartHelper(EXIT_REASON, data );
 		}
 
-		private void PointerDepartHelper( UnityEngine.EventSystems.PointerEventData data )
+		private void PointerDepartHelper(string reason, UnityEngine.EventSystems.PointerEventData data )
 		{
 			if (!_isDown)
 			{
@@ -49,7 +53,7 @@ namespace RJWS.Audio
 
 			int fret = 0;
 			RaycastHit hitInfo;
-			if (Physics.Raycast( Camera.main.ScreenPointToRay( data.position ), out hitInfo, 100 ))
+			if (Physics.Raycast( Camera.main.ScreenPointToRay( data.position ), out hitInfo, 100, _stringLayerMask ))
 			{
 				if (hitInfo.collider.gameObject == _stringView.stringObject)
 				{
@@ -61,17 +65,18 @@ namespace RJWS.Audio
 
 					if (_debug)
 					{
-						Debug.LogWarningFormat( "String Hit {0} at {1} which is Fret {2} at d = {3}... T = {4}, D = {5}",
+						Debug.LogWarningFormat( "({6}) String Hit {0} at {1} which is Fret {2} at d = {3}... T = {4}, D = {5}",
 							hitInfo.collider.transform.GetPathInHierarchy( ),
 							hitInfo.point,
 							fret, d,
 							elapsed.ToString("G4"),
-							distance.ToString( "G4" ) );
+							distance.ToString( "G4" ),
+							reason);
 					}
 				}
 				else
 				{
-					Debug.LogErrorFormat( "Object mismatch when String Hit {0} at {1}", hitInfo.collider.transform.GetPathInHierarchy( ), hitInfo.point );
+					Debug.LogErrorFormat( "({3}) Object mismatch when String Hit {0} at {1} as detected on {2}", hitInfo.collider.transform.GetPathInHierarchy( ), hitInfo.point, _stringView.gameObject.name, reason );
 				}
 			}
 			_stringView.stringBehaviour.Pluck( fret );
@@ -84,7 +89,7 @@ namespace RJWS.Audio
 			{
 				Debug.LogFormat( _stringView, "OnPointerDown: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position );
 			}
-			PointerStartHelper( data );
+			PointerStartHelper(DOWN_REASON, data );
 		}
 		
 		
@@ -94,18 +99,20 @@ namespace RJWS.Audio
 			{
 				Debug.LogFormat( _stringView, "OnPointerEnter: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position );
 			}
-			PointerStartHelper( data );
+			PointerStartHelper(ENTER_REASON, data );
 		}
 
-		private void PointerStartHelper( UnityEngine.EventSystems.PointerEventData data )
+		private void PointerStartHelper(string reason, UnityEngine.EventSystems.PointerEventData data )
 		{
 			if (_isDown)
 			{
-				Debug.LogErrorFormat( _stringView, "OnPointerDown when already down on {0}", _stringView.cachedTransform.GetPathInHierarchy( ) );
+				Debug.LogErrorFormat( _stringView, "({1}) PointerStartHelper when already down on {0}", 
+					_stringView.cachedTransform.GetPathInHierarchy( ),
+					reason);
 			}
 			int fret = 0;
 			RaycastHit hitInfo;
-			if (Physics.Raycast( Camera.main.ScreenPointToRay( data.position ), out hitInfo, 100 ))
+			if (Physics.Raycast( Camera.main.ScreenPointToRay( data.position ), out hitInfo, 100, _stringLayerMask ))
 			{
 				if (hitInfo.collider.gameObject == _stringView.stringObject)
 				{
@@ -118,15 +125,19 @@ namespace RJWS.Audio
 
 					if (_debug)
 					{
-						Debug.LogWarningFormat( "String Hit {0} at {1} which is Fret {2} at d = {3}",
+						Debug.LogWarningFormat( "({4}) String Hit {0} at {1} which is Fret {2} at d = {3}",
 							hitInfo.collider.transform.GetPathInHierarchy( ),
 							hitInfo.point,
-							fret, d );
+							fret, d ,
+							reason);
 					}
 				}
 				else
 				{
-					Debug.LogErrorFormat( "Object mismatch when String Hit {0} at {1}", hitInfo.collider.transform.GetPathInHierarchy( ), hitInfo.point );
+					Debug.LogErrorFormat( "({3}) Object mismatch when String Hit {0} at {1} as detected by {2}", 
+						hitInfo.collider.transform.GetPathInHierarchy( ), 
+						hitInfo.point, _stringView.gameObject.name,
+						reason);
 				}
 			}
 

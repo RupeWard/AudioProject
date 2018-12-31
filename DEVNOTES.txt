@@ -7,7 +7,8 @@ Phone test build
 
 Persist settings?
 Camera view options
-- Animate
+
+Add layer mask to physics cast
 
 Guitar Tuning class
 Guitar note to frequency etc
