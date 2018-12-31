@@ -27,7 +27,7 @@ namespace RJWS.Audio
 			FretNum = fn;
 
 			fretView.localScale = new Vector3( _guitarView.fretWidth, 0.5f * _guitarView.FretLength, _guitarView.fretWidth );
-			cachedTransform.localPosition = new Vector3( cachedTransform.localPosition.x + _guitarView.FretX( fn ), 0.5f * 0.5f * _guitarView.FretLength + _guitarView.stringSeparation, cachedTransform.localPosition.z );
+			cachedTransform.localPosition = new Vector3( cachedTransform.localPosition.x + _guitarView.FretX( fn ), 0.5f * 0.5f * _guitarView.FretLength + _guitarView.stringSeparation, cachedTransform.localPosition.z + _guitarView.fretDepth );
 		}
 
 		public int FretNum

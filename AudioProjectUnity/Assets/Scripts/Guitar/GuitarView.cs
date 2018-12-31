@@ -13,6 +13,8 @@ namespace RJWS.Audio
 			get { return debugMe || DEBUG_LOCAL; }
 		}
 
+		public bool debugHit = true;
+
 		public GuitarStringView stringViewPrefab;
 		public GuitarFretView fretViewPrefab;
 
@@ -21,6 +23,9 @@ namespace RJWS.Audio
 		public float stringWidth = 0.1f;
 		public int numFrets = 10;
 		public float fretWidth = 0.1f;
+		public float fretDepth = 0.15f;
+
+		public EPluckerType pluckerType;
 
 		public float FretLength
 		{
@@ -60,7 +65,7 @@ namespace RJWS.Audio
 			}
 			if (result >= _fretViews.Count)
 			{
-				Debug.LogErrorFormat( "Failed to get fret" );
+				Debug.LogWarningFormat( "Failed to get fret" );
 				result = 0;
 				fraction = 0f;
 			}

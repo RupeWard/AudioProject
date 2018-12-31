@@ -1,6 +1,9 @@
+Runtime choice of plucker type
+Drag plucker
+
 Amplitude/attenuation variation
 Phone test build
-Plucking
+
 Persist settings?
 Camera view options
 

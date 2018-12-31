@@ -43,10 +43,12 @@ namespace RJWS.Audio
 
 		IGuitarStringPlucker _plucker;
 
-		EPluckerType _pluckerType = EPluckerType.BasicUp;
+		public EPluckerType pluckerType = EPluckerType.BasicUp;
 
 		public void Init( GuitarView gv, GuitarModel model, int stringNum)
 		{
+			debughit |= gv.debugHit;
+			pluckerType = gv.pluckerType;
 			guitarView = gv;
 			stringBehaviour = model.GetString( stringNum );
 			stringObject.transform.localScale = guitarView.StringDims;
@@ -58,7 +60,7 @@ namespace RJWS.Audio
 
 		private void MakePlucker()
 		{
-			_plucker = PluckerHelpers.CreatePluckerOfType( _pluckerType, this, debughit );
+			_plucker = PluckerHelpers.CreatePluckerOfType( pluckerType, this, debughit );
 		}
 
 		public void OnPointerClick( PointerEventData eventData )
@@ -91,6 +93,15 @@ namespace RJWS.Audio
 			_plucker.OnDrag( eventData );
 		}
 
+		public void OnPointerExit(PointerEventData eventData)
+		{
+			_plucker.OnPointerExit( eventData );
+		}
+
+		public void OnPointerEnter( PointerEventData eventData )
+		{
+			_plucker.OnPointerEnter( eventData );
+		}
 	}
 }
 
