@@ -68,6 +68,15 @@ namespace RJWS.Audio
 			
 			stringObject.transform.localScale = guitarView.StringDims;
 
+			SetStringColliderSize( );
+
+			gameObject.SetActive( true );
+
+			MakePlucker( );
+		}
+
+		private void SetStringColliderSize()
+		{
 			float maxRad = 0.5f * guitarView.stringSeparation / guitarView.stringWidth;
 			float collW = Mathf.Lerp( 1f, maxRad, guitarView.guitarSettings.stringColliderSize );
 
@@ -77,17 +86,14 @@ namespace RJWS.Audio
 				collW = 1f;
 			}
 			_stringCollider.radius = collW;
-
-			gameObject.SetActive( true );
-
-			MakePlucker( );
 		}
 
 		public void ApplyGuitarSettings(GuitarSettings gs)
-		{
+		{ 
 			ChangePluckerType( gs.pluckerType );
 			stringBehaviour.UseReverb( gs.useReverb );
 			stringBehaviour.SetAttenuation( gs.attenuation );
+			SetStringColliderSize( );
 		}
 
 		private void MakePlucker()

@@ -11,6 +11,7 @@ namespace RJWS.Audio.UI
 		public UnityEngine.UI.InputField attenuationInputField;
 		public UnityEngine.UI.Toggle useReverbToggle;
 		public UnityEngine.UI.Dropdown pluckerTypeDropDown;
+		public UnityEngine.UI.InputField colliderSizeInputField;
 
 		public System.Action _onSettingsChangedAction;
 		public PluckSettingsPanel pluckSettingsPanel;
@@ -34,6 +35,7 @@ namespace RJWS.Audio.UI
 			gameObject.SetActive( true );
 
 			SetAttenuationText( );
+			SetColliderSizeText( );
 			if (useReverbToggle.isOn != _settings.useReverb)
 			{
 				_settings.useReverb = !_settings.useReverb;
@@ -111,6 +113,39 @@ namespace RJWS.Audio.UI
 			}
 			SetAttenuationText( );
 		}
+
+		private void SetColliderSizeText( )
+		{
+			colliderSizeInputField.text = _settings.stringColliderSize.ToString( );
+		}
+
+		public void OnColliderSizeTextEndEdit( )
+		{
+			string s = colliderSizeInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
+			{
+				if (!Mathf.Approximately( f, _settings.stringColliderSize))
+				{
+					if (f <= 1f && f > 0f)
+					{
+						Debug.LogFormat( "Changing collider size from {0} to {1}", _settings.stringColliderSize, f );
+						_settings.stringColliderSize = f;
+						DoOnSettingsChangeAction( );
+					}
+					else
+					{
+						Debug.LogWarningFormat( "Collider size out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetColliderSizeText( );
+		}
+
 
 		public void OnReverbToggleChanged()
 		{
