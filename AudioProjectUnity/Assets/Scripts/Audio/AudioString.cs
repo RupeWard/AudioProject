@@ -44,7 +44,7 @@ namespace RJWS.Audio
 			}
 			if (atten < 0f)
 			{
-				atten = Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
+				atten = Core.Audio.AudioConsts.DEFAULT_GUITAR_ATTENUATION;
 			}
 			_openFrequency = f;
 			_sampleRate = sr;

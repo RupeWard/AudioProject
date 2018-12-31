@@ -44,6 +44,14 @@ namespace RJWS.Audio
 		IGuitarStringPlucker _plucker;
 
 		public EPluckerType pluckerType = EPluckerType.BasicUp;
+		public void ChangePluckerType(EPluckerType p)
+		{
+			if (p != pluckerType || _plucker == null)
+			{
+				pluckerType = p;
+				MakePlucker( );
+			}
+		}
 
 		public void Init( GuitarView gv, GuitarModel model, int stringNum)
 		{
@@ -56,6 +64,13 @@ namespace RJWS.Audio
 			gameObject.SetActive( true );
 
 			MakePlucker( );
+		}
+
+		public void ApplyGuitarSettings(GuitarSettings gs)
+		{
+			ChangePluckerType( gs.pluckerType );
+			stringBehaviour.UseReverb( gs.useReverb );
+			stringBehaviour.SetAttenuation( gs.attenuation );
 		}
 
 		private void MakePlucker()

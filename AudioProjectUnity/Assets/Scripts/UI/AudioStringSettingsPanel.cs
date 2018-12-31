@@ -72,9 +72,9 @@ namespace RJWS.Audio.UI
 			float f;
 			if (float.TryParse( s, out f ))
 			{
-				if (f < RJWS.Core.Audio.KSRingBufferF.MIN_ATTENUATION || f >= 1f)
+				if (f < RJWS.Core.Audio.AudioConsts.MIN_GUITAR_ATTENUATION || f >= 1f)
 				{
-					Debug.LogErrorFormat( this, "Attenuation out of range: {0} < {1}", f, RJWS.Core.Audio.KSRingBufferF.MIN_ATTENUATION );
+					Debug.LogErrorFormat( this, "Attenuation out of range: {0} < {1}", f, RJWS.Core.Audio.AudioConsts.MIN_GUITAR_ATTENUATION );
 				}
 				else
 				{

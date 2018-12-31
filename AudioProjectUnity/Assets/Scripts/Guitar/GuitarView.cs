@@ -27,6 +27,8 @@ namespace RJWS.Audio
 
 		public EPluckerType pluckerType;
 
+		public GuitarSettings guitarSettings;
+
 		public float FretLength
 		{
 			get { return guitarModel.NumStrings * stringSeparation; }
@@ -94,6 +96,7 @@ namespace RJWS.Audio
 		private void Awake()
 		{
 			cachedTransform = transform;
+			GuitarSettings.LoadDefaultsIfNUll( ref guitarSettings );
 		}
 
 		public void Init(GuitarModel model)
@@ -136,6 +139,16 @@ namespace RJWS.Audio
 				gfv.Init( this, i );
 
 				_fretViews.Add( gfv );
+			}
+
+			ApplySettings( );
+		}
+
+		private void ApplySettings()
+		{
+			for (int i = 0; i < _stringViews.Count; i++)
+			{
+				_stringViews[i].ApplyGuitarSettings( guitarSettings );
 			}
 		}
 

@@ -38,7 +38,7 @@ namespace RJWS.Audio
 		private void Awake()
 		{
 	        Frequency = openFrequency;
-			Attenuation = Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
+			Attenuation = Core.Audio.AudioConsts.DEFAULT_GUITAR_ATTENUATION;
 
 			if (audioSource == null)
 			{
@@ -94,7 +94,7 @@ namespace RJWS.Audio
 
 		public void SetAttenuation(float f)
 		{
-			if (f < Core.Audio.KSRingBufferF.MIN_ATTENUATION || f >= 1f)
+			if (f < Core.Audio.AudioConsts.MIN_GUITAR_ATTENUATION || f >= 1f)
 			{
 				Debug.LogErrorFormat( this, "Atten OOR at {0}", f );
 			}

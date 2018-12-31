@@ -12,7 +12,7 @@ public class SceneControllerWaveTestScene: SceneController_Base
 	private float _frequency;
 
 	public UnityEngine.UI.InputField attenInputField;
-	public float startingAttenuation = (float)RJWS.Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
+	public float startingAttenuation = (float)RJWS.Core.Audio.AudioConsts.DEFAULT_GUITAR_ATTENUATION;
 	private float _attenuation;
 
 	public UnityEngine.UI.InputField lowPassCutOffFreqInputField;
@@ -142,9 +142,9 @@ public class SceneControllerWaveTestScene: SceneController_Base
 		float f;
 		if (float.TryParse( s, out f ))
 		{
-			if (f < RJWS.Core.Audio.KSRingBufferF.MIN_ATTENUATION || f >= 1f)
+			if (f < RJWS.Core.Audio.AudioConsts.MIN_GUITAR_ATTENUATION || f >= 1f)
 			{
-				Debug.LogErrorFormat( this, "Attenuation out of range: {0} < {1}", f, RJWS.Core.Audio.KSRingBufferF.MIN_ATTENUATION );
+				Debug.LogErrorFormat( this, "Attenuation out of range: {0} < {1}", f, RJWS.Core.Audio.AudioConsts.MIN_GUITAR_ATTENUATION );
 			}
 			else
 			{
@@ -202,7 +202,7 @@ public class SceneControllerWaveTestScene: SceneController_Base
 
 	public void HandleResetButton()
 	{
-		_attenuation = RJWS.Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
+		_attenuation = RJWS.Core.Audio.AudioConsts.DEFAULT_GUITAR_ATTENUATION;
 		SetAttenInputText( );
 
 		_lowPassCutOffreq = RJWS.Audio.AudioStringBehaviour.DEFAULT_LOWPASSFREQ;
