@@ -108,11 +108,20 @@ public class SceneManager : RJWS.Core.Singleton.SingletonApplicationLifetimeLazy
 				Handheld.SetActivityIndicatorStyle( AndroidActivityIndicatorStyle.Large );
 				#endif
 				
-				Handheld.StartActivityIndicator();
+				StartActivityIndicator();
 
 				StartCoroutine(SwitchSceneCR(sceneNames_[ newScene ] ));
 			}
 		}
+	}
+
+	// TODO should be with its counterpart (which is SceneCOntrollr_Base, but not there either)
+	private void StartActivityIndicator( )
+	{
+#if UNITY_ANDROID || UNITY_IPHONE
+		Handheld.StartActivityIndicator ();
+#else
+#endif
 	}
 
 	private IEnumerator SwitchSceneCR(string s)

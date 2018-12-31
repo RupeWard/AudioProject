@@ -24,6 +24,8 @@ namespace RJWS.Core.Version
 			return androidLabel;
 #elif UNITY_IOS
 			return iosLabel;
+#else
+			return unknownLable;
 #endif
 			}
 		}
@@ -31,6 +33,7 @@ namespace RJWS.Core.Version
 		public static string editorLabel = "edt";
 		public static string androidLabel = "and";
 		public static string iosLabel = "ios";
+		public static string unknownLable = "unknown";
 
 		public static readonly bool DEBUG_VERSION = true;
 

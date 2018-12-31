@@ -1,10 +1,11 @@
-Add length to ring buffer class
-Guitar class
+Amplitude/attenuation variation
+Phone test build
+Plucking
+Persist settings?
+Camera view options
+
 Guitar Tuning class
 Guitar note to frequency etc
-Guitar string
-Guitar fret
-Guitar test scene
 Slide
 Damping
 

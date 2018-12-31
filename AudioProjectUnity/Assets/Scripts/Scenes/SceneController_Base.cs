@@ -41,7 +41,15 @@ abstract public class SceneController_Base : MonoBehaviour
 
 		PostStart ();
 		SceneManager.Instance.finishedSwitching ();
+		StopActivityIndicator( );
+	}
+
+	private void StopActivityIndicator()
+	{
+#if UNITY_ANDROID || UNITY_IPHONE
 		Handheld.StopActivityIndicator ();
+#else
+#endif
 	}
 
 	// Override in subclasses for set-up
