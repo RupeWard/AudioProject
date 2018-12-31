@@ -1,4 +1,5 @@
-Runtime choice of plucker type
+GUITAR
+
 Drag plucker
 
 Amplitude/attenuation variation
@@ -12,6 +13,8 @@ Guitar note to frequency etc
 Slide
 Damping
 
+---------------
+GRAPH
 
 Revisit connector sizes!
 
@@ -46,7 +49,5 @@ Point edit
 - point fixed state
 - types of movement - solo, linear, spline
 
-
-Basic audio
 
 Modify/save/load 
