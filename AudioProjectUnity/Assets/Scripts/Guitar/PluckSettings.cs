@@ -10,6 +10,11 @@ namespace RJWS.Audio
 	{
 		private const string DEFSETTINGSPATH = "DefaultPluckSettings";
 
+		public Vector2 speedRange = new Vector2( 0f, 1000f );
+		public Vector2 volumeRange = new Vector2( 0.1f, 1f );
+
+		public float gamma = 0f;
+
 		static public PluckSettings LoadDefaultsIfNUll(ref PluckSettings gs)
 		{
 			if (gs == null)
@@ -18,6 +23,20 @@ namespace RJWS.Audio
 				Debug.Log( "Loaded default pluck settings" );
 			}
 			return gs;
+		}
+
+		public float GetVolumeForSpeed(float s)
+		{
+			float speedFactor = (s - speedRange.x) / (speedRange.y - speedRange.x);
+			speedFactor = Mathf.Clamp01(speedFactor );
+			if (gamma <= 0f)
+			{
+				return Mathf.Lerp( volumeRange.x, volumeRange.y, speedFactor );
+			}
+			else
+			{
+				return Mathf.Lerp( volumeRange.x, volumeRange.y, (Mathf.Exp( gamma * speedFactor ) - 1f) / (Mathf.Exp( gamma ) - 1) );
+			}
 		}
 
 		public void DebugDescribe( StringBuilder sb )

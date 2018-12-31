@@ -197,7 +197,7 @@ public class SceneControllerWaveTestScene: SceneController_Base
 
 	public void HandlePluckButton()
 	{
-		_audioStringBehaviours[0].Pluck(0, _frequency, _attenuation );
+		_audioStringBehaviours[0].Pluck(1f, 0, _frequency, _attenuation );
 	}
 
 	public void HandleResetButton()

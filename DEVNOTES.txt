@@ -1,14 +1,16 @@
 GUITAR
 
+Gamma and limits to plucker settings panel
+Visual feedback 
+- string change colour
+- different colour for bridge
+
 Drag plucker
 
-Amplitude/attenuation variation
-Phone test build
+Attenuation variation
 
 Persist settings?
 Camera view options
-
-Add layer mask to physics cast
 
 Guitar Tuning class
 Guitar note to frequency etc

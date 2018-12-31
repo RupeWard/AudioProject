@@ -41,7 +41,7 @@ namespace RJWS.Audio.UI
 
 		public void HandlePluckButton()
 		{
-			audioStringBehavuour.Pluck( );
+			audioStringBehavuour.Pluck( 1f);
 		}
 
 		private void OnEnable()

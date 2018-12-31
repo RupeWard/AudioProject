@@ -41,7 +41,7 @@ namespace RJWS.Audio
 					Debug.LogErrorFormat( "String Hit {0} at {1}", hitInfo.collider.transform.GetPathInHierarchy( ), hitInfo.point );
 				}
 			}
-			_stringView.stringBehaviour.Pluck( fret );
+			_stringView.stringBehaviour.Pluck(1f, fret );
 		}
 
 		public override void OnPointerDown( UnityEngine.EventSystems.PointerEventData data )

@@ -104,7 +104,7 @@ namespace RJWS.Audio
 			}
 		}
 
-		public void Pluck( int fret = 0, float f = -1, float atten = -1)
+		public void Pluck( float volume, int fret = 0, float f = -1, float atten = -1)
 		{
 			if (debugMe)
 			{
@@ -119,6 +119,7 @@ namespace RJWS.Audio
 				Attenuation = atten;
 			}
 			Kill( );
+			audioSource.volume = volume;
 			audioSource.Play( );
 
 			_string = new AudioString( Frequency, Attenuation );

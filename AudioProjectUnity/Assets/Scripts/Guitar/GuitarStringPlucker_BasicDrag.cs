@@ -62,16 +62,22 @@ namespace RJWS.Audio
 
 					float elapsed = Time.time - _downTime;
 					float distance = Vector3.Distance( _downLocation, hitInfo.point );
+					float speed = distance / elapsed;
 
+					float volume = _stringView.guitarView.pluckSettings.GetVolumeForSpeed( speed );
+
+					_stringView.stringBehaviour.Pluck(volume, fret );
 					if (_debug)
 					{
-						Debug.LogWarningFormat( "({6}) String Hit {0} at {1} which is Fret {2} at d = {3}... T = {4}, D = {5}",
+						Debug.LogWarningFormat( "({6}) String Hit {0} at {1} which is Fret {2} at d = {3}... T = {4}, D = {5}. Speed = {7} => Volume = {8}",
 							hitInfo.collider.transform.GetPathInHierarchy( ),
 							hitInfo.point,
 							fret, d,
 							elapsed.ToString("G4"),
 							distance.ToString( "G4" ),
-							reason);
+							reason,
+							speed,
+							volume);
 					}
 				}
 				else
@@ -79,7 +85,6 @@ namespace RJWS.Audio
 					Debug.LogErrorFormat( "({3}) Object mismatch when String Hit {0} at {1} as detected on {2}", hitInfo.collider.transform.GetPathInHierarchy( ), hitInfo.point, _stringView.gameObject.name, reason );
 				}
 			}
-			_stringView.stringBehaviour.Pluck( fret );
 		}
 
 		
