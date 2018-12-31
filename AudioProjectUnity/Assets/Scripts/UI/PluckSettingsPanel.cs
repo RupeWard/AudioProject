@@ -3,17 +3,16 @@ using System.Collections.Generic;
 
 namespace RJWS.Audio.UI
 {
-	public class GuitarSettingsPanel : MonoBehaviour
+	public class PluckSettingsPanel : MonoBehaviour
 	{
 		private GuitarSettings _settings;
+		private GuitarSettingsPanel _settingsPanel;
 
 		public UnityEngine.UI.InputField attenuationInputField;
 		public UnityEngine.UI.Toggle useReverbToggle;
 		public UnityEngine.UI.Dropdown pluckerTypeDropDown;
 
 		public System.Action _onSettingsChangedAction;
-		public PluckSettingsPanel pluckSettingsPanel;
-		public GameObject pluckSettingsButton;
 
 		private Dictionary<EPluckerType, string> _dropdownTextMap = new Dictionary<EPluckerType, string>( )
 		{
@@ -21,13 +20,11 @@ namespace RJWS.Audio.UI
 			{ EPluckerType.BasicUp, "B-Up" }
 		};
 
-		public void Init( GuitarSettings gs, System.Action osa)
+		public void Init( GuitarSettingsPanel gsp, GuitarSettings gs, System.Action osa)
 		{
-
+			_settingsPanel = gsp;
 			_settings = gs;
 			_onSettingsChangedAction = osa;
-
-			pluckSettingsButton.SetActive( _settings.pluckerType == EPluckerType.BasicDrag );
 
 			gameObject.SetActive( true );
 
@@ -65,19 +62,6 @@ namespace RJWS.Audio.UI
 
 		public bool debugMe = true;
 
-		private void Awake()
-		{
-			if (pluckSettingsPanel == null)
-			{
-				pluckSettingsPanel = GameObject.FindObjectOfType<PluckSettingsPanel>( );
-			}
-			if (pluckSettingsPanel == null)
-			{
-				throw new System.Exception( "No pluckSettingsPanel" );
-			}
-			pluckSettingsPanel.gameObject.SetActive( false );
-		}
-
 		private void SetAttenuationText()
 		{
 			attenuationInputField.text = _settings.attenuation.ToString();
@@ -95,7 +79,10 @@ namespace RJWS.Audio.UI
 					{
 						Debug.LogFormat( "Changing attenuation from {0} to {1}", _settings.attenuation, f );
 						_settings.attenuation = f;
-						DoOnSettingsChangeAction( );
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
 					}
 					else
 					{
@@ -114,7 +101,10 @@ namespace RJWS.Audio.UI
 		{
 			_settings.useReverb = !_settings.useReverb;
 			Debug.LogFormat( "Changing user reverb from {0} to {1}", !_settings.useReverb, _settings.useReverb );
-			DoOnSettingsChangeAction( );
+			if (_onSettingsChangedAction != null)
+			{
+				_onSettingsChangedAction( );
+			}
 		}
 
 		public void OnPluckerTypeDropDownChanged(int i)
@@ -140,23 +130,12 @@ namespace RJWS.Audio.UI
 			}
 			if (changed)
 			{
-				DoOnSettingsChangeAction( );
+				if (_onSettingsChangedAction != null)
+				{
+					_onSettingsChangedAction( );
+				}
 				Debug.LogFormat( "Changed plucker type to {0}", _settings.pluckerType );
 			}
-		}
-
-		private void DoOnSettingsChangeAction()
-		{
-			if (_onSettingsChangedAction != null)
-			{
-				_onSettingsChangedAction( );
-			}
-			pluckSettingsButton.SetActive( _settings.pluckerType == EPluckerType.BasicDrag );
-		}
-
-		public void HandlePluckSettingsButton()
-		{
-			pluckSettingsPanel.Init( this, _settings,  DoOnSettingsChangeAction);
 		}
 
 		public void HandleDoneButton()

@@ -10,6 +10,7 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 	public bool debugMe = true;
 
 	public RJWS.Audio.UI.GuitarSettingsPanel guitarSettingsPanel;
+
 	public RectTransform buttonsPanel;
 	
 	public float tweenDuration = 1f;
