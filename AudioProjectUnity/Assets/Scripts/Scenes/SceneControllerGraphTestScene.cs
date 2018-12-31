@@ -54,7 +54,7 @@ public class SceneControllerGraphTestScene : SceneController_Base
 
 		_scrollablePanel = GameObject.Instantiate( scrollablePanelPrefab ).GetComponent<ScrollablePanel>( );
 		_scrollablePanel.cachedRT.SetParent( canvasRT );
-		permanentButtonsRT.sizeDelta = new Vector2( Mathf.Max( permanentButtonsRT.sizeDelta.x, RJWS.AppManager.Instance.minClickablePixels ), permanentButtonsRT.sizeDelta.y );
+//		permanentButtonsRT.sizeDelta = new Vector2( Mathf.Max( permanentButtonsRT.sizeDelta.x, RJWS.AppManager.Instance.minClickablePixels ), permanentButtonsRT.sizeDelta.y );
 
 		foreach (Transform t in permanentButtonsRT.transform)
 		{

@@ -76,6 +76,27 @@ namespace RJWS.Core.Version
 				return this.DebugDescribe( );
 			}
 
+			public int BundleVersionCode
+			{
+				get
+				{
+					System.Text.StringBuilder sb = new System.Text.StringBuilder( );
+					sb.Append( "5" );
+					sb.Append( subNumbers_[0] ).Append(subNumbers_[1]).Append(subNumbers_[2].ToString());
+					sb.Append( subNumbers_[3].ToString( ).PadLeft( 4, '0' ) );
+					int i;
+					if (int.TryParse(sb.ToString(), out i))
+					{
+						return i;
+					}
+					else
+					{
+						Debug.LogErrorFormat( "Failed to parse bundle version from '{0}'", sb.ToString( ) );
+						return 0;
+					}
+				}
+			}
+
 			private void setFromString( string s )
 			{
 				if (s.StartsWith( "D" ))
@@ -99,7 +120,25 @@ namespace RJWS.Core.Version
 				}
 				else
 				{
-					Debug.LogError( "Failed to get version from '" + s + "'" );
+					regex = new Regex( @"(\d+)\.(\d+)\.(\d+)" );
+					match = regex.Match( s );
+					if (match.Success)
+					{
+						for (int i = 0; i < 3; i++)
+						{
+							subNumbers_[i] = int.Parse( match.Groups[i + 1].Value );
+						}
+
+						if (Version.DEBUG_VERSION)
+						{
+							//					Debug.Log ("Version read from '"+s+"' is "+this.DebugDescribe());
+						}
+					}
+					else
+					{
+						Debug.LogErrorFormat( "Failed to get version from '{0}'", s );
+					}
+
 				}
 			}
 
