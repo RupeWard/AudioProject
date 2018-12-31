@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using RJWS.Core.TransformExtensions;
+using System;
+using UnityEngine.EventSystems;
 
 namespace RJWS.Audio
 {
-	public class GuitarStringView : MonoBehaviour, UnityEngine.EventSystems.IPointerUpHandler, UnityEngine.EventSystems.IPointerDownHandler
+	public class GuitarStringView : MonoBehaviour, IGuitarStringPlucker
 	{
 		public bool debugMe = true;
 		static public readonly bool DEBUG_STRINGVIEW = true;
+		public bool debughit = false;
 
 		public bool DebugMe
 		{
@@ -26,56 +29,66 @@ namespace RJWS.Audio
 
 		public GameObject stringObject;
 
-		private AudioStringBehaviour _stringBehaviour;
-		private GuitarView _guitarView;
+		public AudioStringBehaviour stringBehaviour
+		{
+			get;
+			private set;
+		}
+
+		public GuitarView guitarView
+		{
+			get;
+			private set;
+		}
+
+		IGuitarStringPlucker _plucker;
+
+		EPluckerType _pluckerType = EPluckerType.BasicUp;
 
 		public void Init( GuitarView gv, GuitarModel model, int stringNum)
 		{
-			_guitarView = gv;
-			_stringBehaviour = model.GetString( stringNum );
-			stringObject.transform.localScale = _guitarView.StringDims;
+			guitarView = gv;
+			stringBehaviour = model.GetString( stringNum );
+			stringObject.transform.localScale = guitarView.StringDims;
 
 			gameObject.SetActive( true );
+
+			MakePlucker( );
 		}
 
-		public bool debughit = false;
-		public void OnPointerUp( UnityEngine.EventSystems.PointerEventData data )
+		private void MakePlucker()
 		{
-			if (debughit)
-			{
-				Debug.LogFormat( this, "OnPointerUp: {0}\n{1}", transform.GetPathInHierarchy( ), data.position);
-			}
-			int fret = 0;
-			RaycastHit hitInfo;
-			if (Physics.Raycast(Camera.main.ScreenPointToRay(data.position), out hitInfo, 100))
-			{
-				if (hitInfo.collider.gameObject == stringObject)
-				{
-					float d=0f;
-					fret = _guitarView.GetFretForWorldX( hitInfo.point.x, ref d );
-
-					if (debughit)
-					{
-						Debug.LogWarningFormat( "String Hit {0} at {1} which is Fret {2} at d = {3}",
-							hitInfo.collider.transform.GetPathInHierarchy( ),
-							hitInfo.point,
-							fret, d );
-					}
-				}
-				else
-				{
-					Debug.LogErrorFormat( "String Hit {0} at {1}", hitInfo.collider.transform.GetPathInHierarchy( ), hitInfo.point );
-				}
-			}
-			_stringBehaviour.Pluck( fret );
+			_plucker = PluckerHelpers.CreatePluckerOfType( _pluckerType, this, debughit );
 		}
 
-		public void OnPointerDown( UnityEngine.EventSystems.PointerEventData data )
+		public void OnPointerClick( PointerEventData eventData )
 		{
-			if (debughit)
-			{
-				Debug.LogFormat( this, "OnPointerDown: {0}\n{1}", transform.GetPathInHierarchy( ), data.position );
-			}
+			_plucker.OnPointerClick( eventData );
+		}
+
+		public void OnPointerDown( PointerEventData eventData )
+		{
+			_plucker.OnPointerDown( eventData );
+		}
+
+		public void OnPointerUp( PointerEventData eventData )
+		{
+			_plucker.OnPointerUp( eventData );
+		}
+
+		public void OnBeginDrag( PointerEventData eventData )
+		{
+			_plucker.OnBeginDrag( eventData );
+		}
+
+		public void OnEndDrag( PointerEventData eventData )
+		{
+			_plucker.OnEndDrag( eventData );
+		}
+
+		public void OnDrag( PointerEventData eventData )
+		{
+			_plucker.OnDrag( eventData );
 		}
 
 	}
