@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RJWS.Core.DebugDescribable;
+using System;
+using System.Text;
 
 namespace RJWS.Audio
 {
 	[CreateAssetMenu( menuName = "RJWS/Guitar/Settings", order = 1000 )]
-	public class GuitarSettings : ScriptableObject
+	public class GuitarSettings : ScriptableObject, IDebugDescribable
 	{
 		public EPluckerType pluckerType = EPluckerType.BasicDrag;
 		public bool useReverb = false;
 		public float attenuation = Core.Audio.AudioConsts.DEFAULT_GUITAR_ATTENUATION;
+		public float stringColliderSize = 1f; // 0 - 1
 
 		private const string DEFSETTINGSPATH = "DefaultGuitarSettings";
 
@@ -21,6 +25,15 @@ namespace RJWS.Audio
 				Debug.Log( "Loaded default guitar settings" );
 			}
 			return gs;
+		}
+
+		public void DebugDescribe( StringBuilder sb )
+		{
+			sb.Append( "GuitarSettings:" );
+			sb.Append( "\n- PluckerType = " ).Append( pluckerType );
+			sb.Append( "\n- UseReverb = " ).Append( useReverb);
+			sb.Append( "\n- Attenuation = " ).Append( attenuation );
+			sb.Append( "\n---" );
 		}
 	}
 }

@@ -5,7 +5,8 @@ namespace RJWS.Audio.UI
 {
 	public class PluckSettingsPanel : MonoBehaviour
 	{
-		private GuitarSettings _settings;
+		private GuitarSettings _guitarSettings;
+		private PluckSettings _pluckSettings;
 		private GuitarSettingsPanel _settingsPanel;
 
 		public UnityEngine.UI.InputField attenuationInputField;
@@ -20,18 +21,18 @@ namespace RJWS.Audio.UI
 			{ EPluckerType.BasicUp, "B-Up" }
 		};
 
-		public void Init( GuitarSettingsPanel gsp, GuitarSettings gs, System.Action osa)
+		public void Init( GuitarSettingsPanel gsp, PluckSettings psp, GuitarSettings gs, System.Action osa)
 		{
 			_settingsPanel = gsp;
-			_settings = gs;
+			_guitarSettings = gs;
 			_onSettingsChangedAction = osa;
 
 			gameObject.SetActive( true );
 
 			SetAttenuationText( );
-			if (useReverbToggle.isOn != _settings.useReverb)
+			if (useReverbToggle.isOn != _guitarSettings.useReverb)
 			{
-				_settings.useReverb = !_settings.useReverb;
+				_guitarSettings.useReverb = !_guitarSettings.useReverb;
 				useReverbToggle.isOn = !useReverbToggle.isOn;
 			}
 			
@@ -42,7 +43,7 @@ namespace RJWS.Audio.UI
 			foreach (KeyValuePair<EPluckerType, string> kvp in  _dropdownTextMap)
 			{
 				options.Add( new UnityEngine.UI.Dropdown.OptionData( kvp.Value, null ) );
-				if (kvp.Key == _settings.pluckerType)
+				if (kvp.Key == _guitarSettings.pluckerType)
 				{
 					dropDownIndex = index;
 				}
@@ -52,7 +53,7 @@ namespace RJWS.Audio.UI
 
 			if (dropDownIndex == -1)
 			{
-				Debug.LogErrorFormat( "Couldn;t find in dropdown: {0} => {1}", _settings.pluckerType, _dropdownTextMap[_settings.pluckerType] );
+				Debug.LogErrorFormat( "Couldn;t find in dropdown: {0} => {1}", _guitarSettings.pluckerType, _dropdownTextMap[_guitarSettings.pluckerType] );
 			}
 			else
 			{
@@ -64,7 +65,7 @@ namespace RJWS.Audio.UI
 
 		private void SetAttenuationText()
 		{
-			attenuationInputField.text = _settings.attenuation.ToString();
+			attenuationInputField.text = _guitarSettings.attenuation.ToString();
 		}
 
 		public void OnAttenuationTextEndEdit()
@@ -73,12 +74,12 @@ namespace RJWS.Audio.UI
 			float f;
 			if (float.TryParse(s, out f))
 			{
-				if (!Mathf.Approximately(f, _settings.attenuation))
+				if (!Mathf.Approximately(f, _guitarSettings.attenuation))
 				{
 					if (f < 1f && f > Core.Audio.AudioConsts.MIN_GUITAR_ATTENUATION)
 					{
-						Debug.LogFormat( "Changing attenuation from {0} to {1}", _settings.attenuation, f );
-						_settings.attenuation = f;
+						Debug.LogFormat( "Changing attenuation from {0} to {1}", _guitarSettings.attenuation, f );
+						_guitarSettings.attenuation = f;
 						if (_onSettingsChangedAction != null)
 						{
 							_onSettingsChangedAction( );
@@ -99,8 +100,8 @@ namespace RJWS.Audio.UI
 
 		public void OnReverbToggleChanged()
 		{
-			_settings.useReverb = !_settings.useReverb;
-			Debug.LogFormat( "Changing user reverb from {0} to {1}", !_settings.useReverb, _settings.useReverb );
+			_guitarSettings.useReverb = !_guitarSettings.useReverb;
+			Debug.LogFormat( "Changing user reverb from {0} to {1}", !_guitarSettings.useReverb, _guitarSettings.useReverb );
 			if (_onSettingsChangedAction != null)
 			{
 				_onSettingsChangedAction( );
@@ -114,17 +115,17 @@ namespace RJWS.Audio.UI
 			string pt = pluckerTypeDropDown.options[pluckerTypeDropDown.value].text;
 			if (pt == _dropdownTextMap[EPluckerType.BasicDrag])
 			{
-				if (_settings.pluckerType != EPluckerType.BasicDrag)
+				if (_guitarSettings.pluckerType != EPluckerType.BasicDrag)
 				{
-					_settings.pluckerType = EPluckerType.BasicDrag;
+					_guitarSettings.pluckerType = EPluckerType.BasicDrag;
 					changed = true;
 				}
 			}
 			else if (pt == _dropdownTextMap[EPluckerType.BasicUp])
 			{
-				if (_settings.pluckerType != EPluckerType.BasicUp)
+				if (_guitarSettings.pluckerType != EPluckerType.BasicUp)
 				{
-					_settings.pluckerType = EPluckerType.BasicUp;
+					_guitarSettings.pluckerType = EPluckerType.BasicUp;
 					changed = true;
 				}
 			}
@@ -134,7 +135,7 @@ namespace RJWS.Audio.UI
 				{
 					_onSettingsChangedAction( );
 				}
-				Debug.LogFormat( "Changed plucker type to {0}", _settings.pluckerType );
+				Debug.LogFormat( "Changed plucker type to {0}", _guitarSettings.pluckerType );
 			}
 		}
 

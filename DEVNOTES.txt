@@ -15,8 +15,11 @@ Guitar note to frequency etc
 Slide
 Damping
 
+
 ---------------
 GRAPH
+
+Scaled connector and point sizes
 
 Revisit connector sizes!
 

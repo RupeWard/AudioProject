@@ -6,6 +6,7 @@ namespace RJWS.Audio.UI
 	public class GuitarSettingsPanel : MonoBehaviour
 	{
 		private GuitarSettings _settings;
+		private PluckSettings _pluckSettings;
 
 		public UnityEngine.UI.InputField attenuationInputField;
 		public UnityEngine.UI.Toggle useReverbToggle;
@@ -21,10 +22,11 @@ namespace RJWS.Audio.UI
 			{ EPluckerType.BasicUp, "B-Up" }
 		};
 
-		public void Init( GuitarSettings gs, System.Action osa)
+		public void Init( GuitarSettings gs, PluckSettings ps, System.Action osa)
 		{
-
 			_settings = gs;
+			_pluckSettings = ps;
+
 			_onSettingsChangedAction = osa;
 
 			pluckSettingsButton.SetActive( _settings.pluckerType == EPluckerType.BasicDrag );
@@ -156,7 +158,7 @@ namespace RJWS.Audio.UI
 
 		public void HandlePluckSettingsButton()
 		{
-			pluckSettingsPanel.Init( this, _settings,  DoOnSettingsChangeAction);
+			pluckSettingsPanel.Init( this, _pluckSettings, _settings,  DoOnSettingsChangeAction);
 		}
 
 		public void HandleDoneButton()

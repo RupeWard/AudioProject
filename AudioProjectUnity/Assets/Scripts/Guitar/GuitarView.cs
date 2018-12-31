@@ -28,6 +28,7 @@ namespace RJWS.Audio
 		public EPluckerType pluckerType;
 
 		public GuitarSettings guitarSettings;
+		public PluckSettings pluckSettings;
 
 		public float FretLength
 		{
@@ -97,6 +98,7 @@ namespace RJWS.Audio
 		{
 			cachedTransform = transform;
 			GuitarSettings.LoadDefaultsIfNUll( ref guitarSettings );
+			PluckSettings.LoadDefaultsIfNUll( ref pluckSettings );
 		}
 
 		public void Init(GuitarModel model)

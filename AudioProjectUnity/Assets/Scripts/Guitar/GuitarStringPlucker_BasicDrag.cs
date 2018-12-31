@@ -55,7 +55,7 @@ namespace RJWS.Audio
 			RaycastHit hitInfo;
 			if (Physics.Raycast( Camera.main.ScreenPointToRay( data.position ), out hitInfo, 100, _stringLayerMask ))
 			{
-				if (hitInfo.collider.gameObject == _stringView.stringObject)
+				if (reason == EXIT_REASON || hitInfo.collider.gameObject == _stringView.stringObject)
 				{
 					float d = 0f;
 					fret = _stringView.guitarView.GetFretForWorldX( hitInfo.point.x, ref d );
@@ -141,7 +141,22 @@ namespace RJWS.Audio
 				}
 			}
 
+			
 		}
 
+		public override void OnDrag( PointerEventData eventData )
+		{
+			Debug.Log( "Drag" );
+		}
+
+		public override void OnBeginDrag( PointerEventData eventData )
+		{
+			Debug.Log( "BeginDrag" );
+		}
+
+		public override void OnEndDrag( PointerEventData eventData )
+		{
+			Debug.Log( "EndDrag" );
+		}
 	}
 }

@@ -25,9 +25,11 @@ namespace RJWS.Audio
 		private void Awake( )
 		{
 			cachedTransform = transform;
+			_stringCollider = stringObject.GetComponent<CapsuleCollider>( );
 		}
 
 		public GameObject stringObject;
+		private CapsuleCollider _stringCollider;
 
 		public AudioStringBehaviour stringBehaviour
 		{
@@ -63,7 +65,18 @@ namespace RJWS.Audio
 			pluckerType = gv.pluckerType;
 			guitarView = gv;
 			stringBehaviour = model.GetString( stringNum );
+			
 			stringObject.transform.localScale = guitarView.StringDims;
+
+			float maxRad = 0.5f * guitarView.stringSeparation / guitarView.stringWidth;
+			float collW = Mathf.Lerp( 1f, maxRad, guitarView.guitarSettings.stringColliderSize );
+
+			if (collW < 1f)
+			{
+				Debug.LogWarningFormat( "Collider too small at {0} = lerp(1f, {1}, {2}", collW, maxRad, guitarView.guitarSettings.stringColliderSize );
+				collW = 1f;
+			}
+			_stringCollider.radius = collW;
 
 			gameObject.SetActive( true );
 

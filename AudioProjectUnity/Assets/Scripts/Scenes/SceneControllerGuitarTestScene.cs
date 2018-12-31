@@ -10,6 +10,7 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 	public bool debugMe = true;
 
 	public RJWS.Audio.UI.GuitarSettingsPanel guitarSettingsPanel;
+	public RJWS.Audio.UI.PluckSettingsPanel pluckSettingsPanel;
 
 	public RectTransform buttonsPanel;
 	
@@ -56,7 +57,7 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 
 	public void HandleGuitarSettingsButton( )
 	{
-		guitarSettingsPanel.Init( guitarView.guitarSettings, guitarView.ApplySettings );
+		guitarSettingsPanel.Init( guitarView.guitarSettings, guitarView.pluckSettings, guitarView.ApplySettings );
 	}
 
 	public void HandlePosButton()
