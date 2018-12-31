@@ -1,5 +1,7 @@
 GUITAR
 
+Scrollable panel scrollbar size
+
 Drag plucker
 
 Amplitude/attenuation variation

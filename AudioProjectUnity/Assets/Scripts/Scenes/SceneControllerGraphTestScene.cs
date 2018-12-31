@@ -22,6 +22,8 @@ public class SceneControllerGraphTestScene : SceneController_Base
 	private GraphPanelDisplay _graphViewPanel;
 	public GameObject graphViewPanelPrefab;
 
+	public float minScrollFraction = 0.1f;
+
 	public AudioClip[] testAudioClips = new AudioClip[2];
 
 	private RJWS.UI.FileSystemFileChooser _fileChooser;
@@ -75,6 +77,13 @@ public class SceneControllerGraphTestScene : SceneController_Base
 		{
 			scrollablePanelSettings = _scrollablePanel.settings.Clone<ScrollablePanelSettings>( );
 		}
+
+		float scrollW = Mathf.Max( _scrollablePanel.settings.scrollSettings.horizontal.width, _scrollablePanel.settings.scrollSettings.vertical.width);
+		scrollW = Mathf.Max( scrollW, minScrollFraction * Screen.width, minScrollFraction * Screen.height);
+		scrollablePanelSettings = _scrollablePanel.settings.Clone<ScrollablePanelSettings>( );
+
+		_scrollablePanel.settings.scrollSettings.horizontal.width = _scrollablePanel.settings.scrollSettings.vertical.width = scrollW;
+
 		_scrollablePanel.Init( );
 
 		_graphViewPanel = null;
