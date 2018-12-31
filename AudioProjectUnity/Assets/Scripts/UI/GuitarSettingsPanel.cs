@@ -15,8 +15,8 @@ namespace RJWS.Audio.UI
 
 		private Dictionary<EPluckerType, string> _dropdownTextMap = new Dictionary<EPluckerType, string>( )
 		{
-			{ EPluckerType.BasicDrag, "Drag" },
-			{ EPluckerType.BasicUp, "Up" }
+			{ EPluckerType.BasicDrag, "B-Drag" },
+			{ EPluckerType.BasicUp, "B-Up" }
 		};
 
 		public void Init(GuitarSettings gs, System.Action osa)
@@ -32,23 +32,29 @@ namespace RJWS.Audio.UI
 				_settings.useReverb = !_settings.useReverb;
 				useReverbToggle.isOn = !useReverbToggle.isOn;
 			}
+			
+			List<UnityEngine.UI.Dropdown.OptionData> options = new List<UnityEngine.UI.Dropdown.OptionData>( );
 
-			int index = -1;
-			for (int i = 0; i < pluckerTypeDropDown.options.Count; i++)
+			int index = 0;
+			int dropDownIndex = -1;
+			foreach (KeyValuePair<EPluckerType, string> kvp in  _dropdownTextMap)
 			{
-				if (_dropdownTextMap[_settings.pluckerType] == pluckerTypeDropDown.options[i].text)
+				options.Add( new UnityEngine.UI.Dropdown.OptionData( kvp.Value, null ) );
+				if (kvp.Key == _settings.pluckerType)
 				{
-					index = i;
-					break;
+					dropDownIndex = index;
 				}
+				index++;
 			}
-			if (index == -1)
+			pluckerTypeDropDown.options = options;
+
+			if (dropDownIndex == -1)
 			{
 				Debug.LogErrorFormat( "Couldn;t find in dropdown: {0} => {1}", _settings.pluckerType, _dropdownTextMap[_settings.pluckerType] );
 			}
 			else
 			{
-				pluckerTypeDropDown.value = index;
+				pluckerTypeDropDown.value = dropDownIndex;
 			}
 		}
 
