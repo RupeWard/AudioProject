@@ -26,10 +26,14 @@ namespace RJWS.Audio
 		{
 			cachedTransform = transform;
 			_stringCollider = stringObject.GetComponent<CapsuleCollider>( );
+			_stringRenderer = stringObject.GetComponent<MeshRenderer>( );
+            _stringMaterial =  new Material(_stringRenderer.material);
+			_stringRenderer.material = _stringMaterial;
 		}
 
 		public GameObject stringObject;
 		private CapsuleCollider _stringCollider;
+		private MeshRenderer _stringRenderer;
 
 		public AudioStringBehaviour stringBehaviour
 		{
@@ -43,7 +47,24 @@ namespace RJWS.Audio
 			private set;
 		}
 
+		private Material _stringMaterial;
+
 		IGuitarStringPlucker _plucker;
+
+		private void Update()
+		{
+			if (stringBehaviour != null)
+			{
+				if (stringBehaviour.Amplitude( ) > 0f)
+				{
+					_stringMaterial.color = Color.Lerp( guitarView.guitarSettings.minVolColour, guitarView.guitarSettings.maxVolColour, stringBehaviour.Amplitude( ) / 0.5f );
+				}
+				else
+				{
+					_stringMaterial.color = guitarView.guitarSettings.idleColour;
+				}
+			}
+		}
 
 		public EPluckerType pluckerType = EPluckerType.BasicUp;
 		public void ChangePluckerType(EPluckerType p)

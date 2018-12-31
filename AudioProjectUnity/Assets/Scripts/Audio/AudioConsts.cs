@@ -11,7 +11,9 @@ namespace RJWS.Core.Audio
         public static readonly float CONCERT_C = CONCERT_A * Mathf.Pow( FRET_FACTOR, 3.0f );
 		public const float DEFAULT_GUITAR_ATTENUATION = 0.994f;
 		public const float MIN_GUITAR_ATTENUATION = 0.9f;
-		
+		public const float MAX_PLUCK_GAMMA = 10f;
+		public const float MAX_VOLUME = 1f;
+
 		static public readonly List<float> s_standardGuitarTuning = new List<float>( )
 		{
 			329.63f,

@@ -130,6 +130,18 @@ namespace RJWS.Audio
 
 		private System.Text.StringBuilder _debugSB = new System.Text.StringBuilder( );
 
+		public float Amplitude()
+		{
+			if (audioSource.isPlaying && _string != null && _string.ringbuffer != null)
+			{
+				return _string.ringbuffer.Amplitude;
+			}
+			else
+			{
+				return 0f;
+			}
+		}
+
 		public void Kill()
 		{
 			if (debugMe)

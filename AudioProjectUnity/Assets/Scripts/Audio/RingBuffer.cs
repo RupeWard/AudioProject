@@ -76,7 +76,7 @@ namespace RJWS.Core.Audio
 			get { return NumQueued >= _capacity; } 
 		}
 
-		public void Enqueue(T d)
+		virtual public void Enqueue(T d)
 		{
 			if (IsFull)
 			{
@@ -112,7 +112,7 @@ namespace RJWS.Core.Audio
 			}
 		}
 
-		public void Clear()
+		virtual public void Clear()
 		{
 			_first = new CyclicIndex( _capacity );
 			_last = new CyclicIndex( _capacity );

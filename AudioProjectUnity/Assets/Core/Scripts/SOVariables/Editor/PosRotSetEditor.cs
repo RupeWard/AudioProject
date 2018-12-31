@@ -8,11 +8,8 @@ namespace RJWS.Core.SOVariables
 	[CustomEditor (typeof (PosRotSet))]
 	public class PosRotSetEditor : Editor
 	{
-		private SerializedObject obj;
-
 		public void OnEnable( )
 		{
-			obj = new SerializedObject( target );
 		}
 
 		public override void OnInspectorGUI( )

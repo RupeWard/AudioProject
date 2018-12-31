@@ -53,9 +53,8 @@ namespace RJWS.Audio
 
 			int fret = 0;
 			RaycastHit hitInfo;
-			if (Physics.Raycast( Camera.main.ScreenPointToRay( data.position ), out hitInfo, 100, _stringLayerMask ))
+			if (Physics.Raycast( Camera.main.ScreenPointToRay( data.position ), out hitInfo, 100, _fretboardLayerMask))
 			{
-				if (reason == EXIT_REASON || hitInfo.collider.gameObject == _stringView.stringObject)
 				{
 					float d = 0f;
 					fret = _stringView.guitarView.GetFretForWorldX( hitInfo.point.x, ref d );
@@ -65,8 +64,8 @@ namespace RJWS.Audio
 					float speed = distance / elapsed;
 
 					float volume = _stringView.guitarView.pluckSettings.GetVolumeForSpeed( speed );
+					_stringView.stringBehaviour.Pluck( volume, fret );
 
-					_stringView.stringBehaviour.Pluck(volume, fret );
 					if (_debug)
 					{
 						Debug.LogWarningFormat( "({6}) String Hit {0} at {1} which is Fret {2} at d = {3}... T = {4}, D = {5}. Speed = {7} => Volume = {8}",
@@ -80,14 +79,10 @@ namespace RJWS.Audio
 							volume);
 					}
 				}
-				else
-				{
-					Debug.LogErrorFormat( "({3}) Object mismatch when String Hit {0} at {1} as detected on {2}", hitInfo.collider.transform.GetPathInHierarchy( ), hitInfo.point, _stringView.gameObject.name, reason );
-				}
 			}
 		}
 
-		
+
 		public override void OnPointerDown( UnityEngine.EventSystems.PointerEventData data )
 		{
 			if (_debug)
@@ -117,9 +112,8 @@ namespace RJWS.Audio
 			}
 			int fret = 0;
 			RaycastHit hitInfo;
-			if (Physics.Raycast( Camera.main.ScreenPointToRay( data.position ), out hitInfo, 100, _stringLayerMask ))
+			if (Physics.Raycast( Camera.main.ScreenPointToRay( data.position ), out hitInfo, 100, _fretboardLayerMask ))
 			{
-				if (hitInfo.collider.gameObject == _stringView.stringObject)
 				{
 					float d = 0f;
 					fret = _stringView.guitarView.GetFretForWorldX( hitInfo.point.x, ref d );
@@ -137,16 +131,7 @@ namespace RJWS.Audio
 							reason);
 					}
 				}
-				else
-				{
-					Debug.LogErrorFormat( "({3}) Object mismatch when String Hit {0} at {1} as detected by {2}", 
-						hitInfo.collider.transform.GetPathInHierarchy( ), 
-						hitInfo.point, _stringView.gameObject.name,
-						reason);
-				}
 			}
-
-			
 		}
 
 		public override void OnDrag( PointerEventData eventData )

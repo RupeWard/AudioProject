@@ -9,77 +9,51 @@ namespace RJWS.Audio.UI
 		private PluckSettings _pluckSettings;
 		private GuitarSettingsPanel _settingsPanel;
 
-		public UnityEngine.UI.InputField attenuationInputField;
-		public UnityEngine.UI.Toggle useReverbToggle;
-		public UnityEngine.UI.Dropdown pluckerTypeDropDown;
+		public UnityEngine.UI.InputField gammaInputField;
+		public UnityEngine.UI.InputField volRangeMinInputField;
+		public UnityEngine.UI.InputField speedRangeMinInputField;
+		public UnityEngine.UI.InputField volRangeMaxInputField;
+		public UnityEngine.UI.InputField speedRangeMaxInputField;
 
 		public System.Action _onSettingsChangedAction;
-
-		private Dictionary<EPluckerType, string> _dropdownTextMap = new Dictionary<EPluckerType, string>( )
-		{
-			{ EPluckerType.BasicDrag, "B-Drag" },
-			{ EPluckerType.BasicUp, "B-Up" }
-		};
 
 		public void Init( GuitarSettingsPanel gsp, PluckSettings psp, GuitarSettings gs, System.Action osa)
 		{
 			_settingsPanel = gsp;
 			_guitarSettings = gs;
+			_pluckSettings = psp;
+
 			_onSettingsChangedAction = osa;
 
 			gameObject.SetActive( true );
 
-			SetAttenuationText( );
-			if (useReverbToggle.isOn != _guitarSettings.useReverb)
-			{
-				_guitarSettings.useReverb = !_guitarSettings.useReverb;
-				useReverbToggle.isOn = !useReverbToggle.isOn;
-			}
-			
-			List<UnityEngine.UI.Dropdown.OptionData> options = new List<UnityEngine.UI.Dropdown.OptionData>( );
-
-			int index = 0;
-			int dropDownIndex = -1;
-			foreach (KeyValuePair<EPluckerType, string> kvp in  _dropdownTextMap)
-			{
-				options.Add( new UnityEngine.UI.Dropdown.OptionData( kvp.Value, null ) );
-				if (kvp.Key == _guitarSettings.pluckerType)
-				{
-					dropDownIndex = index;
-				}
-				index++;
-			}
-			pluckerTypeDropDown.options = options;
-
-			if (dropDownIndex == -1)
-			{
-				Debug.LogErrorFormat( "Couldn;t find in dropdown: {0} => {1}", _guitarSettings.pluckerType, _dropdownTextMap[_guitarSettings.pluckerType] );
-			}
-			else
-			{
-				pluckerTypeDropDown.value = dropDownIndex;
-			}
+			SetGammaText( );
+			SetVolumeMinText( );
+			SetVolumeMaxText( );
+			SetSpeedMinText( );
+			SetSpeedMaxText( );
+	
 		}
 
 		public bool debugMe = true;
 
-		private void SetAttenuationText()
+		private void SetGammaText()
 		{
-			attenuationInputField.text = _guitarSettings.attenuation.ToString();
+			gammaInputField.text = _pluckSettings.gamma.ToString();
 		}
 
-		public void OnAttenuationTextEndEdit()
+		public void OnGammaTextEndEdit()
 		{
-			string s = attenuationInputField.text;
+			string s = gammaInputField.text;
 			float f;
 			if (float.TryParse(s, out f))
 			{
-				if (!Mathf.Approximately(f, _guitarSettings.attenuation))
+				if (!Mathf.Approximately(f, _pluckSettings.gamma))
 				{
-					if (f < 1f && f > Core.Audio.AudioConsts.MIN_GUITAR_ATTENUATION)
+					if (f <= Core.Audio.AudioConsts.MAX_PLUCK_GAMMA && f >= -1f * Core.Audio.AudioConsts.MAX_PLUCK_GAMMA)
 					{
-						Debug.LogFormat( "Changing attenuation from {0} to {1}", _guitarSettings.attenuation, f );
-						_guitarSettings.attenuation = f;
+						Debug.LogFormat( "Changing gamma from {0} to {1}", _pluckSettings.gamma, f );
+						_pluckSettings.gamma = f;
 						if (_onSettingsChangedAction != null)
 						{
 							_onSettingsChangedAction( );
@@ -95,49 +69,150 @@ namespace RJWS.Audio.UI
 			{
 				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
 			}
-			SetAttenuationText( );
+			SetGammaText( );
 		}
 
-		public void OnReverbToggleChanged()
+		private void SetVolumeMinText( )
 		{
-			_guitarSettings.useReverb = !_guitarSettings.useReverb;
-			Debug.LogFormat( "Changing user reverb from {0} to {1}", !_guitarSettings.useReverb, _guitarSettings.useReverb );
-			if (_onSettingsChangedAction != null)
-			{
-				_onSettingsChangedAction( );
-			}
+			volRangeMinInputField.text = _pluckSettings.volumeRange.x.ToString( );
 		}
 
-		public void OnPluckerTypeDropDownChanged(int i)
+		public void OnVolumeMinTextEndEdit( )
 		{
-			bool changed = false;
-
-			string pt = pluckerTypeDropDown.options[pluckerTypeDropDown.value].text;
-			if (pt == _dropdownTextMap[EPluckerType.BasicDrag])
+			string s = volRangeMinInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
 			{
-				if (_guitarSettings.pluckerType != EPluckerType.BasicDrag)
+				if (!Mathf.Approximately( f, _pluckSettings.volumeRange.x))
 				{
-					_guitarSettings.pluckerType = EPluckerType.BasicDrag;
-					changed = true;
+					if (f <= _pluckSettings.volumeRange.y && f >= 0f)
+					{
+						Debug.LogFormat( "Changing volRangeMin from {0} to {1}", _pluckSettings.volumeRange.x, f );
+						_pluckSettings.volumeRange.x = f;
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+					}
+					else
+					{
+						Debug.LogWarningFormat( "VolMin out of range: {0}", f );
+					}
 				}
 			}
-			else if (pt == _dropdownTextMap[EPluckerType.BasicUp])
+			else
 			{
-				if (_guitarSettings.pluckerType != EPluckerType.BasicUp)
-				{
-					_guitarSettings.pluckerType = EPluckerType.BasicUp;
-					changed = true;
-				}
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
 			}
-			if (changed)
-			{
-				if (_onSettingsChangedAction != null)
-				{
-					_onSettingsChangedAction( );
-				}
-				Debug.LogFormat( "Changed plucker type to {0}", _guitarSettings.pluckerType );
-			}
+			SetVolumeMinText( );
 		}
+
+		private void SetVolumeMaxText( )
+		{
+			volRangeMaxInputField.text = _pluckSettings.volumeRange.y.ToString( );
+		}
+
+		public void OnVolumeMaxTextEndEdit( )
+		{
+			string s = volRangeMaxInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
+			{
+				if (!Mathf.Approximately( f, _pluckSettings.volumeRange.y ))
+				{
+					if (f >= _pluckSettings.volumeRange.x && f < Core.Audio.AudioConsts.MAX_VOLUME)
+					{
+						Debug.LogFormat( "Changing volRangeMax from {0} to {1}", _pluckSettings.volumeRange.y, f );
+						_pluckSettings.volumeRange.y = f;
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+					}
+					else
+					{
+						Debug.LogWarningFormat( "VolMax out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetVolumeMaxText( );
+		}
+
+
+		private void SetSpeedMinText( )
+		{
+			speedRangeMinInputField.text = _pluckSettings.speedRange.x.ToString( );
+		}
+
+		public void OnSpeedMinTextEndEdit( )
+		{
+			string s = speedRangeMinInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
+			{
+				if (!Mathf.Approximately( f, _pluckSettings.speedRange.x ))
+				{
+					if (f <= _pluckSettings.speedRange.y && f >= 0f)
+					{
+						Debug.LogFormat( "Changing speedRangeMin from {0} to {1}", _pluckSettings.speedRange.x, f );
+						_pluckSettings.speedRange.x = f;
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+					}
+					else
+					{
+						Debug.LogWarningFormat( "SpeedMin out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetSpeedMinText( );
+		}
+
+		private void SetSpeedMaxText( )
+		{
+			speedRangeMaxInputField.text = _pluckSettings.speedRange.y.ToString( );
+		}
+
+		public void OnSpeedMaxTextEndEdit( )
+		{
+			string s = speedRangeMaxInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
+			{
+				if (!Mathf.Approximately( f, _pluckSettings.speedRange.y ))
+				{
+					if (f >= _pluckSettings.speedRange.x && f < 1000f)
+					{
+						Debug.LogFormat( "Changing speedRangeMax from {0} to {1}", _pluckSettings.speedRange.y, f );
+						_pluckSettings.speedRange.y = f;
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+					}
+					else
+					{
+						Debug.LogWarningFormat( "SpeedMax out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetSpeedMaxText( );
+		}
+
 
 		public void HandleDoneButton()
 		{
