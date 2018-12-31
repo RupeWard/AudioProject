@@ -1,7 +1,5 @@
 GUITAR
 
-Scrollable panel scrollbar size
-
 Drag plucker
 
 Amplitude/attenuation variation
@@ -9,6 +7,7 @@ Phone test build
 
 Persist settings?
 Camera view options
+- Animate
 
 Guitar Tuning class
 Guitar note to frequency etc

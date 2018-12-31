@@ -72,16 +72,23 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 
 	private void SetCameraPos(ECamerPos pos)
 	{
+		cameraTransform.DOKill( );
+
+		RJWS.Core.Maths.PosRot pr = null;
+		 
 		if (pos == ECamerPos.Far)
 		{
-			cameraTransform.SetWorldPose( farCameraPos.Value );
 			_cameraPos = ECamerPos.Far;
+			pr = farCameraPos.Value;
 		}
 		else if (pos == ECamerPos.Bridge)
 		{
-			cameraTransform.SetWorldPose( bridgeCameraPos.Value );
 			_cameraPos = ECamerPos.Bridge;
+			pr = bridgeCameraPos.Value;
 		}
+
+		cameraTransform.DOMove( pr.position, tweenDuration ).SetEase(Ease.InOutQuad);
+		cameraTransform.DORotate( pr.rotation.eulerAngles, tweenDuration ).SetEase( Ease.InOutQuad );
 	}
 
 	#endregion event handlers
