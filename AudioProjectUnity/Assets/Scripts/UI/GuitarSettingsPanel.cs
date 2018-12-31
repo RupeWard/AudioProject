@@ -1,53 +1,137 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace RJWS.Audio.UI
 {
 	public class GuitarSettingsPanel : MonoBehaviour
 	{
-		public void Init()
+		private GuitarSettings _settings;
+
+		public UnityEngine.UI.InputField attenuationInputField;
+		public UnityEngine.UI.Toggle useReverbToggle;
+		public UnityEngine.UI.Dropdown pluckerTypeDropDown;
+
+		public System.Action _onSettingsChangedAction;
+
+		private Dictionary<EPluckerType, string> _dropdownTextMap = new Dictionary<EPluckerType, string>( )
 		{
+			{ EPluckerType.BasicDrag, "Drag" },
+			{ EPluckerType.BasicUp, "Up" }
+		};
+
+		public void Init(GuitarSettings gs, System.Action osa)
+		{
+			_settings = gs;
+			_onSettingsChangedAction = osa;
+
 			gameObject.SetActive( true );
-		}
-		/*
-		public void Init(AudioStringBehaviour audios, System.Action<AudioStringBehaviour> oda)
-		{
-			_audioStringBehaviour = audios;
-			_onDoneAction = oda;
-			SetFreqInputText( );
-			SetAttenInputText( );
-			SetLowPassFreqCutOffInputText( );
-			if (reverbToggle.isOn != _audioStringBehaviour.UsingReverb)
+
+			SetAttenuationText( );
+			if (useReverbToggle.isOn != _settings.useReverb)
 			{
-				_audioStringBehaviour.UseReverb( !_audioStringBehaviour.UsingReverb );
-				reverbToggle.isOn = !reverbToggle.isOn;
+				_settings.useReverb = !_settings.useReverb;
+				useReverbToggle.isOn = !useReverbToggle.isOn;
 			}
-			gameObject.SetActive( true );
+
+			int index = -1;
+			for (int i = 0; i < pluckerTypeDropDown.options.Count; i++)
+			{
+				if (_dropdownTextMap[_settings.pluckerType] == pluckerTypeDropDown.options[i].text)
+				{
+					index = i;
+					break;
+				}
+			}
+			if (index == -1)
+			{
+				Debug.LogErrorFormat( "Couldn;t find in dropdown: {0} => {1}", _settings.pluckerType, _dropdownTextMap[_settings.pluckerType] );
+			}
+			else
+			{
+				pluckerTypeDropDown.value = index;
+			}
 		}
-		*/
 
 		public bool debugMe = true;
 
-
-		/*
-		public void HandleResetButton( )
+		private void SetAttenuationText()
 		{
-			_attenuation = RJWS.Core.Audio.KSRingBufferF.DEFAULT_GUITAR_ATTENUATION;
-			SetAttenInputText( );
-
-			_lowPassCutOffreq = RJWS.Audio.AudioStringBehaviour.DEFAULT_LOWPASSFREQ;
-			SetLowPassFreqCutOffInputText( );
-
-			_audioStringBehaviour.SetLowPassFrequency( _lowPassCutOffreq );
+			attenuationInputField.text = _settings.attenuation.ToString();
 		}
-		*/
+
+		public void OnAttenuationTextEndEdit()
+		{
+			string s = attenuationInputField.text;
+			float f;
+			if (float.TryParse(s, out f))
+			{
+				if (!Mathf.Approximately(f, _settings.attenuation))
+				{
+					if (f < 1f && f > Core.Audio.AudioConsts.MIN_GUITAR_ATTENUATION)
+					{
+						Debug.LogFormat( "Changing attenuation from {0} to {1}", _settings.attenuation, f );
+						_settings.attenuation = f;
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+					}
+					else
+					{
+						Debug.LogWarningFormat( "Attenuation out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetAttenuationText( );
+		}
+
+		public void OnReverbToggleChanged()
+		{
+			_settings.useReverb = !_settings.useReverb;
+			Debug.LogFormat( "Changing user reverb from {0} to {1}", !_settings.useReverb, _settings.useReverb );
+			if (_onSettingsChangedAction != null)
+			{
+				_onSettingsChangedAction( );
+			}
+		}
+
+		public void OnPluckerTypeDropDownChanged(int i)
+		{
+			bool changed = false;
+
+			string pt = pluckerTypeDropDown.options[pluckerTypeDropDown.value].text;
+			if (pt == _dropdownTextMap[EPluckerType.BasicDrag])
+			{
+				if (_settings.pluckerType != EPluckerType.BasicDrag)
+				{
+					_settings.pluckerType = EPluckerType.BasicDrag;
+					changed = true;
+				}
+			}
+			else if (pt == _dropdownTextMap[EPluckerType.BasicUp])
+			{
+				if (_settings.pluckerType != EPluckerType.BasicUp)
+				{
+					_settings.pluckerType = EPluckerType.BasicUp;
+					changed = true;
+				}
+			}
+			if (changed)
+			{
+				if (_onSettingsChangedAction != null)
+				{
+					_onSettingsChangedAction( );
+				}
+				Debug.LogFormat( "Changed plucker type to {0}", _settings.pluckerType );
+			}
+		}
+
 		public void HandleDoneButton()
 		{
-			/*
-			if (_onDoneAction != null)
-			{
-				_onDoneAction( _audioStringBehaviour);
-			}
-			*/
 			gameObject.SetActive( false );
 		}
 	}

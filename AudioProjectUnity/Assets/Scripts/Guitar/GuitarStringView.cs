@@ -51,6 +51,10 @@ namespace RJWS.Audio
 				pluckerType = p;
 				MakePlucker( );
 			}
+			else
+			{
+				Debug.LogFormat( "Not changing: plucker lready of type {0}", p );
+			}
 		}
 
 		public void Init( GuitarView gv, GuitarModel model, int stringNum)
@@ -76,6 +80,7 @@ namespace RJWS.Audio
 		private void MakePlucker()
 		{
 			_plucker = PluckerHelpers.CreatePluckerOfType( pluckerType, this, debughit );
+			Debug.LogFormat( "Created plucker of type {0} for {1}", pluckerType, gameObject.name );
 		}
 
 		public void OnPointerClick( PointerEventData eventData )

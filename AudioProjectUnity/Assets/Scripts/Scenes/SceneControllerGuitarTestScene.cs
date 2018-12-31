@@ -55,7 +55,7 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 
 	public void HandleGuitarSettingsButton( )
 	{
-		guitarSettingsPanel.Init( );
+		guitarSettingsPanel.Init( guitarView.guitarSettings, guitarView.ApplySettings );
 	}
 
 	public void HandlePosButton()

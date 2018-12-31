@@ -119,6 +119,8 @@ namespace RJWS.Audio
 				gsv.cachedTransform.localPosition = new Vector3( 0f, i * stringSeparation, 0f );
 
 				gsv.Init( this, model, i );
+
+				_stringViews.Add( gsv );
 			}
 
 			if (_fretViews.Count > 0)
@@ -144,8 +146,12 @@ namespace RJWS.Audio
 			ApplySettings( );
 		}
 
-		private void ApplySettings()
+		public void ApplySettings()
 		{
+			if (DebugMe)
+			{
+				Debug.LogFormat( "Applying guitar settings to {0} strings", _stringViews.Count );
+			}
 			for (int i = 0; i < _stringViews.Count; i++)
 			{
 				_stringViews[i].ApplyGuitarSettings( guitarSettings );
