@@ -23,6 +23,8 @@ namespace RJWS.Core.Audio
 
 		private float _sum;
 
+		private float _zeroThreshold = Mathf.Epsilon;
+
 		private float _attenuation;
 		public void SetAttenuation(float f)
 		{
@@ -33,15 +35,36 @@ namespace RJWS.Core.Audio
 			_attenuation = f;
 		}
 
-		public KSRingBufferF(int c, float att )
-			: base( c )
+		public struct CtorParams
 		{
-			_sum = 0f;
-			if (att <= 0f || att >= 1f)
+			public int capacity;
+			public float attenuation;
+			public float zeroThreshold;
+		}
+
+		public KSRingBufferF(CtorParams cparams )
+			: base( cparams.capacity )
+		{
+			_zeroThreshold = Mathf.Epsilon;
+			if (cparams.zeroThreshold > 0f)
 			{
-				throw new System.Exception( "Attenuation range error: " + att );
+				if (cparams.zeroThreshold > 0.1f)
+				{
+					Debug.LogWarningFormat( "Invalid ZT: {0}", cparams.zeroThreshold );
+				}
+				else
+				{
+					_zeroThreshold = cparams.zeroThreshold;
+				}
 			}
-			_attenuation = att;
+			_sum = 0f;
+			if (cparams.attenuation <= 0f || cparams.attenuation >= 1f)
+			{
+				throw new System.Exception( "Attenuation range error: " + cparams.attenuation);
+			}
+			_attenuation = cparams.attenuation;
+
+			Debug.LogWarningFormat( "Created buffer with params: C={0}, A={1}, ZT={2}", cparams.capacity, cparams.attenuation, cparams.zeroThreshold );
 		}
 
 		/*
@@ -63,6 +86,10 @@ namespace RJWS.Core.Audio
 
 			float next = Peek( );
 			float newVal = _attenuation * 0.5f * (result + next);
+			if (Mathf.Abs(newVal) <= _zeroThreshold)
+			{
+				newVal = 0f;
+			}
             Enqueue( newVal );
 			return result;
 		}

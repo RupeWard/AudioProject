@@ -10,10 +10,13 @@ namespace RJWS.Audio
 
 		public AudioStringBehaviour stringPrefab;
 
+		public GuitarSettings guitarSettings;
+
 		private void Awake()
 		{
-		} 
-		
+			GuitarSettings.LoadDefaultsIfNUll( ref guitarSettings );
+		}
+
 		public void Init(List<float> freqs)
 		{
 			if (_strings != null)
@@ -37,6 +40,7 @@ namespace RJWS.Audio
 				newString.transform.SetParent( this.transform );
 				newString.gameObject.name = "String_" + i;
 				newString.SetFrequency(freqs[i]);
+				newString.SetZeroThreshold( guitarSettings.zeroThreshold );
 				newString.UseReverb( false );
 				_strings.Add( newString );
 			}

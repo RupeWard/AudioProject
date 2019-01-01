@@ -31,26 +31,43 @@ namespace RJWS.Audio
 		}
 
 		private int _maxFret = 12;
-
-		public AudioString(float f, float atten, int mf = -1, int sr = -1)
+	
+		public struct CtorParams
 		{
-			if (sr < 0)
+			public float openFrequency;
+			public float attenuation;
+			public int maxFret;
+			public int sampleRate;
+			public float zeroThreshold;
+		}
+
+
+		public AudioString(CtorParams cparams)
+		{
+			if (cparams.sampleRate <= 0)
 			{
-				sr = DEFAULT_SAMPLE_RATE;
+				cparams.sampleRate = DEFAULT_SAMPLE_RATE;
 			}
-			if (mf > 0)
+			if (cparams.maxFret > 0)
 			{
-				_maxFret = mf;
+				_maxFret = cparams.maxFret;
 			}
-			if (atten < 0f)
+			if (cparams.attenuation< 0f)
 			{
-				atten = Core.Audio.AudioConsts.DEFAULT_GUITAR_ATTENUATION;
+				cparams.attenuation = Core.Audio.AudioConsts.DEFAULT_GUITAR_ATTENUATION;
 			}
-			_openFrequency = f;
-			_sampleRate = sr;
+			_openFrequency = cparams.openFrequency;
+			_sampleRate = cparams.sampleRate;
 			
-			int c = Mathf.CeilToInt( (float)_sampleRate / f );
-			ringbuffer = new Core.Audio.KSRingBufferF( c, atten );
+			int c = Mathf.CeilToInt( (float)_sampleRate / _openFrequency );
+			ringbuffer = new Core.Audio.KSRingBufferF(
+				new Core.Audio.KSRingBufferF.CtorParams( )
+				{
+					capacity = c,
+					attenuation = cparams.attenuation,
+					zeroThreshold = cparams.zeroThreshold
+				} 
+			);
 		}
 
 		/*

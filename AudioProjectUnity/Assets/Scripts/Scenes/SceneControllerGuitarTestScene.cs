@@ -112,6 +112,7 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 	override protected void PostAwake()
 	{
 		guitarSettingsPanel.gameObject.SetActive( false );
+		pluckSettingsPanel.gameObject.SetActive( false );
 		buttonPanelOffPos = new Vector2(buttonsPanel.rect.width,0f);
 	}
 

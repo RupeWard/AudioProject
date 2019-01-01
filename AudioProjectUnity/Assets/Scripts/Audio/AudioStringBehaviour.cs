@@ -35,6 +35,12 @@ namespace RJWS.Audio
 			private set;
 		}
 
+		public float ZeroThreshold
+		{
+			get;
+			private set;
+		}
+
 		private void Awake()
 		{
 	        Frequency = openFrequency;
@@ -51,6 +57,14 @@ namespace RJWS.Audio
 			_generator = audioSource.GetComponent<RingBufferGeneratorFilter>( );
 			_lowPassFilter = audioSource.GetComponent<AudioLowPassFilter>( );
 			_reverbFilter = audioSource.GetComponent<AudioReverbFilter>( );
+		}
+
+		private void OnDisable( )
+		{
+			if (audioSource != null && audioSource.isPlaying)
+			{
+				audioSource.Stop( );
+			}
 		}
 
 		public void SetLowPassFrequency(float f)
@@ -92,6 +106,17 @@ namespace RJWS.Audio
 			}
 		}
 
+		public void SetZeroThreshold( float f )
+		{
+			{
+				ZeroThreshold = f;
+				if (onChangedAction != null)
+				{
+					onChangedAction( this );
+				}
+			}
+		}
+
 		public void SetAttenuation(float f)
 		{
 			if (f < Core.Audio.AudioConsts.MIN_GUITAR_ATTENUATION || f >= 1f)
@@ -104,25 +129,29 @@ namespace RJWS.Audio
 			}
 		}
 
-		public void Pluck( float volume, int fret = 0, float f = -1, float atten = -1)
+		public struct PluckData
+		{
+			float volume;
+			int fret;
+		}
+
+		public void Pluck( float volume, int fret = 0)
 		{
 			if (debugMe)
 			{
 				Debug.LogFormat( this, "{0}: Pluck( {1} ) ", gameObject.name, fret );
 			}
-			if (f != -1)
-			{
-				Frequency = f;
-			}
-			if (atten != -1)
-			{
-				Attenuation = atten;
-			}
 			Kill( );
 			audioSource.volume = volume;
 			audioSource.Play( );
 
-			_string = new AudioString( Frequency, Attenuation );
+			_string = new AudioString( 
+				new AudioString.CtorParams( )
+				{
+					openFrequency = Frequency,
+					attenuation = Attenuation,
+					zeroThreshold = ZeroThreshold
+				} );
 			
 			_string.Pluck(fret);
 			_generator.Init( _string.ringbuffer );

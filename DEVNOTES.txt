@@ -1,8 +1,6 @@
 GUITAR
 
-Gamma and limits to plucker settings panel
 Visual feedback 
-- string change colour
 - different colour for bridge
 
 Drag plucker

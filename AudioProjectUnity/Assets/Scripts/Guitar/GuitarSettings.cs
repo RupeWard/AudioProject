@@ -14,10 +14,16 @@ namespace RJWS.Audio
 		public bool useReverb = false;
 		public float attenuation = Core.Audio.AudioConsts.DEFAULT_GUITAR_ATTENUATION;
 		public float stringColliderSize = 1f; // 0 - 1
+		public float zeroThreshold = 0.01f;
+		public float minToColourString = 0.0001f;
 
 		public Color idleColour = Color.white;
 		public Color minVolColour = Color.yellow;
 		public Color maxVolColour = Color.red;
+
+		public Material bridgeMaterial;
+		public Material fretMaterial;
+		public Material stringMaterial;
 
 		private const string DEFSETTINGSPATH = "DefaultGuitarSettings";
 

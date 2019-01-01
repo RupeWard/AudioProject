@@ -27,8 +27,6 @@ namespace RJWS.Audio
 			cachedTransform = transform;
 			_stringCollider = stringObject.GetComponent<CapsuleCollider>( );
 			_stringRenderer = stringObject.GetComponent<MeshRenderer>( );
-            _stringMaterial =  new Material(_stringRenderer.material);
-			_stringRenderer.material = _stringMaterial;
 		}
 
 		public GameObject stringObject;
@@ -51,13 +49,24 @@ namespace RJWS.Audio
 
 		IGuitarStringPlucker _plucker;
 
+		private static readonly bool DEBUG_TONE = false;
+
 		private void Update()
 		{
 			if (stringBehaviour != null)
 			{
-				if (stringBehaviour.Amplitude( ) > 0f)
+				if (stringBehaviour.Amplitude( ) > guitarView.guitarSettings.minToColourString)
 				{
 					_stringMaterial.color = Color.Lerp( guitarView.guitarSettings.minVolColour, guitarView.guitarSettings.maxVolColour, stringBehaviour.Amplitude( ) / 0.5f );
+					if (DEBUG_TONE)
+					{
+						Debug.LogFormat( "({0}) - {1}: {2} - threshold = {3}",
+							Time.time,
+							gameObject.name,
+							stringBehaviour.Amplitude( ).ToString( "F6" ),
+							guitarView.guitarSettings.zeroThreshold
+							);
+					}
 				}
 				else
 				{
@@ -89,7 +98,12 @@ namespace RJWS.Audio
 			
 			stringObject.transform.localScale = guitarView.StringDims;
 
+			_stringMaterial =  new Material( guitarView.guitarSettings.stringMaterial );
+			_stringRenderer.material = _stringMaterial;
+
 			SetStringColliderSize( );
+
+			ApplyGuitarSettings( guitarView.guitarSettings);
 
 			gameObject.SetActive( true );
 
@@ -114,6 +128,7 @@ namespace RJWS.Audio
 			ChangePluckerType( gs.pluckerType );
 			stringBehaviour.UseReverb( gs.useReverb );
 			stringBehaviour.SetAttenuation( gs.attenuation );
+			stringBehaviour.SetZeroThreshold( gs.zeroThreshold );
 			SetStringColliderSize( );
 		}
 
