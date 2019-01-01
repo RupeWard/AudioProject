@@ -22,6 +22,8 @@ namespace RJWS.Audio
 			private set;
 		}
 
+		public RectTransform fretIndicatorRT;
+
 		private void Awake( )
 		{
 			cachedTransform = transform;
@@ -97,7 +99,7 @@ namespace RJWS.Audio
 			stringBehaviour = model.GetString( stringNum );
 			
 			stringObject.transform.localScale = guitarView.StringDims;
-
+			fretIndicatorRT.anchoredPosition = new Vector2( 0f, 1.025f ); // MAGIC NUMBER - DERIVE IT!
 			_stringMaterial =  new Material( guitarView.guitarSettings.stringMaterial );
 			_stringRenderer.material = _stringMaterial;
 

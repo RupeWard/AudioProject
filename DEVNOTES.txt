@@ -1,7 +1,14 @@
 GUITAR
 
-Visual feedback 
-- different colour for bridge
+Volume control
+Fret indicators
+- image per fret
+- show while sounding
+- store fret in string
+
+String damping
+
+Chord mode
 
 Drag plucker
 
