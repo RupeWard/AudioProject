@@ -151,6 +151,16 @@ namespace RJWS.Audio
 			int fret;
 		}
 
+		public int Fret
+		{
+			get { return _string.Fret; }
+		}
+
+		public bool IsDamped
+		{
+			get { return _string.IsDamped; }
+		}
+
 		public void Init(AudioString.CtorParams cparams)
 		{
 			Frequency = cparams.openFrequency;

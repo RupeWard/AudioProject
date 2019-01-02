@@ -20,6 +20,7 @@ namespace RJWS.Audio
 		public Color idleColour = Color.white;
 		public Color minVolColour = Color.yellow;
 		public Color maxVolColour = Color.red;
+		public Color dampedColour = Color.red;
 
 		public Material bridgeMaterial;
 		public Material fretMaterial;
@@ -27,6 +28,7 @@ namespace RJWS.Audio
 
 		public Texture2D[] fretMarkerSprites;
 		public Texture2D emptyMarkerSprite;
+		public Texture2D dampedMarkerSprite;
 
 		private const string DEFSETTINGSPATH = "DefaultGuitarSettings";
 
@@ -44,7 +46,7 @@ namespace RJWS.Audio
 		{			
 			if (fret < 0 || fret >= fretMarkerSprites.Length)
 			{
-				return emptyMarkerSprite;
+				return dampedMarkerSprite;
 			}
 			return fretMarkerSprites[fret];
 		}

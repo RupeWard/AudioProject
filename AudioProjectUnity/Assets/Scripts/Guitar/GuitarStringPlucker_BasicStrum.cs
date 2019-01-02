@@ -138,6 +138,24 @@ namespace RJWS.Audio
 					}
 					else
 					{
+						if (fret == 0)
+						{
+							if (_stringView.stringBehaviour.Fret == 0)
+							{
+								if (reason != DOWN_REASON)
+								{
+									return;
+								}
+								fret = -1;
+							}
+							else if (_stringView.stringBehaviour.IsDamped)
+							{
+								if (reason != DOWN_REASON)
+								{
+									return;
+								}
+							}
+						}
 						_stringView.stringBehaviour.SetFret( fret );
 					}
 
@@ -145,9 +163,37 @@ namespace RJWS.Audio
 			}
 		}
 
-		public override void OnDrag( PointerEventData eventData )
+		public override void OnDrag( PointerEventData data )
 		{
-			Debug.Log( "Drag" );
+			int fret = 0;
+			RaycastHit hitInfo;
+			if (Physics.Raycast( Camera.main.ScreenPointToRay( data.position ), out hitInfo, 100, _fretboardLayerMask ))
+			{
+				{
+					float d = 0f;
+					fret = _stringView.guitarView.GetFretForWorldX( hitInfo.point.x, ref d );
+
+					if (_debug)
+					{
+						Debug.LogWarningFormat( "STRUM () String Drag {0} at {1} which is Fret {2} at d = {3}",
+							hitInfo.collider.transform.GetPathInHierarchy( ),
+							hitInfo.point,
+							fret, d);
+					}
+					if (fret == int.MaxValue)
+					{
+						// do nothing
+					}
+					else
+					{
+						if (fret != _stringView.stringBehaviour.Fret)
+						{
+							_stringView.stringBehaviour.SetFret( fret );
+						}
+					}
+
+				}
+			}
 		}
 
 		public override void OnBeginDrag( PointerEventData eventData )

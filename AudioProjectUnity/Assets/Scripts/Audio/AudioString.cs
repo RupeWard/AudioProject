@@ -54,6 +54,18 @@ namespace RJWS.Audio
 			set;
 		}
 
+		private const int DAMPED_FRET = -1;
+
+		public void Dampen()
+		{
+			Fret = DAMPED_FRET;
+		}
+
+		public bool IsDamped
+		{
+			get { return _fret == DAMPED_FRET; }
+		}
+
 		private int _fret;
 		public int Fret
 		{
@@ -156,6 +168,10 @@ namespace RJWS.Audio
 			if (fret >= 0 && fret != int.MaxValue)
 			{
 				Fret = fret;
+			}
+			if (Fret == DAMPED_FRET)
+			{
+				return;
 			}
 			if (amplitude <= 0)
 			{

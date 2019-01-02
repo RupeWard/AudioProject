@@ -84,7 +84,12 @@ namespace RJWS.Audio
 		{
 			if (stringBehaviour != null)
 			{
-				if (stringBehaviour.Amplitude( ) > guitarView.guitarSettings.minToColourString)
+
+				if (stringBehaviour.IsDamped)
+				{
+					_stringMaterial.color = guitarView.guitarSettings.dampedColour;
+				}
+				else if (stringBehaviour.Amplitude( ) > guitarView.guitarSettings.minToColourString)
 				{
 					_stringMaterial.color = Color.Lerp( guitarView.guitarSettings.minVolColour, guitarView.guitarSettings.maxVolColour, stringBehaviour.Amplitude( ) / 0.5f );
 					if (DEBUG_TONE)
