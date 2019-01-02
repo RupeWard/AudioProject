@@ -39,8 +39,16 @@ namespace RJWS.Audio
 				AudioStringBehaviour newString = (Instantiate( stringPrefab.gameObject ) as GameObject).GetComponent<AudioStringBehaviour>( );
 				newString.transform.SetParent( this.transform );
 				newString.gameObject.name = "String_" + i;
-				newString.SetFrequency(freqs[i]);
-				newString.SetZeroThreshold( guitarSettings.zeroThreshold );
+				newString.Init(
+					new AudioString.CtorParams( )
+					{
+						openFrequency = freqs[i],
+						zeroThreshold = guitarSettings.zeroThreshold,
+						attenuation = guitarSettings.attenuation,
+						maxFret = 12
+					} );
+//				newString.SetFrequency(freqs[i]);
+//				newString.SetZeroThreshold( guitarSettings.zeroThreshold );
 				newString.UseReverb( false );
 				_strings.Add( newString );
 			}

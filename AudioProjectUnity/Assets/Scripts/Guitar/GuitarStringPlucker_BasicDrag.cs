@@ -66,7 +66,7 @@ namespace RJWS.Audio
 						float speed = distance / elapsed;
 
 						float volume = _stringView.guitarView.pluckSettings.GetVolumeForSpeed( speed );
-						_stringView.stringBehaviour.Pluck( volume, fret );
+						_stringView.stringBehaviour.Pluck( volume, (fret > 0)?(fret -1):(fret) );
 
 						if (_debug)
 						{

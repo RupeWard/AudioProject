@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using RJWS.Core.TransformExtensions;
-using System;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace RJWS.Audio
@@ -53,11 +52,30 @@ namespace RJWS.Audio
 
 		public UnityEngine.UI.Image fretMarkerImage;
 
+
 		public void SetFretMarker(int i)
 		{
 			Debug.LogWarningFormat( "{0} Changed fret to {1}", gameObject.name, i );
-			Texture2D sprite = guitarView.guitarSettings.FretMarker( i );
-			fretMarkerImage.sprite = Sprite.Create( sprite, fretMarkerImage.sprite.rect, fretMarkerImage.sprite.pivot);
+
+			fretMarkerImage.sprite = GetFretSprite( i );
+		}
+
+		private List<Sprite> _fretSprites = new List<Sprite>( );
+
+		private Sprite GetFretSprite(int i)
+		{
+			i++;
+			while (_fretSprites.Count < i+1)
+			{
+				_fretSprites.Add( null );
+			}
+			if (_fretSprites[i] == null)
+			{
+				Texture2D sprite = guitarView.guitarSettings.FretMarker( i-1 );
+				_fretSprites[i] = Sprite.Create( sprite,
+					fretMarkerImage.sprite.rect, fretMarkerImage.sprite.pivot );
+			}
+			return _fretSprites[i];
 		}
 
 		private static readonly bool DEBUG_TONE = false;
@@ -78,13 +96,35 @@ namespace RJWS.Audio
 							guitarView.guitarSettings.zeroThreshold
 							);
 					}
-					fretMarkerImage.enabled = true;
 				}
 				else
 				{
 					_stringMaterial.color = guitarView.guitarSettings.idleColour;
-					fretMarkerImage.enabled = false;
 				}
+				switch (pluckerType)
+				{
+					case EPluckerType.BasicDrag:
+					case EPluckerType.BasicUp:
+						{
+							if (stringBehaviour.Amplitude( ) > guitarView.guitarSettings.minToColourString)
+							{
+								fretMarkerImage.enabled = true;
+							}
+							else
+							{
+								fretMarkerImage.enabled = false;
+							}
+							break;
+						}
+					case EPluckerType.BasicStrum:
+                        {
+							fretMarkerImage.enabled = true;
+							break;
+						}
+					default:
+						break;
+				}
+
 			}
 		}
 
@@ -98,7 +138,7 @@ namespace RJWS.Audio
 			}
 			else
 			{
-				Debug.LogFormat( "Not changing: plucker lready of type {0}", p );
+//				Debug.LogFormat( "Not changing: plucker lready of type {0}", p );
 			}
 		}
 
@@ -116,6 +156,8 @@ namespace RJWS.Audio
 			_stringMaterial =  new Material( guitarView.guitarSettings.stringMaterial );
 			_stringRenderer.material = _stringMaterial;
 
+			SetFretMarker( 0 );
+
 			SetStringColliderSize( );
 
 			ApplyGuitarSettings( guitarView.guitarSettings);
@@ -128,6 +170,14 @@ namespace RJWS.Audio
 		private void OnDestroy()
 		{
 			stringBehaviour.onFretChanged -= HandleFretChanged;
+			for (int i = 0; i < _fretSprites.Count; i++)
+			{
+				if (_fretSprites[i] != null)
+				{
+					Sprite.Destroy( _fretSprites[i] );
+				}
+			}
+			_fretSprites.Clear( );
 		}
 
 		public void HandleFretChanged(int i)

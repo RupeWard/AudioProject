@@ -46,11 +46,19 @@ namespace RJWS.Audio
 			public System.Action<int> onFretChanged;
 		}
 
+		private static readonly bool DEBUG_FRET = true;
+
+		public string StringName
+		{
+			get;
+			set;
+		}
+
 		private int _fret;
 		public int Fret
 		{
 			get { return _fret; }
-			private set
+			set
 			{
 				if (value != _fret)
 				{
@@ -64,6 +72,10 @@ namespace RJWS.Audio
 						if (onFretChanged != null)
 						{
 							onFretChanged( _fret );
+						}
+						if (DEBUG_FRET)
+						{
+							Debug.LogFormat( "{0} fret changed to {1}", StringName, _fret );
 						}
 					}
 				}
@@ -141,7 +153,7 @@ namespace RJWS.Audio
 
 		public void Pluck(int fret, float amplitude = 1f)
 		{
-			if (fret >= 0)
+			if (fret >= 0 && fret != int.MaxValue)
 			{
 				Fret = fret;
 			}

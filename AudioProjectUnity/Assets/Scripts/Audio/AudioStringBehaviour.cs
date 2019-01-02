@@ -106,6 +106,14 @@ namespace RJWS.Audio
 			}
 		}
 
+		public void SetFret(int i)
+		{
+			if (_string != null)
+			{
+				_string.Fret = i;
+			}
+		}
+
 		public void SetZeroThreshold( float f )
 		{
 			{
@@ -116,7 +124,7 @@ namespace RJWS.Audio
 				}
 				if (_string != null)
 				{
-					_string.SetAttenuation( f );
+					_string.SetZeroThreshold( f );
 				}
 			}
 		}
@@ -143,6 +151,16 @@ namespace RJWS.Audio
 			int fret;
 		}
 
+		public void Init(AudioString.CtorParams cparams)
+		{
+			Frequency = cparams.openFrequency;
+			ZeroThreshold = cparams.zeroThreshold;
+			Attenuation = cparams.attenuation;
+			cparams.onFretChanged = HandleFretChanged;
+			_string = new AudioString(cparams);
+			_string.StringName = gameObject.name;
+		}
+
 		public void Pluck( float volume, int fret = -1)
 		{
 			if (debugMe)
@@ -152,19 +170,6 @@ namespace RJWS.Audio
 			Kill( );
 			audioSource.volume = volume;
 			audioSource.Play( );
-
-			if (_string == null)
-			{
-				_string = new AudioString(
-					new AudioString.CtorParams( )
-					{
-						openFrequency = Frequency,
-						attenuation = Attenuation,
-						zeroThreshold = ZeroThreshold,
-						onFretChanged = HandleFretChanged,
-						maxFret = 12
-					} );
-			}
 
 			_string.Pluck(fret);
 			_generator.Init( _string.ringbuffer );

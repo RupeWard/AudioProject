@@ -26,7 +26,7 @@ namespace RJWS.Audio
 		{
 			if (_debug)
 			{
-				Debug.LogFormat( _stringView, "{2} OnPointerUp: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position, Time.time );
+				Debug.LogFormat( _stringView, "STRUM {2} OnPointerUp: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position, Time.time );
 			}
 			PointerDepartHelper(UP_REASON, data );
 		}
@@ -36,7 +36,7 @@ namespace RJWS.Audio
 		{
 			if (_debug)
 			{
-				Debug.LogFormat( _stringView, "{2} OnPointerExit: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position, Time.time );
+				Debug.LogFormat( _stringView, "{2} STRUM : {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position, Time.time );
 			}
 			PointerDepartHelper(EXIT_REASON, data );
 		}
@@ -59,25 +59,29 @@ namespace RJWS.Audio
 					float d = 0f;
 					fret = _stringView.guitarView.GetFretForWorldX( hitInfo.point.x, ref d );
 
-					float elapsed = Time.time - _downTime;
-					float distance = Vector3.Distance( _downLocation, hitInfo.point );
-					float speed = distance / elapsed;
-
-					float volume = _stringView.guitarView.pluckSettings.GetVolumeForSpeed( speed );
-					_stringView.stringBehaviour.Pluck( volume, fret );
-
-					if (_debug)
+					if (fret == int.MaxValue)
 					{
-						Debug.LogWarningFormat( "({6}) String Hit {0} at {1} which is Fret {2} at d = {3}... T = {4}, D = {5}. Speed = {7} => Volume = {8}",
-							hitInfo.collider.transform.GetPathInHierarchy( ),
-							hitInfo.point,
-							fret, d,
-							elapsed.ToString("G4"),
-							distance.ToString( "G4" ),
-							reason,
-							speed,
-							volume);
+						float elapsed = Time.time - _downTime;
+						float distance = Vector3.Distance( _downLocation, hitInfo.point );
+						float speed = distance / elapsed;
+
+						float volume = _stringView.guitarView.pluckSettings.GetVolumeForSpeed( speed );
+						_stringView.stringBehaviour.Pluck( volume, fret );
+
+						if (_debug)
+						{
+							Debug.LogWarningFormat( "STRUM ({6}) String Hit {0} at {1} which is Fret {2} at d = {3}... T = {4}, D = {5}. Speed = {7} => Volume = {8}",
+								hitInfo.collider.transform.GetPathInHierarchy( ),
+								hitInfo.point,
+								fret, d,
+								elapsed.ToString( "G4" ),
+								distance.ToString( "G4" ),
+								reason,
+								speed,
+								volume );
+						}
 					}
+
 				}
 			}
 		}
@@ -87,7 +91,7 @@ namespace RJWS.Audio
 		{
 			if (_debug)
 			{
-				Debug.LogFormat( _stringView, "OnPointerDown: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position );
+				Debug.LogFormat( _stringView, "STRUM OnPointerDown: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position );
 			}
 			PointerStartHelper(DOWN_REASON, data );
 		}
@@ -97,7 +101,7 @@ namespace RJWS.Audio
 		{
 			if (_debug)
 			{
-				Debug.LogFormat( _stringView, "OnPointerEnter: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position );
+				Debug.LogFormat( _stringView, "STRUM OnPointerEnter: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position );
 			}
 			PointerStartHelper(ENTER_REASON, data );
 		}
@@ -106,7 +110,7 @@ namespace RJWS.Audio
 		{
 			if (_isDown)
 			{
-				Debug.LogErrorFormat( _stringView, "({1}) PointerStartHelper when already down on {0}", 
+				Debug.LogErrorFormat( _stringView, "STRUM ({1}) PointerStartHelper when already down on {0}", 
 					_stringView.cachedTransform.GetPathInHierarchy( ),
 					reason);
 			}
@@ -118,18 +122,25 @@ namespace RJWS.Audio
 					float d = 0f;
 					fret = _stringView.guitarView.GetFretForWorldX( hitInfo.point.x, ref d );
 
-					_isDown = true;
-					_downTime = Time.time;
-					_downLocation = hitInfo.point;
-
 					if (_debug)
 					{
-						Debug.LogWarningFormat( "({4}) String Hit {0} at {1} which is Fret {2} at d = {3}",
+						Debug.LogWarningFormat( "STRUM ({4}) String Hit {0} at {1} which is Fret {2} at d = {3}",
 							hitInfo.collider.transform.GetPathInHierarchy( ),
 							hitInfo.point,
 							fret, d ,
 							reason);
 					}
+					if (fret == int.MaxValue)
+					{
+						_isDown = true;
+						_downTime = Time.time;
+						_downLocation = hitInfo.point;
+					}
+					else
+					{
+						_stringView.stringBehaviour.SetFret( fret );
+					}
+
 				}
 			}
 		}

@@ -41,7 +41,7 @@ namespace RJWS.Audio
 		}
 
 		public Texture2D FretMarker(int fret)
-		{
+		{			
 			if (fret < 0 || fret >= fretMarkerSprites.Length)
 			{
 				return emptyMarkerSprite;
