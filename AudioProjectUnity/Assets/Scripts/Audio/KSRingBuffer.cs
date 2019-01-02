@@ -35,6 +35,11 @@ namespace RJWS.Core.Audio
 			_attenuation = f;
 		}
 
+		public void SetZeroThreshold(float f)
+		{
+			_zeroThreshold = f;
+		}
+
 		public struct CtorParams
 		{
 			public int capacity;

@@ -68,11 +68,10 @@ namespace RJWS.Audio
 			}
 			if (result >= _fretViews.Count)
 			{
-				Debug.LogWarningFormat( "Failed to get fret" );
-				result = 0;
+				result = int.MaxValue;
 				fraction = 0f;
 			}
-			if (result > 0)
+			else if (result > 0)
 			{
 				fraction = (x - _fretViews[result-1].cachedTransform.position.x) / (_fretViews[result].cachedTransform.position.x - _fretViews[result - 1].cachedTransform.position.x);
 			}

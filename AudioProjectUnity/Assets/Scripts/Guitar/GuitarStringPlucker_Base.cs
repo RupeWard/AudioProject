@@ -22,7 +22,8 @@ namespace RJWS.Audio
 	public enum EPluckerType
 	{
 		BasicUp,
-		BasicDrag
+		BasicDrag,
+		BasicStrum
 	}
 
 	public static class PluckerHelpers
@@ -38,6 +39,10 @@ namespace RJWS.Audio
 				case EPluckerType.BasicDrag:
 					{
 						return new GuitarStringPlucker_BasicDrag( gsv, debug );
+					}
+				case EPluckerType.BasicStrum:
+					{
+						return new GuitarStringPlucker_BasicStrum( gsv, debug );
 					}
 				default:
 					{

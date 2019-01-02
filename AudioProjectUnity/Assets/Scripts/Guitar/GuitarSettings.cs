@@ -25,6 +25,9 @@ namespace RJWS.Audio
 		public Material fretMaterial;
 		public Material stringMaterial;
 
+		public Texture2D[] fretMarkerSprites;
+		public Texture2D emptyMarkerSprite;
+
 		private const string DEFSETTINGSPATH = "DefaultGuitarSettings";
 
 		static public GuitarSettings LoadDefaultsIfNUll(ref GuitarSettings gs)
@@ -35,6 +38,15 @@ namespace RJWS.Audio
 				Debug.Log( "Loaded default guitar settings" );
 			}
 			return gs;
+		}
+
+		public Texture2D FretMarker(int fret)
+		{
+			if (fret < 0 || fret >= fretMarkerSprites.Length)
+			{
+				return emptyMarkerSprite;
+			}
+			return fretMarkerSprites[fret];
 		}
 
 		public void DebugDescribe( StringBuilder sb )

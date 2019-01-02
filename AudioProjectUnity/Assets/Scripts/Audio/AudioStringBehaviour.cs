@@ -114,6 +114,10 @@ namespace RJWS.Audio
 				{
 					onChangedAction( this );
 				}
+				if (_string != null)
+				{
+					_string.SetAttenuation( f );
+				}
 			}
 		}
 
@@ -126,6 +130,10 @@ namespace RJWS.Audio
 			else
 			{
 				Attenuation = f;
+				if (_string != null)
+				{
+					_string.SetAttenuation( f );
+				}
 			}
 		}
 
@@ -135,7 +143,7 @@ namespace RJWS.Audio
 			int fret;
 		}
 
-		public void Pluck( float volume, int fret = 0)
+		public void Pluck( float volume, int fret = -1)
 		{
 			if (debugMe)
 			{
@@ -145,19 +153,33 @@ namespace RJWS.Audio
 			audioSource.volume = volume;
 			audioSource.Play( );
 
-			_string = new AudioString( 
-				new AudioString.CtorParams( )
-				{
-					openFrequency = Frequency,
-					attenuation = Attenuation,
-					zeroThreshold = ZeroThreshold
-				} );
-			
+			if (_string == null)
+			{
+				_string = new AudioString(
+					new AudioString.CtorParams( )
+					{
+						openFrequency = Frequency,
+						attenuation = Attenuation,
+						zeroThreshold = ZeroThreshold,
+						onFretChanged = HandleFretChanged,
+						maxFret = 12
+					} );
+			}
+
 			_string.Pluck(fret);
 			_generator.Init( _string.ringbuffer );
 		}
 
 		private System.Text.StringBuilder _debugSB = new System.Text.StringBuilder( );
+
+		public System.Action<int> onFretChanged;
+		public void HandleFretChanged(int i)
+		{
+			if (onFretChanged != null)
+			{
+				onFretChanged( i );
+			}
+		}
 
 		public float Amplitude()
 		{

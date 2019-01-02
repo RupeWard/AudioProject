@@ -51,6 +51,15 @@ namespace RJWS.Audio
 
 		IGuitarStringPlucker _plucker;
 
+		public UnityEngine.UI.Image fretMarkerImage;
+
+		public void SetFretMarker(int i)
+		{
+			Debug.LogWarningFormat( "{0} Changed fret to {1}", gameObject.name, i );
+			Texture2D sprite = guitarView.guitarSettings.FretMarker( i );
+			fretMarkerImage.sprite = Sprite.Create( sprite, fretMarkerImage.sprite.rect, fretMarkerImage.sprite.pivot);
+		}
+
 		private static readonly bool DEBUG_TONE = false;
 
 		private void Update()
@@ -69,10 +78,12 @@ namespace RJWS.Audio
 							guitarView.guitarSettings.zeroThreshold
 							);
 					}
+					fretMarkerImage.enabled = true;
 				}
 				else
 				{
 					_stringMaterial.color = guitarView.guitarSettings.idleColour;
+					fretMarkerImage.enabled = false;
 				}
 			}
 		}
@@ -97,7 +108,9 @@ namespace RJWS.Audio
 			pluckerType = gv.pluckerType;
 			guitarView = gv;
 			stringBehaviour = model.GetString( stringNum );
-			
+			stringBehaviour.onFretChanged -= HandleFretChanged;
+			stringBehaviour.onFretChanged += HandleFretChanged;
+
 			stringObject.transform.localScale = guitarView.StringDims;
 			fretIndicatorRT.anchoredPosition = new Vector2( 0f, 1.025f ); // MAGIC NUMBER - DERIVE IT!
 			_stringMaterial =  new Material( guitarView.guitarSettings.stringMaterial );
@@ -110,6 +123,16 @@ namespace RJWS.Audio
 			gameObject.SetActive( true );
 
 			MakePlucker( );
+		}
+
+		private void OnDestroy()
+		{
+			stringBehaviour.onFretChanged -= HandleFretChanged;
+		}
+
+		public void HandleFretChanged(int i)
+		{
+			SetFretMarker( i );
 		}
 
 		private void SetStringColliderSize()

@@ -20,6 +20,7 @@ namespace RJWS.Audio.UI
 		private Dictionary<EPluckerType, string> _dropdownTextMap = new Dictionary<EPluckerType, string>( )
 		{
 			{ EPluckerType.BasicDrag, "B-Drag" },
+			{ EPluckerType.BasicStrum, "B-Strum" },
 			{ EPluckerType.BasicUp, "B-Up" }
 		};
 
@@ -172,6 +173,14 @@ namespace RJWS.Audio.UI
 				if (_settings.pluckerType != EPluckerType.BasicUp)
 				{
 					_settings.pluckerType = EPluckerType.BasicUp;
+					changed = true;
+				}
+			}
+			else if (pt == _dropdownTextMap[EPluckerType.BasicStrum])
+			{
+				if (_settings.pluckerType != EPluckerType.BasicStrum)
+				{
+					_settings.pluckerType = EPluckerType.BasicStrum;
 					changed = true;
 				}
 			}

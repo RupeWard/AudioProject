@@ -30,7 +30,11 @@ namespace RJWS.Audio
 			private set;
 		}
 
-		private int _maxFret = 12;
+		public int MaxFret
+		{
+			get;
+			private set;
+		}
 	
 		public struct CtorParams
 		{
@@ -39,8 +43,34 @@ namespace RJWS.Audio
 			public int maxFret;
 			public int sampleRate;
 			public float zeroThreshold;
+			public System.Action<int> onFretChanged;
 		}
 
+		private int _fret;
+		public int Fret
+		{
+			get { return _fret; }
+			private set
+			{
+				if (value != _fret)
+				{
+					if (value > MaxFret || value < -1)
+					{
+						Debug.LogErrorFormat( "Fret OOR: {0}", value );
+					}
+					else
+					{
+						_fret = value;
+						if (onFretChanged != null)
+						{
+							onFretChanged( _fret );
+						}
+					}
+				}
+			}
+		}
+
+		public System.Action<int> onFretChanged;
 
 		public AudioString(CtorParams cparams)
 		{
@@ -50,12 +80,14 @@ namespace RJWS.Audio
 			}
 			if (cparams.maxFret > 0)
 			{
-				_maxFret = cparams.maxFret;
+				MaxFret = cparams.maxFret;
 			}
 			if (cparams.attenuation< 0f)
 			{
 				cparams.attenuation = Core.Audio.AudioConsts.DEFAULT_GUITAR_ATTENUATION;
 			}
+			onFretChanged = cparams.onFretChanged;
+
 			_openFrequency = cparams.openFrequency;
 			_sampleRate = cparams.sampleRate;
 			
@@ -68,6 +100,24 @@ namespace RJWS.Audio
 					zeroThreshold = cparams.zeroThreshold
 				} 
 			);
+
+			Fret = 0;
+		}
+
+		public void SetAttenuation(float f)
+		{
+			if (ringbuffer != null)
+			{
+				ringbuffer.SetAttenuation( f );
+			}
+		}
+
+		public void SetZeroThreshold( float f )
+		{
+			if (ringbuffer != null)
+			{
+				ringbuffer.SetZeroThreshold( f );
+			}
 		}
 
 		/*
@@ -91,15 +141,9 @@ namespace RJWS.Audio
 
 		public void Pluck(int fret, float amplitude = 1f)
 		{
-			if (fret < 0)
+			if (fret >= 0)
 			{
-				Debug.LogErrorFormat( "fret OOR = {0}", fret);
-				fret = 0;
-			}
-			else if (fret > _maxFret)
-			{
-				Debug.LogErrorFormat( "fret OOR = {0}", fret );
-				fret = _maxFret;
+				Fret = fret;
 			}
 			if (amplitude <= 0)
 			{
@@ -109,7 +153,7 @@ namespace RJWS.Audio
 			ringbuffer.Clear( );
 
 			float freq = _openFrequency;
-			for (int i = 0; i < fret; i++)
+			for (int i = 0; i < Fret; i++)
 			{
 				freq *= Core.Audio.AudioConsts.FRET_FACTOR;
 			}

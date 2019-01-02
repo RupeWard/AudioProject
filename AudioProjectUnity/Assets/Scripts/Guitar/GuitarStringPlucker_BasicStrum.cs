@@ -5,9 +5,9 @@ using RJWS.Core.DebugDescribable;
 
 namespace RJWS.Audio
 {
-	public class GuitarStringPlucker_BasicDrag : GuitarStringPlucker_Base
+	public class GuitarStringPlucker_BasicStrum: GuitarStringPlucker_Base
 	{
-		public GuitarStringPlucker_BasicDrag( GuitarStringView s, bool b)
+		public GuitarStringPlucker_BasicStrum( GuitarStringView s, bool b)
 			: base( s, b )
 		{
 
@@ -59,27 +59,24 @@ namespace RJWS.Audio
 					float d = 0f;
 					fret = _stringView.guitarView.GetFretForWorldX( hitInfo.point.x, ref d );
 
-					if (fret != int.MaxValue)
+					float elapsed = Time.time - _downTime;
+					float distance = Vector3.Distance( _downLocation, hitInfo.point );
+					float speed = distance / elapsed;
+
+					float volume = _stringView.guitarView.pluckSettings.GetVolumeForSpeed( speed );
+					_stringView.stringBehaviour.Pluck( volume, fret );
+
+					if (_debug)
 					{
-						float elapsed = Time.time - _downTime;
-						float distance = Vector3.Distance( _downLocation, hitInfo.point );
-						float speed = distance / elapsed;
-
-						float volume = _stringView.guitarView.pluckSettings.GetVolumeForSpeed( speed );
-						_stringView.stringBehaviour.Pluck( volume, fret );
-
-						if (_debug)
-						{
-							Debug.LogWarningFormat( "({6}) String Hit {0} at {1} which is Fret {2} at d = {3}... T = {4}, D = {5}. Speed = {7} => Volume = {8}",
-								hitInfo.collider.transform.GetPathInHierarchy( ),
-								hitInfo.point,
-								fret, d,
-								elapsed.ToString( "G4" ),
-								distance.ToString( "G4" ),
-								reason,
-								speed,
-								volume );
-						}
+						Debug.LogWarningFormat( "({6}) String Hit {0} at {1} which is Fret {2} at d = {3}... T = {4}, D = {5}. Speed = {7} => Volume = {8}",
+							hitInfo.collider.transform.GetPathInHierarchy( ),
+							hitInfo.point,
+							fret, d,
+							elapsed.ToString("G4"),
+							distance.ToString( "G4" ),
+							reason,
+							speed,
+							volume);
 					}
 				}
 			}
