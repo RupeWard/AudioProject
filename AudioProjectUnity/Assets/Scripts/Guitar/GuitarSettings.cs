@@ -22,6 +22,8 @@ namespace RJWS.Audio
 		public Color maxVolColour = Color.red;
 		public Color dampedColour = Color.red;
 
+		public Color fretMarkerColour = Color.blue;
+
 		public Material bridgeMaterial;
 		public Material fretMaterial;
 		public Material stringMaterial;
@@ -30,6 +32,7 @@ namespace RJWS.Audio
 		public Texture2D emptyMarkerSprite;
 		public Texture2D dampedMarkerSprite;
 
+		
 		private const string DEFSETTINGSPATH = "DefaultGuitarSettings";
 
 		static public GuitarSettings LoadDefaultsIfNUll(ref GuitarSettings gs)

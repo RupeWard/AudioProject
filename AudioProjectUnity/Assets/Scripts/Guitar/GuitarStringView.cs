@@ -60,16 +60,7 @@ namespace RJWS.Audio
 			Debug.LogWarningFormat( "{0} Changed fret to {1}", gameObject.name, fretCode );
 
 			fretIndicatorImage.sprite = GetFretSprite( fretCode );
-
 			SetUpFretMarkerForFretCode( fretCode );
-		}
-
-		private void SetUpFretMaker(GameObject go, int fretNum)
-		{
-			if (fretNum < 1)
-			{
-				throw new System.Exception( "SetUpFretMaker: " + fretNum );
-			}
 		}
 
 		private void SetFretMarkerPos(int fretNum)
@@ -200,6 +191,8 @@ namespace RJWS.Audio
 			fretIndicatorRT.anchoredPosition = new Vector2( 0f, 1.025f ); // MAGIC NUMBER - DERIVE IT!
 			_stringMaterial =  new Material( guitarView.guitarSettings.stringMaterial );
 			_stringRenderer.material = _stringMaterial;
+
+			fretMarker.material.color = guitarView.guitarSettings.fretMarkerColour;
 
 			HandleFretChanged( 0 );
 
