@@ -186,10 +186,12 @@ namespace RJWS.Audio.UI
 			}
 			if (changed)
 			{
+				_settings.SaveToPlayerPrefs( );
 				DoOnSettingsChangeAction( );
 				Debug.LogFormat( "Changed plucker type to {0}", _settings.pluckerType );
 			}
 		}
+
 
 		private void DoOnSettingsChangeAction()
 		{

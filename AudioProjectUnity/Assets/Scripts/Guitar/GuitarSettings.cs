@@ -32,7 +32,54 @@ namespace RJWS.Audio
 		public Texture2D emptyMarkerSprite;
 		public Texture2D dampedMarkerSprite;
 
-		
+		private const string PPKEY_PluckerType = "PluckerType";
+		private const string PPKEY_UseReverb = "UseReverb";
+		private const string PPKEY_Attenuation = "Attenuation";
+		private const string PPKEY_StringColliderSize = "StringColliderSize";
+		private const string PPKEY_ZeroThreshold = "ZeroThreshold";
+
+		public void LoadFromPlayerPrefs()
+		{
+			if (PlayerPrefs.HasKey(PPKEY_PluckerType))
+			{
+				string s = PlayerPrefs.GetString( PPKEY_PluckerType );
+				EPluckerType pt = (EPluckerType) System.Enum.Parse( typeof( EPluckerType ), s );
+				pluckerType = pt;
+			}
+			else
+			{
+				Debug.LogWarning( "No PP saved" );
+				return;
+			}
+			if (PlayerPrefs.HasKey( PPKEY_UseReverb ))
+			{
+				useReverb = (PlayerPrefs.GetInt( PPKEY_UseReverb ) == 1);
+			}
+			if (PlayerPrefs.HasKey( PPKEY_Attenuation ))
+			{
+				attenuation = PlayerPrefs.GetFloat( PPKEY_Attenuation);
+			}
+			if (PlayerPrefs.HasKey( PPKEY_StringColliderSize))
+			{
+				stringColliderSize= PlayerPrefs.GetFloat( PPKEY_StringColliderSize);
+			}
+			if (PlayerPrefs.HasKey( PPKEY_ZeroThreshold))
+			{
+				zeroThreshold = PlayerPrefs.GetFloat( PPKEY_ZeroThreshold);
+			}
+		}
+
+		public void SaveToPlayerPrefs( )
+		{
+			PlayerPrefs.SetString( PPKEY_PluckerType, pluckerType.ToString() );
+			PlayerPrefs.SetInt( PPKEY_UseReverb, (useReverb)?1:0);
+			PlayerPrefs.SetFloat( PPKEY_Attenuation, attenuation );
+			PlayerPrefs.SetFloat( PPKEY_StringColliderSize, stringColliderSize );
+			PlayerPrefs.SetFloat( PPKEY_ZeroThreshold, zeroThreshold );
+
+			PlayerPrefs.Save( );
+		}
+
 		private const string DEFSETTINGSPATH = "DefaultGuitarSettings";
 
 		static public GuitarSettings LoadDefaultsIfNUll(ref GuitarSettings gs)
@@ -41,6 +88,10 @@ namespace RJWS.Audio
 			{
 				gs = Resources.Load( DEFSETTINGSPATH ) as GuitarSettings;
 				Debug.Log( "Loaded default guitar settings" );
+
+#if !UNITY_EDITOR
+				gs.LoadFromPlayerPrefs( );
+#endif
 			}
 			return gs;
 		}
