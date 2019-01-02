@@ -15,6 +15,9 @@ namespace RJWS.Audio.UI
 		public UnityEngine.UI.InputField volRangeMaxInputField;
 		public UnityEngine.UI.InputField speedRangeMaxInputField;
 
+		public UnityEngine.UI.Toggle useEnterToggle;
+		public UnityEngine.UI.Toggle useExitToggle;
+
 		public System.Action _onSettingsChangedAction;
 
 		public void Init( GuitarSettingsPanel gsp, PluckSettings psp, GuitarSettings gs, System.Action osa)
@@ -33,9 +36,31 @@ namespace RJWS.Audio.UI
 			SetSpeedMinText( );
 			SetSpeedMaxText( );
 	
+			if (useEnterToggle.isOn != _pluckSettings.useEnter)
+			{
+				_pluckSettings.useEnter = !_pluckSettings.useEnter;
+				useEnterToggle.isOn = !useEnterToggle.isOn;
+            }
+			if (useExitToggle.isOn != _pluckSettings.useExit)
+			{
+				_pluckSettings.useExit = !_pluckSettings.useExit;
+				useExitToggle.isOn = !useExitToggle.isOn;
+			}
 		}
 
 		public bool debugMe = true;
+
+		public void OnUseEnterToggleChanged()
+		{
+			_pluckSettings.useEnter = !_pluckSettings.useEnter;
+			Debug.LogFormat( "Changing useEnter to {0}", _pluckSettings.useEnter );
+		}
+
+		public void OnUseExitToggleChanged( )
+		{
+			_pluckSettings.useExit = !_pluckSettings.useExit;
+			Debug.LogFormat( "Changing useExit to {0}", _pluckSettings.useEnter );
+		}
 
 		private void SetGammaText()
 		{

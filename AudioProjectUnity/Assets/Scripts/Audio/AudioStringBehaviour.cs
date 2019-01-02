@@ -167,8 +167,8 @@ namespace RJWS.Audio
 			ZeroThreshold = cparams.zeroThreshold;
 			Attenuation = cparams.attenuation;
 			cparams.onFretChanged = HandleFretChanged;
+			cparams.stringName = gameObject.name;
 			_string = new AudioString(cparams);
-			_string.StringName = gameObject.name;
 		}
 
 		public void Pluck( float volume, int fret = -1)

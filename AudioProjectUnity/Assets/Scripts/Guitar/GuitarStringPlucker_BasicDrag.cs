@@ -34,6 +34,10 @@ namespace RJWS.Audio
 
 		public override void OnPointerExit( UnityEngine.EventSystems.PointerEventData data )
 		{
+			if (!_stringView.guitarView.pluckSettings.useExit)
+			{
+				return;
+			}
 			if (_debug)
 			{
 				Debug.LogFormat( _stringView, "{2} OnPointerExit: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position, Time.time );
@@ -98,6 +102,10 @@ namespace RJWS.Audio
 		
 		public override void OnPointerEnter( UnityEngine.EventSystems.PointerEventData data )
 		{
+			if (!_stringView.guitarView.pluckSettings.useEnter)
+			{
+				return;
+			}
 			if (_debug)
 			{
 				Debug.LogFormat( _stringView, "OnPointerEnter: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position );

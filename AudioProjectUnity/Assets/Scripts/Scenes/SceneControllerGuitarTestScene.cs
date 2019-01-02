@@ -107,6 +107,7 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 		guitarModel.Init( RJWS.Core.Audio.AudioConsts.s_standardGuitarTuning );
 		guitarView.Init( guitarModel );
 		SetCameraPos( startCameraPos );
+		HandleOffButton( );
 	}
 
 	override protected void PostAwake()

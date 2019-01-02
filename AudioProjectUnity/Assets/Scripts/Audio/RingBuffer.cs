@@ -47,8 +47,16 @@ namespace RJWS.Core.Audio
 			get { return _numQueued; }
 		}
 
-		public RingBuffer(int c)
+		public string Name
 		{
+			get;
+			private set;
+		}
+
+
+		public RingBuffer(int c, string n = "UNKNOWN" )
+		{
+			Name = n;
 			_capacity = c;
 			_buffer = new T[_capacity];
 			_numQueued = 0;
@@ -99,7 +107,7 @@ namespace RJWS.Core.Audio
 		{
 			if (IsEmpty)
 			{
-				throw new System.Exception( "Can't Peek at empty buffer" );
+				throw new System.Exception( "Can't Peek at empty buffer ("+Name+")" );
 			}
 			return _buffer[_last.Value];
 		}

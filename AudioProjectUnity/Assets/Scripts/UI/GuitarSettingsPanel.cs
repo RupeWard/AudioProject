@@ -31,7 +31,7 @@ namespace RJWS.Audio.UI
 
 			_onSettingsChangedAction = osa;
 
-			pluckSettingsButton.SetActive( _settings.pluckerType == EPluckerType.BasicDrag );
+			pluckSettingsButton.SetActive( _settings.pluckerType != EPluckerType.BasicUp);
 
 			gameObject.SetActive( true );
 
@@ -197,7 +197,7 @@ namespace RJWS.Audio.UI
 			{
 				_onSettingsChangedAction( );
 			}
-			pluckSettingsButton.SetActive( _settings.pluckerType == EPluckerType.BasicDrag );
+			pluckSettingsButton.SetActive( _settings.pluckerType != EPluckerType.BasicUp);
 		}
 
 		public void HandlePluckSettingsButton()

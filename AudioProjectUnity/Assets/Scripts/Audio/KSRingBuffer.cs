@@ -47,7 +47,7 @@ namespace RJWS.Core.Audio
 			public float zeroThreshold;
 		}
 
-		public KSRingBufferF(CtorParams cparams )
+		public KSRingBufferF(CtorParams cparams, string n = "UNKNOWN" )
 			: base( cparams.capacity )
 		{
 			_zeroThreshold = Mathf.Epsilon;

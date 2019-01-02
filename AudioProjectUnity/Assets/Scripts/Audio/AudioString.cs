@@ -44,6 +44,7 @@ namespace RJWS.Audio
 			public int sampleRate;
 			public float zeroThreshold;
 			public System.Action<int> onFretChanged;
+			public string stringName;
 		}
 
 		private static readonly bool DEBUG_FRET = true;
@@ -112,6 +113,14 @@ namespace RJWS.Audio
 			}
 			onFretChanged = cparams.onFretChanged;
 
+			if (cparams.stringName.Length == 0)
+			{
+				StringName = "UNKNOWN";
+			}
+			else
+			{
+				StringName = cparams.stringName;
+			}
 			_openFrequency = cparams.openFrequency;
 			_sampleRate = cparams.sampleRate;
 			
@@ -122,7 +131,8 @@ namespace RJWS.Audio
 					capacity = c,
 					attenuation = cparams.attenuation,
 					zeroThreshold = cparams.zeroThreshold
-				} 
+				},
+				StringName
 			);
 
 			Fret = 0;

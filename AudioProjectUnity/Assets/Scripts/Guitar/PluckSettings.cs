@@ -14,6 +14,8 @@ namespace RJWS.Audio
 		public Vector2 volumeRange = new Vector2( 0.1f, 1f );
 
 		public float gamma = 0f;
+		public bool useEnter = true;
+		public bool useExit = true;
 
 		static public PluckSettings LoadDefaultsIfNUll(ref PluckSettings gs)
 		{
@@ -42,6 +44,11 @@ namespace RJWS.Audio
 		public void DebugDescribe( StringBuilder sb )
 		{
 			sb.Append( "PluckSettings..." );
+			sb.Append( "\n volRange = " ).Append( volumeRange.ToString( ) );
+			sb.Append( "\n speedRange = " ).Append( speedRange.ToString( ) );
+			sb.Append( "\n gamma = " ).Append( gamma);
+			sb.Append( "\n useEnter = " ).Append( useEnter );
+			sb.Append( "\n useExit = " ).Append( useExit );
 			sb.Append( "\n---" );
 		}
 	}

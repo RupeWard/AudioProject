@@ -31,9 +31,12 @@ namespace RJWS.Audio
 			PointerDepartHelper(UP_REASON, data );
 		}
 		
-
 		public override void OnPointerExit( UnityEngine.EventSystems.PointerEventData data )
 		{
+			if (!_stringView.guitarView.pluckSettings.useExit)
+			{
+				return;
+			}
 			if (_debug)
 			{
 				Debug.LogFormat( _stringView, "{2} STRUM : {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position, Time.time );
@@ -99,6 +102,12 @@ namespace RJWS.Audio
 		
 		public override void OnPointerEnter( UnityEngine.EventSystems.PointerEventData data )
 		{
+			/*
+			if (!_stringView.guitarView.pluckSettings.useEnter)
+			{
+				return;
+			}
+			*/
 			if (_debug)
 			{
 				Debug.LogFormat( _stringView, "STRUM OnPointerEnter: {0}\n{1}", _stringView.cachedTransform.GetPathInHierarchy( ), data.position );
@@ -138,6 +147,20 @@ namespace RJWS.Audio
 					}
 					else
 					{
+						if (! _stringView.guitarView.pluckSettings.useEnter)
+						{
+							if (reason == ENTER_REASON)
+							{
+								return;
+							}
+						}
+						if (_stringView.stringBehaviour.IsDamped)
+						{
+							if (reason != DOWN_REASON)
+							{
+								return;
+							}
+						}
 						if (fret == 0)
 						{
 							if (_stringView.stringBehaviour.Fret == 0)
@@ -148,6 +171,7 @@ namespace RJWS.Audio
 								}
 								fret = -1;
 							}
+							/*
 							else if (_stringView.stringBehaviour.IsDamped)
 							{
 								if (reason != DOWN_REASON)
@@ -155,6 +179,7 @@ namespace RJWS.Audio
 									return;
 								}
 							}
+							*/
 						}
 						_stringView.stringBehaviour.SetFret( fret );
 					}
