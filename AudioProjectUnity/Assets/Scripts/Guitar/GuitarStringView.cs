@@ -34,6 +34,8 @@ namespace RJWS.Audio
 		private CapsuleCollider _stringCollider;
 		private MeshRenderer _stringRenderer;
 
+		public MeshRenderer fretMarker;
+
 		public AudioStringBehaviour stringBehaviour
 		{
 			get;
@@ -50,14 +52,44 @@ namespace RJWS.Audio
 
 		IGuitarStringPlucker _plucker;
 
-		public UnityEngine.UI.Image fretMarkerImage;
+		public UnityEngine.UI.Image fretIndicatorImage;
 
 
-		public void SetFretMarker(int i)
+		public void SetFretIndicators(int fretCode)
 		{
-			Debug.LogWarningFormat( "{0} Changed fret to {1}", gameObject.name, i );
+			Debug.LogWarningFormat( "{0} Changed fret to {1}", gameObject.name, fretCode );
 
-			fretMarkerImage.sprite = GetFretSprite( i );
+			fretIndicatorImage.sprite = GetFretSprite( fretCode );
+
+			SetUpFretMarkerForFretCode( fretCode );
+		}
+
+		private void SetUpFretMaker(GameObject go, int fretNum)
+		{
+			if (fretNum < 1)
+			{
+				throw new System.Exception( "SetUpFretMaker: " + fretNum );
+			}
+		}
+
+		private void SetFretMarkerPos(int fretNum)
+		{
+			Vector3 pos = fretMarker.transform.position;
+			pos.x = 0.5f * (guitarView.FretX( fretNum ) + guitarView.FretX( fretNum - 1 ));
+			fretMarker.transform.position = pos;
+		}
+
+		private void SetUpFretMarkerForFretCode(int fretCode)
+		{
+			if (fretCode < 1)
+			{
+				fretMarker.enabled = false;
+			}
+			else
+			{
+				SetFretMarkerPos( fretCode );
+				fretMarker.enabled = true;
+			}
 		}
 
 		private List<Sprite> _fretSprites = new List<Sprite>( );
@@ -73,7 +105,7 @@ namespace RJWS.Audio
 			{
 				Texture2D sprite = guitarView.guitarSettings.FretMarker( i-1 );
 				_fretSprites[i] = Sprite.Create( sprite,
-					fretMarkerImage.sprite.rect, fretMarkerImage.sprite.pivot );
+					fretIndicatorImage.sprite.rect, fretIndicatorImage.sprite.pivot );
 			}
 			return _fretSprites[i];
 		}
@@ -113,17 +145,17 @@ namespace RJWS.Audio
 						{
 							if (stringBehaviour.Amplitude( ) > guitarView.guitarSettings.minToColourString)
 							{
-								fretMarkerImage.enabled = true;
+								fretIndicatorImage.enabled = true;
 							}
 							else
 							{
-								fretMarkerImage.enabled = false;
+								fretIndicatorImage.enabled = false;
 							}
 							break;
 						}
 					case EPluckerType.BasicStrum:
                         {
-							fretMarkerImage.enabled = true;
+							fretIndicatorImage.enabled = true;
 							break;
 						}
 					default:
@@ -147,12 +179,20 @@ namespace RJWS.Audio
 			}
 		}
 
+		public int StringNum
+		{
+			get;
+			private set;
+		}
+
 		public void Init( GuitarView gv, GuitarModel model, int stringNum)
 		{
+			StringNum = stringNum;
+
 			debughit |= gv.debugHit;
 			pluckerType = gv.pluckerType;
 			guitarView = gv;
-			stringBehaviour = model.GetString( stringNum );
+			stringBehaviour = model.GetString( StringNum );
 			stringBehaviour.onFretChanged -= HandleFretChanged;
 			stringBehaviour.onFretChanged += HandleFretChanged;
 
@@ -161,14 +201,14 @@ namespace RJWS.Audio
 			_stringMaterial =  new Material( guitarView.guitarSettings.stringMaterial );
 			_stringRenderer.material = _stringMaterial;
 
-			SetFretMarker( 0 );
+			HandleFretChanged( 0 );
 
 			SetStringColliderSize( );
 
 			ApplyGuitarSettings( guitarView.guitarSettings);
 
 			gameObject.SetActive( true );
-
+			
 			MakePlucker( );
 		}
 
@@ -187,7 +227,7 @@ namespace RJWS.Audio
 
 		public void HandleFretChanged(int i)
 		{
-			SetFretMarker( i );
+			SetFretIndicators( i );
 		}
 
 		private void SetStringColliderSize()
