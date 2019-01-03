@@ -68,7 +68,11 @@ namespace RJWS.Audio
 						float distance = Vector3.Distance( _downLocation, hitInfo.point );
 						float speed = distance / elapsed;
 
-						float volume = _stringView.guitarView.pluckSettings.GetVolumeForSpeed( speed );
+						float volume = 1;
+						if (_lastDownReason == ENTER_REASON)
+						{
+							volume = _stringView.guitarView.pluckSettings.GetStrumVolumeForSpeed( speed );
+						}
 						_stringView.stringBehaviour.Pluck( volume, fret );
 
 						if (_debug)
@@ -115,6 +119,8 @@ namespace RJWS.Audio
 			PointerStartHelper(ENTER_REASON, data );
 		}
 
+		private string _lastDownReason = string.Empty;
+
 		private void PointerStartHelper(string reason, UnityEngine.EventSystems.PointerEventData data )
 		{
 			if (_isDown)
@@ -144,6 +150,8 @@ namespace RJWS.Audio
 						_isDown = true;
 						_downTime = Time.time;
 						_downLocation = hitInfo.point;
+
+						_lastDownReason = reason;
 					}
 					else
 					{

@@ -10,18 +10,26 @@ namespace RJWS.Audio
 	{
 		private const string DEFSETTINGSPATH = "DefaultPluckSettings";
 
+		public Vector2 durationRange = new Vector2( 0f, 0.3f );
 		public Vector2 speedRange = new Vector2( 0f, 1000f );
-		public Vector2 volumeRange = new Vector2( 0.1f, 1f );
+		public Vector2 strumVolRange = new Vector2( 0.1f, 1f );
+		public Vector2 pluckVolRange = new Vector2( 0.1f, 1f );
 
-		public float gamma = 0f;
+		public float strumGamma = 0f;
+		public float pluckGamma = 0f;
 		public bool useEnter = true;
 		public bool useExit = true;
 
+		private const string PPKEY_DurationMin = "DurationMin";
+		private const string PPKEY_DurationMax = "DurationMax";
 		private const string PPKEY_SpeedMin = "SpeedMin";
 		private const string PPKEY_SpeedMax = "SpeedMax";
-		private const string PPKEY_VolMin = "VolMin";
-		private const string PPKEY_VolMax = "VolMax";
-		private const string PPKEY_Gamma = "Gamma";
+		private const string PPKEY_StrumVolMin = "StrumVolMin";
+		private const string PPKEY_StrumVolMax = "StrumVolMax";
+		private const string PPKEY_PluckVolMin = "PluckVolMin";
+		private const string PPKEY_PluckVolMax = "PluckVolMax";
+		private const string PPKEY_StrumGamma = "StrumGamma";
+		private const string PPKEY_PluckGamma = "PluckGamma";
 		private const string PPKEY_UseEnter = "UseEnter";
 		private const string PPKEY_UseExit = "UseExit";
 
@@ -40,17 +48,38 @@ namespace RJWS.Audio
 			{
 				speedRange.y = PlayerPrefs.GetFloat( PPKEY_SpeedMax );
 			}
-			if (PlayerPrefs.HasKey( PPKEY_VolMin))
+			if (PlayerPrefs.HasKey( PPKEY_DurationMin))
 			{
-				volumeRange.x = PlayerPrefs.GetFloat( PPKEY_VolMin);
+				durationRange.x = PlayerPrefs.GetFloat( PPKEY_DurationMin);
 			}
-			if (PlayerPrefs.HasKey( PPKEY_VolMax ))
+			if (PlayerPrefs.HasKey( PPKEY_DurationMax))
 			{
-				volumeRange.y = PlayerPrefs.GetFloat( PPKEY_VolMax );
+				durationRange.y = PlayerPrefs.GetFloat( PPKEY_DurationMax);
 			}
-			if (PlayerPrefs.HasKey( PPKEY_Gamma))
+			if (PlayerPrefs.HasKey( PPKEY_StrumVolMin))
 			{
-				gamma = PlayerPrefs.GetFloat( PPKEY_Gamma);
+				strumVolRange.x = PlayerPrefs.GetFloat( PPKEY_StrumVolMin);
+			}
+			if (PlayerPrefs.HasKey( PPKEY_StrumVolMax ))
+			{
+				strumVolRange.y = PlayerPrefs.GetFloat( PPKEY_StrumVolMax );
+			}
+			if (PlayerPrefs.HasKey( PPKEY_StrumGamma))
+			{
+				strumGamma = PlayerPrefs.GetFloat( PPKEY_StrumGamma);
+			}
+
+			if (PlayerPrefs.HasKey( PPKEY_PluckVolMin))
+			{
+				pluckVolRange.x = PlayerPrefs.GetFloat( PPKEY_PluckVolMin);
+			}
+			if (PlayerPrefs.HasKey( PPKEY_PluckVolMax))
+			{
+				strumVolRange.y = PlayerPrefs.GetFloat( PPKEY_PluckVolMax);
+			}
+			if (PlayerPrefs.HasKey( PPKEY_PluckGamma))
+			{
+				pluckGamma= PlayerPrefs.GetFloat( PPKEY_PluckGamma);
 			}
 
 			if (PlayerPrefs.HasKey( PPKEY_UseEnter))
@@ -67,9 +96,11 @@ namespace RJWS.Audio
 		{
 			PlayerPrefs.SetFloat( PPKEY_SpeedMin, speedRange.x );
 			PlayerPrefs.SetFloat( PPKEY_SpeedMax, speedRange.y );
-			PlayerPrefs.SetFloat( PPKEY_VolMin, volumeRange.x );
-			PlayerPrefs.SetFloat( PPKEY_VolMax, volumeRange.y );
-			PlayerPrefs.SetFloat( PPKEY_Gamma, gamma );
+			PlayerPrefs.SetFloat( PPKEY_DurationMin, durationRange.x );
+			PlayerPrefs.SetFloat( PPKEY_DurationMax, durationRange.y );
+			PlayerPrefs.SetFloat( PPKEY_StrumVolMin, strumVolRange.x );
+			PlayerPrefs.SetFloat( PPKEY_StrumVolMax, strumVolRange.y );
+			PlayerPrefs.SetFloat( PPKEY_StrumGamma, strumGamma );
 		    PlayerPrefs.SetInt( PPKEY_UseEnter, (useEnter)?(1):(0));
 			PlayerPrefs.SetInt( PPKEY_UseExit, (useExit) ? (1) : (0) );
 		}
@@ -88,26 +119,41 @@ namespace RJWS.Audio
 			return gs;
 		}
 
-		public float GetVolumeForSpeed(float s)
+		public float GetStrumVolumeForSpeed(float s)
 		{
 			float speedFactor = (s - speedRange.x) / (speedRange.y - speedRange.x);
 			speedFactor = Mathf.Clamp01(speedFactor );
-			if (gamma <= 0f)
+			if (Mathf.Approximately(strumGamma, 0f))
 			{
-				return Mathf.Lerp( volumeRange.x, volumeRange.y, speedFactor );
+				return Mathf.Lerp( strumVolRange.x, strumVolRange.y, speedFactor );
 			}
 			else
 			{
-				return Mathf.Lerp( volumeRange.x, volumeRange.y, (Mathf.Exp( gamma * speedFactor ) - 1f) / (Mathf.Exp( gamma ) - 1) );
+				return Mathf.Lerp( strumVolRange.x, strumVolRange.y, (Mathf.Exp( strumGamma * speedFactor ) - 1f) / (Mathf.Exp( strumGamma ) - 1) );
+			}
+		}
+
+		public float GetPluckVolumeForDuration( float s )
+		{
+			float durationFactor = (s - durationRange.x) / (durationRange.y - durationRange.x);
+			durationFactor = Mathf.Clamp01( durationFactor );
+			if (Mathf.Approximately( strumGamma, 0f))
+			{
+				return Mathf.Lerp( strumVolRange.x, strumVolRange.y, durationFactor );
+			}
+			else
+			{
+				return Mathf.Lerp( strumVolRange.x, strumVolRange.y, (Mathf.Exp( strumGamma * durationFactor ) - 1f) / (Mathf.Exp( strumGamma ) - 1) );
 			}
 		}
 
 		public void DebugDescribe( StringBuilder sb )
 		{
 			sb.Append( "PluckSettings..." );
-			sb.Append( "\n volRange = " ).Append( volumeRange.ToString( ) );
+			sb.Append( "\n volRange = " ).Append( strumVolRange.ToString( ) );
 			sb.Append( "\n speedRange = " ).Append( speedRange.ToString( ) );
-			sb.Append( "\n gamma = " ).Append( gamma);
+			sb.Append( "\n volumeRange = " ).Append( durationRange.ToString( ) );
+			sb.Append( "\n gamma = " ).Append( strumGamma);
 			sb.Append( "\n useEnter = " ).Append( useEnter );
 			sb.Append( "\n useExit = " ).Append( useExit );
 			sb.Append( "\n---" );

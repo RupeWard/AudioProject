@@ -9,11 +9,20 @@ namespace RJWS.Audio.UI
 		private PluckSettings _pluckSettings;
 		private GuitarSettingsPanel _settingsPanel;
 
-		public UnityEngine.UI.InputField gammaInputField;
-		public UnityEngine.UI.InputField volRangeMinInputField;
+		public UnityEngine.UI.InputField strumGammaInputField;
+		public UnityEngine.UI.InputField pluckGammaInputField;
+
+		public UnityEngine.UI.InputField strumVolRangeMinInputField;
+		public UnityEngine.UI.InputField strumVolRangeMaxInputField;
+
+		public UnityEngine.UI.InputField pluckVolRangeMinInputField;
+		public UnityEngine.UI.InputField pluckVolRangeMaxInputField;
+
 		public UnityEngine.UI.InputField speedRangeMinInputField;
-		public UnityEngine.UI.InputField volRangeMaxInputField;
 		public UnityEngine.UI.InputField speedRangeMaxInputField;
+
+		public UnityEngine.UI.InputField durationRangeMinInputField;
+		public UnityEngine.UI.InputField durationRangeMaxInputField;
 
 		public UnityEngine.UI.Toggle useEnterToggle;
 		public UnityEngine.UI.Toggle useExitToggle;
@@ -30,12 +39,14 @@ namespace RJWS.Audio.UI
 
 			gameObject.SetActive( true );
 
-			SetGammaText( );
-			SetVolumeMinText( );
-			SetVolumeMaxText( );
+			SetStrumGammaText( );
+			SetStrumVolMinText( );
+			SetStrumVolMaxText( );
 			SetSpeedMinText( );
 			SetSpeedMaxText( );
-	
+			SetDurationMinText( );
+			SetDurationMaxText( );
+
 			if (useEnterToggle.isOn != _pluckSettings.useEnter)
 			{
 				_pluckSettings.useEnter = !_pluckSettings.useEnter;
@@ -62,31 +73,33 @@ namespace RJWS.Audio.UI
 			Debug.LogFormat( "Changing useExit to {0}", _pluckSettings.useEnter );
 		}
 
-		private void SetGammaText()
+		private void SetStrumGammaText()
 		{
-			gammaInputField.text = _pluckSettings.gamma.ToString();
+			strumGammaInputField.text = _pluckSettings.strumGamma.ToString();
 		}
 
-		public void OnGammaTextEndEdit()
+		public void OnStrumGammaTextEndEdit()
 		{
-			string s = gammaInputField.text;
+			string s = strumGammaInputField.text;
 			float f;
 			if (float.TryParse(s, out f))
 			{
-				if (!Mathf.Approximately(f, _pluckSettings.gamma))
+				if (!Mathf.Approximately(f, _pluckSettings.strumGamma))
 				{
 					if (f <= Core.Audio.AudioConsts.MAX_PLUCK_GAMMA && f >= -1f * Core.Audio.AudioConsts.MAX_PLUCK_GAMMA)
 					{
-						Debug.LogFormat( "Changing gamma from {0} to {1}", _pluckSettings.gamma, f );
-						_pluckSettings.gamma = f;
+						Debug.LogFormat( "Changing strum gamma from {0} to {1}", _pluckSettings.strumGamma, f );
+						_pluckSettings.strumGamma = f;
+						/*
 						if (_onSettingsChangedAction != null)
 						{
 							_onSettingsChangedAction( );
 						}
+						*/
 					}
 					else
 					{
-						Debug.LogWarningFormat( "Attenuation out of range: {0}", f );
+						Debug.LogWarningFormat( "Strum gamma out of range: {0}", f );
 					}
 				}
 			}
@@ -94,34 +107,36 @@ namespace RJWS.Audio.UI
 			{
 				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
 			}
-			SetGammaText( );
+			SetStrumGammaText( );
 		}
 
-		private void SetVolumeMinText( )
+		private void SetPluckGammaText( )
 		{
-			volRangeMinInputField.text = _pluckSettings.volumeRange.x.ToString( );
+			pluckGammaInputField.text = _pluckSettings.pluckGamma.ToString( );
 		}
 
-		public void OnVolumeMinTextEndEdit( )
+		public void OnPluckGammaTextEndEdit( )
 		{
-			string s = volRangeMinInputField.text;
+			string s = pluckGammaInputField.text;
 			float f;
 			if (float.TryParse( s, out f ))
 			{
-				if (!Mathf.Approximately( f, _pluckSettings.volumeRange.x))
+				if (!Mathf.Approximately( f, _pluckSettings.pluckGamma))
 				{
-					if (f <= _pluckSettings.volumeRange.y && f >= 0f)
+					if (f <= Core.Audio.AudioConsts.MAX_PLUCK_GAMMA && f >= -1f * Core.Audio.AudioConsts.MAX_PLUCK_GAMMA)
 					{
-						Debug.LogFormat( "Changing volRangeMin from {0} to {1}", _pluckSettings.volumeRange.x, f );
-						_pluckSettings.volumeRange.x = f;
+						Debug.LogFormat( "Changing pluck gamma from {0} to {1}", _pluckSettings.pluckGamma, f );
+						_pluckSettings.pluckGamma= f;
+						/*
 						if (_onSettingsChangedAction != null)
 						{
 							_onSettingsChangedAction( );
 						}
+						*/
 					}
 					else
 					{
-						Debug.LogWarningFormat( "VolMin out of range: {0}", f );
+						Debug.LogWarningFormat( "Pluck gamma out of range: {0}", f );
 					}
 				}
 			}
@@ -129,34 +144,36 @@ namespace RJWS.Audio.UI
 			{
 				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
 			}
-			SetVolumeMinText( );
+			SetPluckGammaText( );
 		}
 
-		private void SetVolumeMaxText( )
+		private void SetStrumVolMinText( )
 		{
-			volRangeMaxInputField.text = _pluckSettings.volumeRange.y.ToString( );
+			strumVolRangeMinInputField.text = _pluckSettings.strumVolRange.x.ToString( );
 		}
 
-		public void OnVolumeMaxTextEndEdit( )
+		public void OnStrumVolMinTextEndEdit( )
 		{
-			string s = volRangeMaxInputField.text;
+			string s = strumVolRangeMinInputField.text;
 			float f;
 			if (float.TryParse( s, out f ))
 			{
-				if (!Mathf.Approximately( f, _pluckSettings.volumeRange.y ))
+				if (!Mathf.Approximately( f, _pluckSettings.strumVolRange.x))
 				{
-					if (f >= _pluckSettings.volumeRange.x && f < Core.Audio.AudioConsts.MAX_VOLUME)
+					if (f <= _pluckSettings.strumVolRange.y && f >= 0f)
 					{
-						Debug.LogFormat( "Changing volRangeMax from {0} to {1}", _pluckSettings.volumeRange.y, f );
-						_pluckSettings.volumeRange.y = f;
+						Debug.LogFormat( "Changing strum volRangeMin from {0} to {1}", _pluckSettings.strumVolRange.x, f );
+						_pluckSettings.strumVolRange.x = f;
+						/*
 						if (_onSettingsChangedAction != null)
 						{
 							_onSettingsChangedAction( );
 						}
+						*/
 					}
 					else
 					{
-						Debug.LogWarningFormat( "VolMax out of range: {0}", f );
+						Debug.LogWarningFormat( "Strum VolMin out of range: {0}", f );
 					}
 				}
 			}
@@ -164,9 +181,194 @@ namespace RJWS.Audio.UI
 			{
 				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
 			}
-			SetVolumeMaxText( );
+			SetStrumVolMinText( );
 		}
 
+		private void SetStrumVolMaxText( )
+		{
+			strumVolRangeMaxInputField.text = _pluckSettings.strumVolRange.y.ToString( );
+		}
+
+		public void OnStrumVolMaxTextEndEdit( )
+		{
+			string s = strumVolRangeMaxInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
+			{
+				if (!Mathf.Approximately( f, _pluckSettings.strumVolRange.y ))
+				{
+					if (f >= _pluckSettings.strumVolRange.x && f < Core.Audio.AudioConsts.MAX_VOLUME)
+					{
+						Debug.LogFormat( "Changing strum volRangeMax from {0} to {1}", _pluckSettings.strumVolRange.y, f );
+						_pluckSettings.strumVolRange.y = f;
+						/*
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+						*/
+					}
+					else
+					{
+						Debug.LogWarningFormat( "Strum VolMax out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetStrumVolMaxText( );
+		}
+
+		private void SetPluckVolMinText( )
+		{
+			pluckVolRangeMinInputField.text = _pluckSettings.pluckVolRange.x.ToString( );
+		}
+
+		public void OnPluckVolMinTextEndEdit( )
+		{
+			string s = pluckVolRangeMinInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
+			{
+				if (!Mathf.Approximately( f, _pluckSettings.pluckVolRange.x ))
+				{
+					if (f <= _pluckSettings.pluckVolRange.y && f >= 0f)
+					{
+						Debug.LogFormat( "Changing pluck volRangeMin from {0} to {1}", _pluckSettings.pluckVolRange.x, f );
+						_pluckSettings.pluckVolRange.x = f;
+						/*
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+						*/
+					}
+					else
+					{
+						Debug.LogWarningFormat( "Pluck VolMin out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetPluckVolMinText( );
+		}
+
+		private void SetPluckVolMaxText( )
+		{
+			pluckVolRangeMaxInputField.text = _pluckSettings.pluckVolRange.y.ToString( );
+		}
+
+		public void OnPluckVolMaxTextEndEdit( )
+		{
+			string s = pluckVolRangeMaxInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
+			{
+				if (!Mathf.Approximately( f, _pluckSettings.pluckVolRange.y ))
+				{
+					if (f >= _pluckSettings.pluckVolRange.x && f < Core.Audio.AudioConsts.MAX_VOLUME)
+					{
+						Debug.LogFormat( "Changing pluck volRangeMax from {0} to {1}", _pluckSettings.pluckVolRange.y, f );
+						_pluckSettings.pluckVolRange.y = f;
+						/*
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+						*/
+					}
+					else
+					{
+						Debug.LogWarningFormat( "Pluck VolMax out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetPluckVolMaxText( );
+		}
+
+
+		private void SetDurationMinText( )
+		{
+			durationRangeMinInputField.text = _pluckSettings.durationRange.x.ToString( );
+		}
+
+		public void OnDurationMinTextEndEdit( )
+		{
+			string s = durationRangeMinInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
+			{
+				if (!Mathf.Approximately( f, _pluckSettings.durationRange.x ))
+				{
+					if (f <= _pluckSettings.durationRange.y && f > -1f)
+					{
+						Debug.LogFormat( "Changing durationRangeMin from {0} to {1}", _pluckSettings.durationRange.x, f );
+						_pluckSettings.durationRange.x = f;
+						/*
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+						*/
+					}
+					else
+					{
+						Debug.LogWarningFormat( "DurationMin out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetDurationMinText( );
+		}
+
+		private void SetDurationMaxText( )
+		{
+			durationRangeMaxInputField.text = _pluckSettings.durationRange.y.ToString( );
+		}
+
+		public void OnDurationMaxTextEndEdit( )
+		{
+			string s = durationRangeMaxInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
+			{
+				if (!Mathf.Approximately( f, _pluckSettings.durationRange.y ))
+				{
+					if (f >= _pluckSettings.durationRange.x && f < 2f)
+					{
+						Debug.LogFormat( "Changing durationRangeMax from {0} to {1}", _pluckSettings.durationRange.y, f );
+						_pluckSettings.durationRange.x = f;
+						/*
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+						*/
+					}
+					else
+					{
+						Debug.LogWarningFormat( "DurationMax out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetDurationMaxText( );
+		}
 
 		private void SetSpeedMinText( )
 		{
