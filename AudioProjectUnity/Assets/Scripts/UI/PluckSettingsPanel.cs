@@ -42,6 +42,11 @@ namespace RJWS.Audio.UI
 			SetStrumGammaText( );
 			SetStrumVolMinText( );
 			SetStrumVolMaxText( );
+
+			SetPluckGammaText( );
+			SetPluckVolMinText( );
+			SetPluckVolMaxText( );
+
 			SetSpeedMinText( );
 			SetSpeedMaxText( );
 			SetDurationMinText( );

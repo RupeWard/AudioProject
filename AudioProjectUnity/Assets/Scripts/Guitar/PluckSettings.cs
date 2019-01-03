@@ -139,11 +139,11 @@ namespace RJWS.Audio
 			durationFactor = Mathf.Clamp01( durationFactor );
 			if (Mathf.Approximately( pluckGamma, 0f))
 			{
-				return Mathf.Lerp( pluckVolRange.x, pluckVolRange.y, durationFactor );
+				return Mathf.Lerp( pluckVolRange.y, pluckVolRange.x, durationFactor );
 			}
 			else
 			{
-				return Mathf.Lerp( pluckVolRange.x, pluckVolRange.y, (Mathf.Exp( pluckGamma* durationFactor ) - 1f) / (Mathf.Exp( strumGamma ) - 1) );
+				return Mathf.Lerp( pluckVolRange.y, pluckVolRange.x, (Mathf.Exp( pluckGamma* durationFactor ) - 1f) / (Mathf.Exp( strumGamma ) - 1) );
 			}
 		}
 
