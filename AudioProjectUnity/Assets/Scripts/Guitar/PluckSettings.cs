@@ -20,6 +20,8 @@ namespace RJWS.Audio
 		public bool useEnter = true;
 		public bool useExit = true;
 
+		public float slideVolumeIncrease = 0.25f;
+
 		private const string PPKEY_DurationMin = "DurationMin";
 		private const string PPKEY_DurationMax = "DurationMax";
 		private const string PPKEY_SpeedMin = "SpeedMin";
