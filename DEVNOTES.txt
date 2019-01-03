@@ -1,17 +1,17 @@
 GUITAR
 
 Volume control
-Chord play button
+Slide
+Touch to damp
+
+Try pluck volume down to zero, with difft gammas
 
 ? Attenuation variation
 
-Persist settings?
 Camera view options
 
 Guitar Tuning class
 Guitar note to frequency etc
-Slide
-Damping
 
 
 ---------------

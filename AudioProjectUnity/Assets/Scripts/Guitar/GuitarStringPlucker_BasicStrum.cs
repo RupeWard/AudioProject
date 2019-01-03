@@ -156,6 +156,11 @@ namespace RJWS.Audio
 						_downLocation = hitInfo.point;
 
 						_lastDownReason = reason;
+
+						if (reason == DOWN_REASON)
+						{
+							_stringView.stringBehaviour.Kill( );
+						}
 					}
 					else
 					{

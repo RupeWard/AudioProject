@@ -14,7 +14,7 @@ namespace RJWS.Audio
 
 		private void Awake()
 		{
-			GuitarSettings.LoadDefaultsIfNUll( ref guitarSettings );
+			GuitarSettings.LoadIfNUll( ref guitarSettings );
 		}
 
 		public void Init(List<float> freqs)

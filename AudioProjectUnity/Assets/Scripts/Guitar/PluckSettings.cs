@@ -8,7 +8,7 @@ namespace RJWS.Audio
 	[CreateAssetMenu( menuName = "RJWS/Guitar/PluckSettings", order = 1000 )]
 	public class PluckSettings : ScriptableObject, IDebugDescribable
 	{
-		private const string DEFSETTINGSPATH = "DefaultPluckSettings";
+		private const string SETTINGSPATH = "PluckSettings";
 
 		public Vector2 durationRange = new Vector2( 0f, 0.3f );
 		public Vector2 speedRange = new Vector2( 0f, 1000f );
@@ -105,12 +105,12 @@ namespace RJWS.Audio
 			PlayerPrefs.SetInt( PPKEY_UseExit, (useExit) ? (1) : (0) );
 		}
 
-		static public PluckSettings LoadDefaultsIfNUll(ref PluckSettings gs)
+		static public PluckSettings LoadIfNUll(ref PluckSettings gs)
 		{
 			if (gs == null)
 			{
-				gs = Resources.Load( DEFSETTINGSPATH ) as PluckSettings;
-				Debug.Log( "Loaded default pluck settings" );
+				gs = Resources.Load( SETTINGSPATH ) as PluckSettings;
+				Debug.Log( "Loaded pluck settings" );
 
 #if !UNITY_EDITOR
 				gs.LoadFromPlayerPrefs( );

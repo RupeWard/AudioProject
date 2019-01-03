@@ -80,14 +80,14 @@ namespace RJWS.Audio
 			PlayerPrefs.Save( );
 		}
 
-		private const string DEFSETTINGSPATH = "DefaultGuitarSettings";
+		private const string SETTINGSPATH = "GuitarSettings";
 
-		static public GuitarSettings LoadDefaultsIfNUll(ref GuitarSettings gs)
+		static public GuitarSettings LoadIfNUll(ref GuitarSettings gs)
 		{
 			if (gs == null)
 			{
-				gs = Resources.Load( DEFSETTINGSPATH ) as GuitarSettings;
-				Debug.Log( "Loaded default guitar settings" );
+				gs = Resources.Load( SETTINGSPATH ) as GuitarSettings;
+				Debug.Log( "Loaded guitar settings" );
 
 #if !UNITY_EDITOR
 				gs.LoadFromPlayerPrefs( );

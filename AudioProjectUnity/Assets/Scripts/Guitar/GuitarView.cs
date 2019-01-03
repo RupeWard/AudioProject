@@ -96,8 +96,8 @@ namespace RJWS.Audio
 		private void Awake()
 		{
 			cachedTransform = transform;
-			GuitarSettings.LoadDefaultsIfNUll( ref guitarSettings );
-			PluckSettings.LoadDefaultsIfNUll( ref pluckSettings );
+			GuitarSettings.LoadIfNUll( ref guitarSettings );
+			PluckSettings.LoadIfNUll( ref pluckSettings );
 		}
 
 		public void Init(GuitarModel model)
