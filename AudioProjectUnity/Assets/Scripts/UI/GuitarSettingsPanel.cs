@@ -13,7 +13,7 @@ namespace RJWS.Audio.UI
 		public UnityEngine.UI.Dropdown pluckerTypeDropDown;
 		public UnityEngine.UI.InputField colliderSizeInputField;
 
-		public System.Action _onSettingsChangedAction;
+		public System.Action<GuitarSettings> _onSettingsChangedAction;
 		public PluckSettingsPanel pluckSettingsPanel;
 		public GameObject pluckSettingsButton;
 
@@ -24,7 +24,7 @@ namespace RJWS.Audio.UI
 			{ EPluckerType.BasicUp, "B-Up" }
 		};
 
-		public void Init( GuitarSettings gs, PluckSettings ps, System.Action osa)
+		public void Init( GuitarSettings gs, PluckSettings ps, System.Action<GuitarSettings> osa)
 		{
 			_settings = gs;
 			_pluckSettings = ps;
@@ -197,7 +197,7 @@ namespace RJWS.Audio.UI
 		{
 			if (_onSettingsChangedAction != null)
 			{
-				_onSettingsChangedAction( );
+				_onSettingsChangedAction( _settings );
 			}
 			pluckSettingsButton.SetActive( _settings.pluckerType != EPluckerType.BasicUp);
 		}

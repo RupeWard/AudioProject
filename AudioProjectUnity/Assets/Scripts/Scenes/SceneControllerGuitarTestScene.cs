@@ -25,6 +25,8 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 	public RJWS.Core.SOVariables.PosRotVariable farCameraPos;
 	public RJWS.Core.SOVariables.PosRotVariable bridgeCameraPos;
 
+	public GameObject chordButtonObject;
+
 	public enum ECamerPos
 	{
 		Far,
@@ -57,7 +59,13 @@ public class SceneControllerGuitarTestScene: SceneController_Base
 
 	public void HandleGuitarSettingsButton( )
 	{
-		guitarSettingsPanel.Init( guitarView.guitarSettings, guitarView.pluckSettings, guitarView.ApplySettings );
+		guitarSettingsPanel.Init( guitarView.guitarSettings, guitarView.pluckSettings, HandleSettingsChanged );
+	}
+
+	private void HandleSettingsChanged(RJWS.Audio.GuitarSettings s)
+	{
+		guitarView.ApplySettings( s );
+		chordButtonObject.SetActive( s.pluckerType == RJWS.Audio.EPluckerType.BasicStrum );
 	}
 
 	public void HandlePosButton()

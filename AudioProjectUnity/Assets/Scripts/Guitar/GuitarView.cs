@@ -144,10 +144,10 @@ namespace RJWS.Audio
 				_fretViews.Add( gfv );
 			}
 
-			ApplySettings( );
+			ApplySettings( guitarSettings);
 		}
 
-		public void ApplySettings()
+		public void ApplySettings(GuitarSettings s)
 		{
 			if (DebugMe)
 			{
@@ -155,7 +155,7 @@ namespace RJWS.Audio
 			}
 			for (int i = 0; i < _stringViews.Count; i++)
 			{
-				_stringViews[i].ApplyGuitarSettings( guitarSettings );
+				_stringViews[i].ApplyGuitarSettings( s );
 			}
 		}
 
@@ -164,6 +164,14 @@ namespace RJWS.Audio
 			get
 			{
 				return new Vector3( stringWidth, 0.5f * stringLength, stringWidth);
+			}
+		}
+
+		public void PlayChord()
+		{
+			for (int i = 0; i < _stringViews.Count; i++)
+			{
+				_stringViews[i].stringBehaviour.Pluck( 1f );
 			}
 		}
 	}

@@ -1,18 +1,9 @@
 GUITAR
 
 Volume control
-Fret indicators
-- image per fret
-- show while sounding
-- store fret in string
+Chord play button
 
-String damping
-
-Chord mode
-
-Drag plucker
-
-Attenuation variation
+? Attenuation variation
 
 Persist settings?
 Camera view options
