@@ -73,6 +73,10 @@ namespace RJWS.Audio
 						{
 							volume = _stringView.guitarView.pluckSettings.GetStrumVolumeForSpeed( speed );
 						}
+						else
+						{
+							volume = _stringView.guitarView.pluckSettings.GetPluckVolumeForDuration( elapsed);
+						}
 						_stringView.stringBehaviour.Pluck( volume, fret );
 
 						if (_debug)

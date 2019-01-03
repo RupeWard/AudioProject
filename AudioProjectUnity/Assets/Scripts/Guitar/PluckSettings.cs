@@ -137,13 +137,13 @@ namespace RJWS.Audio
 		{
 			float durationFactor = (s - durationRange.x) / (durationRange.y - durationRange.x);
 			durationFactor = Mathf.Clamp01( durationFactor );
-			if (Mathf.Approximately( strumGamma, 0f))
+			if (Mathf.Approximately( pluckGamma, 0f))
 			{
-				return Mathf.Lerp( strumVolRange.x, strumVolRange.y, durationFactor );
+				return Mathf.Lerp( pluckVolRange.x, pluckVolRange.y, durationFactor );
 			}
 			else
 			{
-				return Mathf.Lerp( strumVolRange.x, strumVolRange.y, (Mathf.Exp( strumGamma * durationFactor ) - 1f) / (Mathf.Exp( strumGamma ) - 1) );
+				return Mathf.Lerp( pluckVolRange.x, pluckVolRange.y, (Mathf.Exp( pluckGamma* durationFactor ) - 1f) / (Mathf.Exp( strumGamma ) - 1) );
 			}
 		}
 
