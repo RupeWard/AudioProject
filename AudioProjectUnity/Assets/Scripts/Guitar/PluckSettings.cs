@@ -35,6 +35,8 @@ namespace RJWS.Audio
 		private const string PPKEY_PluckGamma = "PluckGamma";
 		private const string PPKEY_UseEnter = "UseEnter";
 		private const string PPKEY_UseExit = "UseExit";
+		private const string PPKEY_SlideFraction = "SlideFraction";
+		private const string PPKEY_SlideMin = "SlideMin";
 
 		public void LoadFromPlayerPrefs( )
 		{
@@ -93,6 +95,14 @@ namespace RJWS.Audio
 			{
 				useExit= (PlayerPrefs.GetInt( PPKEY_UseExit) == 1);
 			}
+			if (PlayerPrefs.HasKey( PPKEY_SlideFraction))
+			{
+				slideVolumeIncreaseFraction = PlayerPrefs.GetFloat( PPKEY_SlideFraction);
+			}
+			if (PlayerPrefs.HasKey( PPKEY_SlideMin))
+			{
+				slideVolumeIncreasedMin= PlayerPrefs.GetFloat( PPKEY_SlideMin);
+			}
 		}
 
 		public void SaveToPlayerPrefs( )
@@ -106,6 +116,8 @@ namespace RJWS.Audio
 			PlayerPrefs.SetFloat( PPKEY_StrumGamma, strumGamma );
 		    PlayerPrefs.SetInt( PPKEY_UseEnter, (useEnter)?(1):(0));
 			PlayerPrefs.SetInt( PPKEY_UseExit, (useExit) ? (1) : (0) );
+			PlayerPrefs.SetFloat( PPKEY_SlideFraction, slideVolumeIncreaseFraction);
+			PlayerPrefs.SetFloat( PPKEY_SlideMin, slideVolumeIncreasedMin);
 		}
 
 		static public PluckSettings LoadIfNUll(ref PluckSettings gs)

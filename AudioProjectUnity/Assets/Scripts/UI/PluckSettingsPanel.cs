@@ -24,6 +24,9 @@ namespace RJWS.Audio.UI
 		public UnityEngine.UI.InputField durationRangeMinInputField;
 		public UnityEngine.UI.InputField durationRangeMaxInputField;
 
+		public UnityEngine.UI.InputField slideFractionInputField;
+		public UnityEngine.UI.InputField slideMinInputField;
+
 		public UnityEngine.UI.Toggle useEnterToggle;
 		public UnityEngine.UI.Toggle useExitToggle;
 
@@ -51,6 +54,9 @@ namespace RJWS.Audio.UI
 			SetSpeedMaxText( );
 			SetDurationMinText( );
 			SetDurationMaxText( );
+
+			SetSlideMinText( );
+			SetSlideFractionText( );
 
 			if (useEnterToggle.isOn != _pluckSettings.useEnter)
 			{
@@ -83,13 +89,13 @@ namespace RJWS.Audio.UI
 			strumGammaInputField.text = _pluckSettings.strumGamma.ToString();
 		}
 
-		public void OnStrumGammaTextEndEdit()
+		public void OnStrumGammaTextEndEdit( )
 		{
 			string s = strumGammaInputField.text;
 			float f;
-			if (float.TryParse(s, out f))
+			if (float.TryParse( s, out f ))
 			{
-				if (!Mathf.Approximately(f, _pluckSettings.strumGamma))
+				if (!Mathf.Approximately( f, _pluckSettings.strumGamma ))
 				{
 					if (f <= Core.Audio.AudioConsts.MAX_PLUCK_GAMMA && f >= -1f * Core.Audio.AudioConsts.MAX_PLUCK_GAMMA)
 					{
@@ -114,6 +120,81 @@ namespace RJWS.Audio.UI
 			}
 			SetStrumGammaText( );
 		}
+
+		private void SetSlideFractionText( )
+		{
+			slideFractionInputField.text = _pluckSettings.slideVolumeIncreaseFraction.ToString( );
+		}
+
+		public void OnSlideFractionTextEndEdit()
+		{
+			string s = slideFractionInputField.text;
+			float f;
+			if (float.TryParse(s, out f))
+			{
+				if (!Mathf.Approximately(f, _pluckSettings.slideVolumeIncreaseFraction))
+				{
+					if (f <= 1f && f >= 0f)
+					{
+						Debug.LogFormat( "Changing slide fraction from {0} to {1}", _pluckSettings.slideVolumeIncreaseFraction, f );
+						_pluckSettings.slideVolumeIncreaseFraction= f;
+						/*
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+						*/
+					}
+					else
+					{
+						Debug.LogWarningFormat( "Slide vol fraction out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetSlideFractionText( );
+		}
+
+		private void SetSlideMinText( )
+		{
+			slideMinInputField.text = _pluckSettings.slideVolumeIncreasedMin.ToString( );
+		}
+
+		public void OnSlideMinTextEndEdit( )
+		{
+			string s = slideMinInputField.text;
+			float f;
+			if (float.TryParse( s, out f ))
+			{
+				if (!Mathf.Approximately( f, _pluckSettings.slideVolumeIncreasedMin))
+				{
+					if (f <= 1f && f >= 0f)
+					{
+						Debug.LogFormat( "Changing slide min from {0} to {1}", _pluckSettings.slideVolumeIncreasedMin, f );
+						_pluckSettings.slideVolumeIncreasedMin= f;
+						/*
+						if (_onSettingsChangedAction != null)
+						{
+							_onSettingsChangedAction( );
+						}
+						*/
+					}
+					else
+					{
+						Debug.LogWarningFormat( "Slide vol min out of range: {0}", f );
+					}
+				}
+			}
+			else
+			{
+				Debug.LogWarningFormat( "Couldn't get float from '{0}'", s );
+			}
+			SetSlideMinText( );
+		}
+
 
 		private void SetPluckGammaText( )
 		{
