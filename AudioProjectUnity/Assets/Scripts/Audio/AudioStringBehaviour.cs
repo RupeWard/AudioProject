@@ -114,12 +114,12 @@ namespace RJWS.Audio
 			}
 		}
 
-		public void IncreaseVolumeifPlaying(float fraction)
+		public void IncreaseVolumeifPlaying(float fraction, float min = 0f)
 		{
 			if (audioSource.isPlaying)
 			{
 				float vol = audioSource.volume * (1f + fraction);
-				audioSource.volume = Mathf.Clamp01( vol );
+				audioSource.volume = Mathf.Clamp( vol, min, 1f );
 			}
 		}
 

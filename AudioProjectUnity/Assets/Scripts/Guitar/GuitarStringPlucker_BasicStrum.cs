@@ -231,7 +231,7 @@ namespace RJWS.Audio
 						if (fret != _stringView.stringBehaviour.Fret)
 						{
 							_stringView.stringBehaviour.SetFret( fret );
-							_stringView.stringBehaviour.IncreaseVolumeifPlaying( _stringView.guitarView.pluckSettings.slideVolumeIncrease );
+							_stringView.stringBehaviour.IncreaseVolumeifPlaying( _stringView.guitarView.pluckSettings.slideVolumeIncreaseFraction, _stringView.guitarView.pluckSettings.slideVolumeIncreasedMin );
 						}
 					}
 
