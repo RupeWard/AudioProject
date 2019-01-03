@@ -82,6 +82,8 @@ namespace RJWS.Audio
 					else
 					{
 						_fret = value;
+						SetRingBufferForFret( _fret ); // slide
+
 						if (onFretChanged != null)
 						{
 							onFretChanged( _fret );
@@ -92,6 +94,20 @@ namespace RJWS.Audio
 						}
 					}
 				}
+			}
+		}
+
+		public void SetRingBufferForFret(int f)
+		{
+			if (ringbuffer != null)
+			{
+				float freq = _openFrequency;
+				for (int i = 0; i < Fret; i++)
+				{
+					freq *= Core.Audio.AudioConsts.FRET_FACTOR;
+				}
+				int c = Mathf.CeilToInt( (float)_sampleRate / freq );
+				ringbuffer.Capacity = c;
 			}
 		}
 
@@ -189,14 +205,7 @@ namespace RJWS.Audio
 				amplitude = 1f;
 			}
 			ringbuffer.Clear( );
-
-			float freq = _openFrequency;
-			for (int i = 0; i < Fret; i++)
-			{
-				freq *= Core.Audio.AudioConsts.FRET_FACTOR;
-			}
-			int c = Mathf.CeilToInt( (float)_sampleRate / freq );
-			ringbuffer.Capacity = c;
+			SetRingBufferForFret( Fret );
 
 			float min = -0.5f * amplitude;
 			float max = -1f * min;

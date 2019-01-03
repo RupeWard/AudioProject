@@ -2,7 +2,6 @@ GUITAR
 
 Volume control
 Slide
-Touch to damp
 
 Try pluck volume down to zero, with difft gammas
 
