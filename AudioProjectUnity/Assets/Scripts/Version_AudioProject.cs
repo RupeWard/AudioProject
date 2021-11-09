@@ -12,6 +12,7 @@ namespace RJWS.Core.Version
 		{
 			get
 			{
+                /*
 				if (_versionNumber == null)
 				{
 					Build.BuildConfig buildConfig = Build.BuildConfig.LoadConfigFromResources( );
@@ -19,10 +20,11 @@ namespace RJWS.Core.Version
 					_versionNumber.subNumbers_[3] = buildConfig.buildNumber;
 					Debug.LogWarningFormat( "Loaded version from config: {0}\nConfig=...\n{1}", _versionNumber.ToString( ), buildConfig.DebugDescribe( ) );
 				}
+                */
 				return _versionNumber;
 			}
 		}
-		public static VersionNumber _versionNumber = null; 
+		public static VersionNumber _versionNumber = new VersionNumber("0.1.2"); 
 
 	}
 }
